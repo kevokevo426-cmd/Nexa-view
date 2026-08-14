@@ -1,9 +1,236 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta http-equiv="refresh" content="0; url=app.html" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXA VIEW</title>
+<style>
+  body { font-family: 'Poppins', sans-serif; background:#0f172a; color:white; margin:0; padding-bottom:80px; }
+  .tab { display:none; padding:20px; }
+  .tab.active { display:block; }
+  .nav { position:fixed; bottom:0; width:100%; background:#1e293b; display:flex; justify-content:space-around; padding:10px 0; }
+  .nav button { background:none; border:none; color:#94a3b8; font-size:12px; }
+  .nav button.active { color:#22c55e; }
+  .card { background:#1e293b; padding:15px; border-radius:12px; margin:15px 0; }
+  .btn { width:100%; padding:14px; background:#22c55e; color:black; border:none; border-radius:10px; font-weight:bold; font-size:16px; margin-top:10px; }
+  .btn-red { background:#ef4444; color:white; }
+  .amt-btn { background:#334155; color:white; border:none; padding:10px; border-radius:8px; flex:1; }
+  .amt-btn.active { background:#22c55e; color:black; }
+  input { width:100%; padding:12px; margin:8px 0; border-radius:8px; background:#334155; border:none; color:white; }
+  video { width:100%; border-radius:12px; margin-top:10px; }
+  .info-link { display:block; padding:12px; background:#334155; border-radius:8px; margin:8px 0; color:white; text-decoration:none; }
+  #loginPage { padding:20px; text-align:center; }
+</style>
 </head>
 <body>
-Loading NEXA VIEW...
+
+<!-- LOGIN PAGE -->
+<div id="loginPage">
+  <h2>NEXA VIEW</h2>
+  <div class="card">
+    <input type="email" id="email" placeholder="Enter Email">
+    <input type="password" id="password" placeholder="Enter Password">
+    <button class="btn" onclick="login()">Login</button>
+    <button class="btn" onclick="register()">Register</button>
+    <p id="authMsg" style="color:#fbbf24;"></p>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" style="display:none;">
+<div id="home" class="tab active">
+  <h2>Welcome</h2>
+  <div class="card">
+    <h3>Your Package: <span id="userPackage">L1</span></h3>
+    <p>Daily Income: <b>Ksh <span id="dailyIncome">25</span></b></p>
+    <p>Total Return: <b>Ksh <span id="totalReturn">500</span></b></p>
+    <p>Balance: <b>Ksh <span id="balance">0</span></b></p>
+    <button class="btn btn-red" onclick="logout()">Logout</button>
+  </div>
+  <div class="card"><h3>Packages</h3><p>L1: 300 → 25/day → 500</p><p>L2: 700 → 50/day → 1000</p><p>L3: 1300 → 100/day → 2000</p><p>L4: 2500 → 150/day → 4500</p><p>L5: 3500 → 200/day → 6000</p><p>L6: 4800 → 250/day → 7500</p><p>L7: 7500 → 350/day → 10500</p><p>L8: 10000 → 500/day → 15000</p><p style="color:#fbbf24;">*Sunday = Rest Day*</p></div>
+</div>
+
+<div id="task" class="tab">
+  <h2>Daily Task</h2>
+  <div class="card">
+    <p id="dayStatus">Loading...</p>
+    <button id="watchBtn" class="btn" onclick="startVideo()">Tap to Watch</button>
+    <video id="taskVideo" src="https://www.w3schools.com/html/mov_bbb.mp4" style="display:none;" controls></video>
+    <p id="resultMsg"></p>
+  </div>
+</div>
+
+<div id="me" class="tab">
+  <h2>My Account</h2>
+  <div class="card">
+    <h3>Withdraw Earnings</h3>
+    <p>Available Balance: <b>Ksh <span id="availBal">0</span></b></p>
+    <p style="color:#fbbf24; font-size:12px;">Withdrawals: 9:00AM - 5:00PM | 1x per day | 15% Tax</p>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0;">
+      <button class="amt-btn" onclick="selectAmt(200)">Ksh 200</button>
+      <button class="amt-btn" onclick="selectAmt(400)">Ksh 400</button>
+      <button class="amt-btn" onclick="selectAmt(500)">Ksh 500</button>
+      <button class="amt-btn" onclick="selectAmt(700)">Ksh 700</button>
+      <button class="amt-btn" onclick="selectAmt(1000)">Ksh 1000</button>
+    </div>
+    <p>You Request: Ksh <span id="reqAmt">0</span></p>
+    <p>Tax 15%: Ksh <span id="taxAmt">0</span></p>
+    <p style="color:#22c55e;">You Receive: Ksh <span id="netAmt">0</span></p>
+    <input type="text" id="mpesa" placeholder="Enter M-PESA Number 07xx">
+    <button class="btn" onclick="submitWithdraw()">Withdraw Now</button>
+    <p id="withdrawMsg"></p>
+  </div>
+</div>
+
+<div id="info" class="tab">
+  <h2>Info & Support</h2>
+  <div class="card"><h3>📜 Rules</h3><p>1. Watch full video to earn. 2. 1 Task per day. 3. Withdraw: 9AM-5PM. 4. 15% Tax</p></div>
+  <div class="card"><h3>📞 Contact Us</h3><a href="https://wa.me/2547XXXXXXXX" class="info-link">WhatsApp Support</a></div>
+</div>
+
+<div class="nav">
+  <button onclick="showTab('home')" id="nav-home" class="active">Home</button>
+  <button onclick="showTab('task')" id="nav-task">Task</button>
+  <button onclick="showTab('me')" id="nav-me">Me</button>
+  <button onclick="showTab('info')" id="nav-info">Info</button>
+</div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+<script>
+// YOUR FIREBASE CONFIG
+const firebaseConfig = {
+  apiKey: "AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",
+  authDomain: "nexa-view.firebaseapp.com",
+  projectId: "nexa-view",
+  storageBucket: "nexa-view.firebasestorage.app",
+  messagingSenderId: "947915083946",
+  appId: "1:947915083946:web:7f2cb69ddbc2f8bd2ec0d3",
+  measurementId: "G-Q2ZD17234K"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+const PACKAGE_DATA = {
+  "L1": {stake:300, daily:25, total:500}, "L2": {stake:700, daily:50, total:1000},
+  "L3": {stake:1300, daily:100, total:2000}, "L4": {stake:2500, daily:150, total:4500},
+  "L5": {stake:3500, daily:200, total:6000}, "L6": {stake:4800, daily:250, total:7500},
+  "L7": {stake:7500, daily:350, total:10500}, "L8": {stake:10000, daily:500, total:15000}
+};
+
+let currentUser = null;
+let userData = {};
+const today = new Date().toDateString();
+
+// AUTH
+function register() {
+  auth.createUserWithEmailAndPassword(email.value, password.value)
+  .then(cred => {
+    db.collection("users").doc(cred.user.uid).set({
+      email: email.value, balance: 0, package: "L1", 
+      lastTask: "", lastWithdraw: ""
+    });
+  }).catch(e => authMsg.innerText = e.message);
+}
+function login() {
+  auth.signInWithEmailAndPassword(email.value, password.value)
+  .catch(e => authMsg.innerText = e.message);
+}
+function logout() { auth.signOut(); }
+
+auth.onAuthStateChanged(user => {
+  if(user) {
+    currentUser = user;
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    loadUserData();
+  } else {
+    document.getElementById('loginPage').style.display = 'block';
+    document.getElementById('app').style.display = 'none';
+  }
+});
+
+function loadUserData() {
+  db.collection("users").doc(currentUser.uid).onSnapshot(doc => {
+    userData = doc.data();
+    loadHome(); loadTask();
+  });
+}
+
+// NAV + HOME
+function showTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(tab).classList.add('active');
+  document.getElementById('nav-'+tab).classList.add('active');
+}
+function loadHome() {
+  let data = PACKAGE_DATA[userData.package];
+  document.getElementById('userPackage').innerText = userData.package;
+  document.getElementById('dailyIncome').innerText = data.daily;
+  document.getElementById('totalReturn').innerText = data.total;
+  document.getElementById('balance').innerText = userData.balance;
+  document.getElementById('availBal').innerText = userData.balance;
+}
+
+// TASK
+function loadTask() {
+  let data = PACKAGE_DATA[userData.package];
+  let day = new Date().getDay();
+  if(day === 0) {
+    dayStatus.innerText = "😌 Rest Day. No tasks today.";
+    watchBtn.style.display = 'none'; return;
+  }
+  if(userData.lastTask === today) {
+    dayStatus.innerText = `✅ Earned Ksh ${data.daily} today. Come back tomorrow.`;
+    watchBtn.style.display = 'none';
+  } else {
+    dayStatus.innerText = `Task Available. Package: ${userData.package}`;
+    watchBtn.innerText = `Tap to Watch & Earn Ksh ${data.daily}`;
+    watchBtn.style.display = 'block';
+  }
+}
+function startVideo() {
+  let data = PACKAGE_DATA[userData.package];
+  watchBtn.style.display = 'none';
+  taskVideo.style.display = 'block';
+  taskVideo.play();
+  taskVideo.onended = function() {
+    let newBal = userData.balance + data.daily;
+    db.collection("users").doc(currentUser.uid).update({balance: newBal, lastTask: today});
+    resultMsg.innerText = `✅ Congratulations! Ksh ${data.daily} added.`;
+  }
+}
+
+// WITHDRAW
+let selectedAmt = 0;
+function selectAmt(amt) {
+  selectedAmt = amt;
+  document.querySelectorAll('.amt-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  let tax = amt * 0.15;
+  document.getElementById('reqAmt').innerText = amt;
+  document.getElementById('taxAmt').innerText = tax;
+  document.getElementById('netAmt').innerText = amt - tax;
+}
+function submitWithdraw() {
+  const hours = new Date().getHours();
+  if(hours < 9 || hours >= 17) return alert("❌ Withdrawals only 9AM - 5PM");
+  if(userData.lastWithdraw === today) return alert("❌ You already withdrew today.");
+  if(selectedAmt < 200) return alert("❌ Minimum withdrawal is Ksh 200");
+  if(userData.balance < selectedAmt) return alert("❌ Insufficient Balance");
+  if(!mpesa.value) return alert("❌ Enter M-PESA Number");
+  
+  let newBal = userData.balance - selectedAmt;
+  db.collection("users").doc(currentUser.uid).update({balance: newBal, lastWithdraw: today});
+  
+  // TODO: Also save request to "withdrawals" collection for Admin
+  withdrawMsg.innerText = `✅ Request Sent! You will receive Ksh ${selectedAmt*0.85} via M-PESA`;
+}
+</script>
 </body>
 </html>
