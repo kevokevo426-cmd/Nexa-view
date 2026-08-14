@@ -1,202 +1,42 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEXA VIEW</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
-  body { background: #0a0a0a; color: white; }
- .gradient-btn { background: linear-gradient(90deg, #FFD700, #FFA500); }
- .card { background: #1a1a1a; border: 1px solid #333; }
- .package { border: 2px solid #FFD700; }
-</style>
-</head>
-<body class="p-4">
+<div id="homeTab" class="tab-content active">
 
-<div id="app" class="max-w-md mx-auto">
-  <div id="loginScreen" class="card p-6 rounded-2xl">
-    <h1 class="text-3xl font-bold text-center text-yellow-400 mb-6">NEXA VIEW</h1>
-    <input id="loginPhone" type="tel" placeholder="Phone Number" class="w-full p-3 mb-3 bg-black rounded">
-    <input id="loginPin" type="password" placeholder="4 Digit PIN" maxlength="4" class="w-full p-3 mb-4 bg-black rounded">
-    <button onclick="login()" class="w-full gradient-btn text-black font-bold p-3 rounded">LOGIN</button>
-    <p class="text-center mt-4">No account? <button onclick="showSignup()" class="text-yellow-400 underline">Create One</button></p>
+  <!-- Welcome Banner -->
+  <div class="card" style="background:linear-gradient(135deg,#fbbf24,#f59e0b); color:black; text-align:center; margin:15px 20px;">
+    <h2 style="margin:0; color:black;">Welcome to NEXA VIEW</h2>
+    <p style="margin:5px 0; color:black;">Earn Daily by Watching Ads</p>
   </div>
 
-  <div id="signupScreen" class="card p-6 rounded-2xl hidden">
-    <h1 class="text-2xl font-bold text-center text-yellow-400 mb-6">CREATE ACCOUNT</h1>
-    <input id="signupName" type="text" placeholder="Username" class="w-full p-3 mb-3 bg-black rounded">
-    <input id="signupPhone" type="tel" placeholder="Phone Number" class="w-full p-3 mb-3 bg-black rounded">
-    <input id="signupPin" type="password" placeholder="Create 4 Digit PIN" maxlength="4" class="w-full p-3 mb-4 bg-black rounded">
-    <button onclick="createAccount()" class="w-full gradient-btn text-black font-bold p-3 rounded">CREATE ACCOUNT</button>
-    <p class="text-center mt-4">Have account? <button onclick="showLogin()" class="text-yellow-400 underline">Login</button></p>
+  <!-- Stats -->
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:0 20px;">
+    <div class="card" style="text-align:center; padding:15px;">
+      <p style="color:#888; margin:0; font-size:12px;">Total Balance</p>
+      <h2 style="margin:5px 0; color:#fbbf24;">Ksh <span id="userBalance">0.00</span></h2>
+    </div>
+    <div class="card" style="text-align:center; padding:15px;">
+      <p style="color:#888; margin:0; font-size:12px;">Today's Income</p>
+      <h2 style="margin:5px 0; color:#22c55e;">Ksh <span id="daily">0</span></h2>
+    </div>
   </div>
 
-  <div id="dashboard" class="hidden">
-    <div class="card p-4 rounded-xl mb-4">
-      <h1 class="text-2xl font-bold text-yellow-400">Hi <span id="userName"></span></h1>
-      <p>Balance: Ksh <span id="userBalance">0</span></p>
-      <p>Package: <span id="userPackage">None</span></p>
-      <p>Days Left: <span id="daysLeft">0</span></p>
-      <p id="nextAdTime" class="text-sm text-gray-400"></p>
-    </div>
-
-    <div id="packages" class="mb-4"></div>
-
-    <div class="card p-4 rounded-xl mb-4">
-      <h2 class="font-bold text-lg">Daily Task</h2>
-      <p class="text-sm text-gray-400">Watch 1 video. 1min. Earn instantly</p>
-      <button id="watchBtn" onclick="watchVideo()" class="w-full gradient-btn text-black font-bold p-3 rounded mt-2">WATCH 1MIN VIDEO</button>
-      <p id="timer" class="text-center text-yellow-400 font-bold mt-2"></p>
-    </div>
-    
-    <div class="card p-4 rounded-xl mb-4">
-      <h2 class="font-bold text-lg">Withdraw</h2>
-      <input id="withdrawAmount" type="number" placeholder="Amount Min 500" class="w-full p-3 mb-2 bg-black rounded">
-      <input id="withdrawNumber" type="tel" placeholder="M-PESA Number" class="w-full p-3 mb-2 bg-black rounded">
-      <button onclick="requestWithdraw()" class="w-full bg-green-600 p-3 rounded font-bold">REQUEST WITHDRAWAL</button>
-    </div>
-
-    <button onclick="logout()" class="w-full bg-red-600 p-3 rounded font-bold">LOGOUT</button>
+  <!-- Packages Preview -->
+  <div class="card">
+    <h2>💎 Investment Packages</h2>
+    <table>
+      <tr><th>Package</th><th>Price</th><th>Daily</th><th>Days</th></tr>
+      <tr><td>Bronze</td><td>500</td><td>100</td><td>30</td></tr>
+      <tr><td>Silver</td><td>1,500</td><td>300</td><td>30</td></tr>
+      <tr><td>Gold</td><td>5,000</td><td>900</td><td>30</td></tr>
+    </table>
+    <button class="btn" onclick="switchTab('packageTab', document.querySelectorAll('.nav-item')[2])">Buy Package Now</button>
   </div>
+
+  <!-- How to Earn -->
+  <div class="card">
+    <h2>📢 How to Earn</h2>
+    <p>1. Buy a Package</p>
+    <p>2. Watch 1 Ad Daily</p>
+    <p>3. Earn Ksh 10 - Ksh 900 per day</p>
+    <p>4. Withdraw to M-PESA</p>
+  </div>
+
 </div>
-
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getDatabase, ref, set, get, child, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyD1ftJH9O9fbV9X5oUr8r5c9YkeV7N1ecI",
-    authDomain: "nexa-view.firebaseapp.com",
-    databaseURL: "https://nexa-view-default-rtdb.firebaseio.com",
-    projectId: "nexa-view",
-    storageBucket: "nexa-view.firebasestorage.app",
-    messagingSenderId: "947915083946",
-    appId: "1:947915083946:web:7f2cb69ddbc2f8bd2ec0d3",
-    measurementId: "G-Q2ZD17234K"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-  let currentUser = null;
-
-  const PACKAGES = [
-    {name: "L1", price: 300, earning: 25, days: 20, total: 500},
-    {name: "L2", price: 700, earning: 50, days: 20, total: 1000},
-    {name: "L3", price: 1300, earning: 100, days: 20, total: 2000},
-    {name: "L4", price: 2500, earning: 150, days: 30, total: 4500},
-    {name: "L5", price: 3500, earning: 200, days: 30, total: 6000},
-    {name: "L6", price: 4800, earning: 250, days: 30, total: 7500},
-    {name: "L7", price: 7500, earning: 350, days: 30, total: 10500},
-    {name: "L8", price: 10000, earning: 500, days: 30, total: 15000}
-  ];
-
-  function getToday() { return new Date().toISOString().split('T')[0]; }
-
-  function showPackages() {
-    const div = document.getElementById('packages');
-    div.innerHTML = '<h2 class="text-xl font-bold text-yellow-400 mb-2">BUY PACKAGE</h2>';
-    PACKAGES.forEach(p => {
-      div.innerHTML += `
-      <div class="card package p-3 rounded-xl mb-2">
-        <p class="font-bold">${p.name}</p>
-        <p>Pay: Ksh ${p.price} | Earn: Ksh ${p.earning}/day</p>
-        <p>${p.days} Days | Total: Ksh ${p.total}</p>
-        <button onclick="buyPackage('${p.name}')" class="w-full gradient-btn text-black p-2 rounded mt-1">BUY</button>
-      </div>`;
-    });
-  }
-
-  window.buyPackage = function(name) {
-    const pkg = PACKAGES.find(p => p.name === name);
-    if(currentUser.balance < pkg.price) return alert("Not enough balance");
-    const newBal = currentUser.balance - pkg.price;
-    const endDate = new Date(); endDate.setDate(endDate.getDate() + pkg.days);
-    update(ref(db, 'users/' + currentUser.phone), {
-      balance: newBal, package: name, dailyEarning: pkg.earning, packageEndDate: endDate.toISOString().split('T')[0]
-    }).then(() => {
-      currentUser.balance = newBal; currentUser.package = name; currentUser.dailyEarning = pkg.earning; currentUser.packageEndDate = endDate.toISOString().split('T')[0];
-      loadDashboard(); alert(name + " Activated for " + pkg.days + " days!");
-    });
-  }
-
-  window.watchVideo = function() {
-    if(!currentUser.package) return alert("Buy a package first");
-    if(new Date() > new Date(currentUser.packageEndDate)) return alert("Package Expired. Buy new one");
-    if(currentUser.lastWatchDate === getToday()) return alert("You already watched today. Come back tomorrow 0000hrs");
-    
-    document.getElementById('watchBtn').disabled = true;
-    let time = 60;
-    const timer = setInterval(() => {
-      document.getElementById('timer').innerText = `Watching... ${time}s`;
-      time--;
-      if(time < 0) {
-        clearInterval(timer);
-        document.getElementById('timer').innerText = "";
-        document.getElementById('watchBtn').disabled = false;
-        
-        const commission = currentUser.dailyEarning;
-        const newBal = currentUser.balance + commission;
-        update(ref(db, 'users/' + currentUser.phone), {
-          balance: newBal, lastWatchDate: getToday()
-        }).then(() => {
-          currentUser.balance = newBal; currentUser.lastWatchDate = getToday();
-          loadDashboard();
-          alert(`Video Complete! +Ksh ${commission} added`);
-        });
-      }
-    }, 1000);
-  }
-
-  window.requestWithdraw = function() {
-    const amount = parseInt(document.getElementById('withdrawAmount').value);
-    const number = document.getElementById('withdrawNumber').value;
-    if(amount < 500) return alert("Min withdraw Ksh 500");
-    if(amount > currentUser.balance) return alert("Not enough balance");
-    set(ref(db, 'withdrawals/' + currentUser.phone + '/' + Date.now()), {
-      amount: amount, number: number, status: "pending"
-    }).then(() => alert("Withdrawal request sent to Admin"));
-  }
-
-  function loadDashboard() {
-    document.getElementById('userName').innerText = currentUser.username;
-    document.getElementById('userBalance').innerText = currentUser.balance;
-    document.getElementById('userPackage').innerText = currentUser.package || "None";
-    const daysLeft = Math.ceil((new Date(currentUser.packageEndDate) - new Date()) / (1000*60*60*24));
-    document.getElementById('daysLeft').innerText = daysLeft > 0? daysLeft : 0;
-    if(currentUser.lastWatchDate === getToday()) {
-      document.getElementById('watchBtn').disabled = true;
-      document.getElementById('nextAdTime').innerText = "Next video: Tomorrow 0000hrs";
-    } else {
-      document.getElementById('watchBtn').disabled = false;
-      document.getElementById('nextAdTime').innerText = "Video Available";
-    }
-  }
-
-  window.showSignup = () => {document.getElementById('loginScreen').classList.add('hidden');document.getElementById('signupScreen').classList.remove('hidden');}
-  window.showLogin = () => {document.getElementById('signupScreen').classList.add('hidden');document.getElementById('loginScreen').classList.remove('hidden');}
-  window.createAccount = () => {
-    const name = document.getElementById('signupName').value;
-    const phone = document.getElementById('signupPhone').value;
-    const pin = document.getElementById('signupPin').value;
-    if(!name ||!phone || pin.length!== 4) return alert("Fill all. PIN 4 digits");
-    set(ref(db, 'users/' + phone), {username: name, pin: pin, balance: 0, package: null, dailyEarning: 0, lastWatchDate: "", packageEndDate: ""})
-  .then(() => {alert("Account Created!"); showLogin();});
-  }
-  window.login = () => {
-    const phone = document.getElementById('loginPhone').value;
-    const pin = document.getElementById('loginPin').value;
-    get(child(ref(db), `users/${phone}`)).then((snapshot) => {
-      if (snapshot.exists() && snapshot.val().pin === pin) {
-        currentUser = snapshot.val(); currentUser.phone = phone;
-        document.getElementById('loginScreen').classList.add('hidden');
-        document.getElementById('dashboard').classList.remove('hidden');
-        loadDashboard(); showPackages();
-      } else {alert("Wrong phone or PIN");}
-    });
-  }
-  window.logout = () => {currentUser = null; document.getElementById('dashboard').classList.add('hidden'); document.getElementById('loginScreen').classList.remove('hidden');}
-
-</script>
-</body>
-</html>
