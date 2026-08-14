@@ -19,30 +19,32 @@
   <div id="loginScreen" class="card p-6 rounded-2xl">
     <h1 class="text-3xl font-bold text-center text-yellow-400 mb-6">NEXA VIEW</h1>
     <input id="loginPhone" type="tel" placeholder="Phone Number" class="w-full p-3 mb-3 bg-black border-gray-600 rounded">
-    <input id="loginPin" type="password" placeholder="4 Digit PIN" maxlength="4" class="w-full p-3 mb-4 bg-black border border-gray-600 rounded">
+    <input id="loginPin" type="password" placeholder="4 Digit PIN" maxlength="4" class="w-full p-3 mb-4 bg-black border-gray-600 rounded">
     <button onclick="login()" class="w-full gradient-btn text-black font-bold p-3 rounded">LOGIN</button>
-    <p class="text-center mt-4">No account? <span onclick="showSignup()" class="text-yellow-400 cursor-pointer">Create One</span></p>
+    <p class="text-center mt-4">No account? <button onclick="showSignup()" class="text-yellow-400 underline font-bold">Create One</button></p>
   </div>
 
   <!-- SIGNUP SCREEN -->
   <div id="signupScreen" class="card p-6 rounded-2xl hidden">
     <h1 class="text-2xl font-bold text-center text-yellow-400 mb-6">CREATE ACCOUNT</h1>
-    <input id="signupName" type="text" placeholder="Username" class="w-full p-3 mb-3 bg-black border border-gray-600 rounded">
-    <input id="signupPhone" type="tel" placeholder="Phone Number" class="w-full p-3 mb-3 bg-black border-gray-600 rounded">
-    <input id="signupPin" type="password" placeholder="Create 4 Digit PIN" maxlength="4" class="w-full p-3 mb-4 bg-black border border-gray-600 rounded">
+    <input id="signupName" type="text" placeholder="Username" class="w-full p-3 mb-3 bg-black border-gray-600 rounded">
+    <input id="signupPhone" type="tel" placeholder="Phone Number" class="w-full p-3 mb-3 bg-black border border-gray-600 rounded">
+    <input id="signupPin" type="password" placeholder="Create 4 Digit PIN" maxlength="4" class="w-full p-3 mb-4 bg-black border-gray-600 rounded">
     <button onclick="createAccount()" class="w-full gradient-btn text-black font-bold p-3 rounded">CREATE ACCOUNT</button>
-    <p class="text-center mt-4">Have account? <span onclick="showLogin()" class="text-yellow-400 cursor-pointer">Login</span></p>
+    <p class="text-center mt-4">Have account? <button onclick="showLogin()" class="text-yellow-400 underline font-bold">Login</button></p>
   </div>
 
   <!-- DASHBOARD SCREEN -->
   <div id="dashboard" class="hidden">
-    <h1 class="text-2xl font-bold text-yellow-400">Welcome <span id="userName"></span></h1>
-    <p class="text-gray-400">Balance: Ksh <span id="userBalance">0</span></p>
+    <div class="card p-4 rounded-xl">
+      <h1 class="text-2xl font-bold text-yellow-400">Welcome <span id="userName"></span></h1>
+      <p class="text-gray-400">Balance: Ksh <span id="userBalance">0</span></p>
+    </div>
     <div class="card p-4 rounded-xl mt-4">
-      <p>Watch Ads & Earn</p>
+      <p class="font-bold">Watch Ads & Earn</p>
       <button onclick="watchAd()" class="w-full gradient-btn text-black font-bold p-3 rounded mt-2">WATCH AD +Ksh 2</button>
     </div>
-    <button onclick="logout()" class="w-full bg-red-600 p-3 rounded mt-4">LOGOUT</button>
+    <button onclick="logout()" class="w-full bg-red-600 p-3 rounded mt-4 font-bold">LOGOUT</button>
   </div>
 
 </div>
@@ -73,11 +75,11 @@
   let currentUser = null;
 
   // SCREEN FUNCTIONS
-  function showSignup() {
+  window.showSignup = function() {
     document.getElementById('loginScreen').classList.add('hidden');
     document.getElementById('signupScreen').classList.remove('hidden');
   }
-  function showLogin() {
+  window.showLogin = function() {
     document.getElementById('signupScreen').classList.add('hidden');
     document.getElementById('loginScreen').classList.remove('hidden');
   }
