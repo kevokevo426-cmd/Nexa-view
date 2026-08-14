@@ -6,169 +6,161 @@
 <title>NEXA VIEW</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-  body { font-family: 'Poppins', sans-serif; background:#000; color:white; margin:0; padding-bottom:80px; text-align:center; }
-  .card { background:#111; padding:20px; border-radius:16px; margin:20px; border:1px solid #222; text-align:left; }
+  body { font-family: 'Poppins', sans-serif; background:#000; color:white; margin:0; padding-bottom:80px; }
+  .card { background:#111; padding:20px; border-radius:16px; margin:20px; border:1px solid #222; }
   .logo { width:80px; height:80px; background:#fbbf24; color:black; border-radius:20px; margin:20px auto; font-size:40px; font-weight:bold; display:flex; align-items:center; justify-content:center; }
-  h1 { color:#fbbf24; margin:0; }
-  h2 { color:white; margin-top:0; }
+  h1 { color:#fbbf24; text-align:center; margin:0; }
   input { width:100%; padding:14px; margin:8px 0; border-radius:10px; background:#222; border:1px solid #333; color:white; box-sizing:border-box; font-size:16px; }
   .phone-box { display:flex; gap:10px; }
   .phone-box span { padding:14px; background:#222; border-radius:10px; border:1px solid #333; color:#888; }
   .btn { width:100%; padding:14px; background:linear-gradient(90deg,#fbbf24,#f59e0b); color:black; border:none; border-radius:10px; font-weight:bold; font-size:16px; margin-top:10px; cursor:pointer; }
-  .btn:disabled { background:#444; color:#888; cursor:not-allowed; }
+  .btn:disabled { background:#444; color:#888; }
   .captcha-box { display:flex; gap:10px; align-items:center; }
-  .captcha { background:#222; padding:14px; border-radius:10px; font-size:22px; letter-spacing:5px; color:#fbbf24; font-weight:bold; cursor:pointer; user-select:none; }
-  #loginPage { padding:20px; }
+  .captcha { background:#222; padding:14px; border-radius:10px; font-size:22px; letter-spacing:5px; color:#fbbf24; font-weight:bold; cursor:pointer; }
   label { font-size:13px; color:#888; display:block; margin-top:10px; }
   a { color:#fbbf24; text-decoration:none; }
   .terms { display:flex; align-items:center; gap:10px; margin:15px 0; font-size:13px; }
   .terms input { width:20px; height:20px; margin:0; }
   #authMsg { text-align:center; font-size:14px; margin-top:10px; }
+  
+  /* DASHBOARD */
+  .hidden { display:none; }
+  .header { padding:20px; background:#111; }
+  .balance-card { background:linear-gradient(135deg,#fbbf24,#f59e0b); color:black; padding:20px; border-radius:16px; margin:20px; }
+  .balance-card h3 { margin:0; font-size:14px; }
+  .balance-card h1 { color:black; font-size:32px; margin:5px 0; }
+  .bottom-nav { position:fixed; bottom:0; left:0; right:0; background:#111; display:flex; justify-content:space-around; padding:10px 0; border-top:1px solid #222; }
+  .nav-item { text-align:center; color:#888; font-size:12px; cursor:pointer; }
+  .nav-item.active { color:#fbbf24; }
+  .tab-content { display:none; }
+  .tab-content.active { display:block; }
 </style>
 </head>
 <body>
 
-<div id="loginPage">
-  <div class="logo">N</div>
-  <h1>NEXA VIEW</h1>
-  <p style="color:#888;">Start Your Earning Journey</p>
-
-  <div class="card">
-    <h2>Create Account</h2>
-    <p style="color:#888; font-size:13px;">Fill in your details to get started</p>
-
-    <label>PHONE NUMBER</label>
-    <div class="phone-box">
-      <span>+254</span>
-      <input type="tel" id="phone" placeholder="712 345 678" maxlength="9" inputmode="numeric">
+<!-- AUTH PAGE -->
+<div id="authPage">
+  <div id="registerForm">
+    <div class="logo">N</div>
+    <h1>NEXA VIEW</h1>
+    <div class="card">
+      <h2>Create Account</h2>
+      <label>PHONE NUMBER</label>
+      <div class="phone-box"><span>+254</span><input type="tel" id="regPhone" maxlength="9"></div>
+      <label>PASSWORD</label>
+      <input type="password" id="regPass">
+      <label>VERIFICATION CODE</label>
+      <div class="captcha-box"><input type="text" id="regCaptchaInput"><div class="captcha" id="regCaptcha" onclick="generateCaptcha()"></div></div>
+      <label>INVITATION CODE <span style="color:#666;">Optional</span></label>
+      <input type="text" id="regInvite">
+      <div class="terms"><input type="checkbox" id="agreeTerms"><label>I agree to <a href="terms.html" target="_blank">Terms</a></label></div>
+      <button class="btn" id="regBtn" onclick="register()">REGISTER</button>
+      <p id="regMsg"></p>
+      <p style="text-align:center;">Have account? <a onclick="showLogin()">Login</a></p>
     </div>
+  </div>
 
-    <label>PASSWORD</label>
-    <input type="password" id="password" placeholder="Min 4 digits" inputmode="numeric">
-
-    <label>VERIFICATION CODE</label>
-    <div class="captcha-box">
-      <input type="text" id="captchaInput" placeholder="Enter code above" inputmode="numeric">
-      <div class="captcha" id="captchaCode" onclick="generateCaptcha()" title="Click to refresh">2254</div>
+  <div id="loginForm" class="hidden">
+    <div class="logo">N</div>
+    <h1>NEXA VIEW</h1>
+    <div class="card">
+      <h2>Welcome Back</h2>
+      <label>PHONE NUMBER</label>
+      <div class="phone-box"><span>+254</span><input type="tel" id="logPhone" maxlength="9"></div>
+      <label>PASSWORD</label>
+      <input type="password" id="logPass">
+      <button class="btn" onclick="login()">LOGIN</button>
+      <p id="logMsg"></p>
+      <p style="text-align:center;">No account? <a onclick="showRegister()">Register</a></p>
     </div>
+  </div>
+</div>
 
-    <label>INVITATION CODE <span style="color:#666;">Optional</span></label>
-    <input type="text" id="invite" placeholder="Enter invite code">
+<!-- APP DASHBOARD -->
+<div id="appPage" class="hidden">
+  <div class="header">
+    <h2>Welcome <span id="userPhone"></span></h2>
+  </div>
+  <div class="balance-card">
+    <h3>Total Balance</h3>
+    <h1>Ksh <span id="userBalance">0.00</span></h1>
+  </div>
 
-    <div class="terms">
-      <input type="checkbox" id="agreeTerms">
-      <label for="agreeTerms">I agree to the <a href="terms.html" target="_blank">Terms</a> & <a href="privacy.html" target="_blank">Privacy Policy</a></label>
-    </div>
+  <div id="homeTab" class="tab-content active"><div class="card"><h2>HOME</h2><p>Welcome to NEXA VIEW. Complete tasks to earn.</p></div></div>
+  <div id="taskTab" class="tab-content"><div class="card"><h2>TASKS</h2><p>0/20 Tasks completed today</p></div></div>
+  <div id="packageTab" class="tab-content"><div class="card"><h2>PACKAGES</h2><p>Buy a package to unlock tasks</p></div></div>
+  <div id="infoTab" class="tab-content"><div class="card"><h2>INFO</h2><p>Support & Withdrawal Rules</p></div></div>
+  <div id="meTab" class="tab-content"><div class="card"><h2>ME</h2><button class="btn" style="background:#ef4444;color:white;" onclick="logout()">Logout</button></div></div>
 
-    <button class="btn" id="regBtn" onclick="register()">REGISTER</button>
-    <p id="authMsg"></p>
-    <p style="text-align:center;">Already have account? <a onclick="login()">Login</a></p>
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="switchTab('homeTab', this)">🏠<br>Home</div>
+    <div class="nav-item" onclick="switchTab('taskTab', this)">📋<br>Task</div>
+    <div class="nav-item" onclick="switchTab('packageTab', this)">💎<br>Package</div>
+    <div class="nav-item" onclick="switchTab('infoTab', this)">ℹ️<br>Info</div>
+    <div class="nav-item" onclick="switchTab('meTab', this)">👤<br>Me</div>
   </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",
-  authDomain: "nexa-view.firebaseapp.com",
-  projectId: "nexa-view",
-  storageBucket: "nexa-view.firebasestorage.app",
-  messagingSenderId: "947915083946",
-  appId: "1:947915083946:web:7f2cb69ddbc2f8bd2ec0d3"
-};
+const firebaseConfig = {apiKey:"AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",authDomain:"nexa-view.firebaseapp.com",projectId:"nexa-view"};
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+let currentUser = null;
 
-// GET ELEMENTS
-const phone = document.getElementById('phone');
-const password = document.getElementById('password');
-const captchaInput = document.getElementById('captchaInput');
-const captchaCode = document.getElementById('captchaCode');
-const invite = document.getElementById('invite');
-const agreeTerms = document.getElementById('agreeTerms');
-const regBtn = document.getElementById('regBtn');
-const authMsg = document.getElementById('authMsg');
-
-// 1. AUTO FILL INVITE FROM LINK ?ref=CODE
-const urlParams = new URLSearchParams(window.location.search);
-const refCode = urlParams.get('ref');
-if(refCode){
-  invite.value = refCode;
-  invite.readOnly = true;
-  invite.style.background = "#1a1a1a";
-}
-
-// 2. GENERATE CAPTCHA
-function generateCaptcha(){
-  let code = Math.floor(1000 + Math.random() * 9000);
-  captchaCode.innerText = code;
-}
+// AUTO INVITE
+const refCode = new URLSearchParams(window.location.search).get('ref');
+if(refCode) regInvite.value = refCode;
 generateCaptcha();
-
-// 3. DISABLE BUTTON UNTIL TERMS CHECKED
-agreeTerms.onchange = function(){
-  regBtn.disabled = !this.checked;
-}
+agreeTerms.onchange = () => regBtn.disabled = !agreeTerms.checked;
 regBtn.disabled = true;
 
-function register() {
-  let fullPhone = "254" + phone.value.replace(/\s/g, '');
-  let pass = password.value;
-  let capInput = captchaInput.value;
-  let capReal = captchaCode.innerText;
+function generateCaptcha(){ regCaptcha.innerText = Math.floor(1000 + Math.random() * 9000); }
+function showLogin(){ registerForm.classList.add('hidden'); loginForm.classList.remove('hidden'); }
+function showRegister(){ loginForm.classList.add('hidden'); registerForm.classList.remove('hidden'); }
 
-  // VALIDATIONS
-  if(capInput !== capReal) {
-    authMsg.style.color = "#ef4444";
-    authMsg.innerText = "❌ Wrong verification code";
-    generateCaptcha();
-    return;
-  }
-  if(fullPhone.length !== 12) {
-    authMsg.style.color = "#ef4444";
-    authMsg.innerText = "❌ Enter valid 9 digit phone number";
-    return;
-  }
-  if(pass.length < 4) {
-    authMsg.style.color = "#ef4444";
-    authMsg.innerText = "❌ Password must be atleast 4 digits";
-    return;
-  }
-
-  authMsg.style.color = "#fbbf24";
-  authMsg.innerText = "Creating account...";
-
-  // CHECK IF PHONE EXISTS
-  db.collection("users").doc(fullPhone).get().then(doc => {
-    if(doc.exists){
-      authMsg.style.color = "#ef4444";
-      authMsg.innerText = "❌ This phone number already registered";
-    } else {
-      db.collection("users").doc(fullPhone).set({
-        phone: fullPhone, 
-        password: pass, 
-        balance: 0, 
-        package: "None", 
-        invitedBy: invite.value || "None",
-        agreedToTerms: true,
-        createdAt: new Date()
-      }).then(() => {
-        authMsg.style.color = "#22c55e";
-        authMsg.innerText = "✅ Account Created! You can login now.";
-        phone.value = ""; password.value = ""; captchaInput.value = ""; agreeTerms.checked = false; regBtn.disabled = true;
-        generateCaptcha();
-      }).catch(e => {
-        authMsg.style.color = "#ef4444";
-        authMsg.innerText = "Error: " + e.message;
-      });
-    }
+function register(){
+  let phone = "254" + regPhone.value;
+  if(regCaptchaInput.value !== regCaptcha.innerText){ regMsg.innerText="❌ Wrong captcha"; generateCaptcha(); return; }
+  if(phone.length!==12){ regMsg.innerText="❌ Invalid phone"; return; }
+  if(regPass.value.length<4){ regMsg.innerText="❌ Min 4 digits"; return; }
+  
+  db.collection("users").doc(phone).set({phone, password:regPass.value, balance:0, package:"None", invitedBy:regInvite.value||"None"}).then(()=>{
+    regMsg.style.color="#22c55e"; regMsg.innerText="✅ Registered! Login now.";
   });
 }
 
 function login(){
-  alert("Login page coming in v3.4 boss. For now just register.")
+  let phone = "254" + logPhone.value;
+  db.collection("users").doc(phone).get().then(doc=>{
+    if(doc.exists && doc.data().password === logPass.value){
+      currentUser = doc.data();
+      localStorage.setItem('nexaUser', phone);
+      loadApp();
+    } else { logMsg.innerText="❌ Wrong phone or password"; }
+  });
 }
+
+function loadApp(){
+  authPage.classList.add('hidden');
+  appPage.classList.remove('hidden');
+  userPhone.innerText = currentUser.phone;
+  userBalance.innerText = currentUser.balance.toFixed(2);
+}
+
+function switchTab(tabId, el){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  el.classList.add('active');
+}
+
+function logout(){ localStorage.removeItem('nexaUser'); location.reload(); }
+
+// AUTO LOGIN
+const saved = localStorage.getItem('nexaUser');
+if(saved){ db.collection("users").doc(saved).get().then(d=>{ if(d.exists){currentUser=d.data(); loadApp();}})}
 </script>
 </body>
 </html>
