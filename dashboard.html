@@ -28,6 +28,7 @@ header{background:#111;padding:20px;text-align:center;border-bottom:1px solid #2
 .nav button.active{color:#fbbf24}
 .task{background:#111;padding:15px;border-radius:12px;margin:10px 0;border:1px solid #222}
 .task button{width:100%;padding:14px;background:#22c55e;color:black;border:none;border-radius:10px;font-weight:bold;font-size:15px}
+.task button:disabled{background:#444;color:#888}
 table{width:100%;font-size:12px;border-collapse:collapse}
 th,td{padding:8px;text-align:left;border-bottom:1px solid #222}
 th{color:#fbbf24}
@@ -82,13 +83,6 @@ th{color:#fbbf24}
       <tr><td>L8</td><td>10000</td><td>500</td><td>30</td><td>15000</td></tr>
     </table>
   </div>
-
-  <div style="background:#111;padding:15px;border-radius:12px;margin:15px 0;border:1px solid #222">
-    <h3 style="color:#fbbf24">IMPORTANT</h3>
-    <p>L1-L3 Expires after 20 Days</p>
-    <p>L4-L8 Expires after 30 Days</p>
-    <p>Minimum Withdraw: Ksh 500</p>
-  </div>
 </div>
 
 <div class="nav">
@@ -118,12 +112,20 @@ const PACKAGES = [
 let currentUser = null;
 let phone = localStorage.getItem("nexaPhone");
 
+// FIX: If no phone in storage, send back to login
+if(!phone){
+  alert("Please login first");
+  window.location.href = "login.html";
+}
+
 db.collection("users").doc(phone).onSnapshot(doc=>{
   if(doc.exists){
     currentUser = doc.data();
     balance.innerText = `Ksh ${currentUser.balance.toFixed(2)}`;
     loadPackages();
     loadTasks();
+  } else {
+    packageGrid.innerHTML = "Account not found. <a href='login.html' style='color:#fbbf24'>Login again</a>";
   }
 });
 
@@ -180,7 +182,7 @@ function loadTasks(){
     <div class="task">
       <h4>Complete 20 Tasks Today</h4>
       <p>Earn Ksh ${perTask} per task | Total: Ksh ${totalDaily}/day</p>
-      <button onclick="doTask(${perTask})" ${totalDaily==0?'disabled style="background:#444"':''}>
+      <button onclick="doTask(${perTask})" ${totalDaily==0?'disabled':''}>
         ${totalDaily==0?'BUY PACKAGE FIRST':'COMPLETE 1 TASK'}
       </button>
     </div>
