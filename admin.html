@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXA ADMIN</title>
+<style>
+body{font-family:Arial;background:#0a0a0a;color:#fff;margin:0;padding:20px}
+.card{background:#1a1a1a;padding:15px;border-radius:10px;margin:10px 0}
+input,button{padding:10px;margin:5px;border-radius:6px;border:none}
+button{background:#00ff88;color:#000;font-weight:bold;cursor:pointer}
+.danger{background:#ff4444;color:#fff}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+td,th{border:1px solid #333;padding:8px;text-align:left;font-size:14px}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div id="login" class="card">
+  <h2>NEXA ADMIN LOGIN</h2>
+  <input id="adminPass" type="password" placeholder="Admin Password">
+  <button onclick="adminLogin()">Login</button>
+</div>
+
+<div id="panel" class="hidden">
+  <h2>NEXA VIEW - ADMIN PANEL</h2>
+  
+  <div class="card">
+    <h3>Global Settings</h3>
+    <label>Earnings per 2min: KES </label>
+    <input id="earnAmount" type="number" value="40">
+    <button onclick="updateSettings()">Update Amount</button>
+  </div>
+
+  <div class="card">
+    <h3>All Users</h3>
+    <div id="usersList">Loading...</div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, updateDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD1ftJH9O9fbV9X5oUr8r5c9YkeV7N1ecI",
+  authDomain: "nexa-view.firebaseapp.com",
+  projectId: "nexa-view",
+  storageBucket: "nexa-view.firebasestorage.app",
+  messagingSenderId: "947915083946",
+  appId: "1:947915083946:web:7f2cb69ddbc2f8bd2ec0d3",
+  measurementId: "G-Q2ZD17234K"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const ADMIN_PASSWORD = "admin123"; // CHANGE THIS
+
+function adminLogin(){
+  if(document.getElementById('adminPass').value === ADMIN_PASSWORD){
+    document.getElementById('login').classList.add('hidden');
+    document.getElementById('panel').classList.remove('hidden');
+    loadUsers();
+    loadSettings();
+  } else { alert("Wrong password"); }
+}
+
+async function loadUsers(){
+  const querySnapshot = await getDocs(collection(db, "users"));
+  let html = `<table><tr><th>Email</th><th>Invested</th><th>Earned</th><th>Action</th></tr>`;
+  querySnapshot.forEach((docSnap) => {
+    const u = docSnap.data();
+    html += `<tr>
+      <td>${u.email}</td>
+      <td>KES ${u.invested}</td>
+      <td>KES ${u.earned}</td>
+      <td><button class="danger" onclick="resetUser('${docSnap.id}')">Reset</button></td>
+    </tr>`;
+  });
+  html += `</table>`;
+  document.getElementById('usersList').innerHTML = html;
+}
+
+async function resetUser(uid){
+  if(confirm("Reset this user's earnings to 0?")){
+    await updateDoc(doc(db,"users",uid),{earned:0});
+    loadUsers();
+  }
+}
+
+async function loadSettings(){
+  const snap = await getDoc(doc(db,"settings","global"));
+  if(snap.exists()) document.getElementById('earnAmount').value = snap.data().earnAmount;
+}
+
+async function updateSettings(){
+  const amount = Number(document.getElementById('earnAmount').value);
+  await setDoc(doc(db,"settings","global"),{earnAmount:amount});
+  alert("Updated! All users now earn KES " + amount);
+}
+</script>
+</body>
+</html>
