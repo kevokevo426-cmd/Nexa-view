@@ -6,57 +6,65 @@
 <title>NEXA VIEW</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-  body { background: #0a0a0a; color: white; font-family: 'Arial', sans-serif; }
-  .gradient-btn { background: linear-gradient(90deg, #FFD700, #FFA500); }
-  .card { background: #1a1a1a; border: 1px solid #333; }
+  body { background: #0a0a0a; color: white; }
+ .gradient-btn { background: linear-gradient(90deg, #FFD700, #FFA500); }
+ .card { background: #1a1a1a; border: 1px solid #333; }
+ .package { border: 2px solid #FFD700; }
 </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
+<body class="p-4">
 
-<div id="app" class="w-full max-w-md">
-
-  <!-- LOGIN SCREEN -->
+<div id="app" class="max-w-md mx-auto">
   <div id="loginScreen" class="card p-6 rounded-2xl">
     <h1 class="text-3xl font-bold text-center text-yellow-400 mb-6">NEXA VIEW</h1>
-    <input id="loginPhone" type="tel" placeholder="Phone Number" class="w-full p-3 mb-3 bg-black border-gray-600 rounded">
-    <input id="loginPin" type="password" placeholder="4 Digit PIN" maxlength="4" class="w-full p-3 mb-4 bg-black border-gray-600 rounded">
+    <input id="loginPhone" type="tel" placeholder="Phone Number" class="w-full p-3 mb-3 bg-black rounded">
+    <input id="loginPin" type="password" placeholder="4 Digit PIN" maxlength="4" class="w-full p-3 mb-4 bg-black rounded">
     <button onclick="login()" class="w-full gradient-btn text-black font-bold p-3 rounded">LOGIN</button>
-    <p class="text-center mt-4">No account? <button onclick="showSignup()" class="text-yellow-400 underline font-bold">Create One</button></p>
+    <p class="text-center mt-4">No account? <button onclick="showSignup()" class="text-yellow-400 underline">Create One</button></p>
   </div>
 
-  <!-- SIGNUP SCREEN -->
   <div id="signupScreen" class="card p-6 rounded-2xl hidden">
     <h1 class="text-2xl font-bold text-center text-yellow-400 mb-6">CREATE ACCOUNT</h1>
-    <input id="signupName" type="text" placeholder="Username" class="w-full p-3 mb-3 bg-black border-gray-600 rounded">
-    <input id="signupPhone" type="tel" placeholder="Phone Number" class="w-full p-3 mb-3 bg-black border border-gray-600 rounded">
-    <input id="signupPin" type="password" placeholder="Create 4 Digit PIN" maxlength="4" class="w-full p-3 mb-4 bg-black border-gray-600 rounded">
+    <input id="signupName" type="text" placeholder="Username" class="w-full p-3 mb-3 bg-black rounded">
+    <input id="signupPhone" type="tel" placeholder="Phone Number" class="w-full p-3 mb-3 bg-black rounded">
+    <input id="signupPin" type="password" placeholder="Create 4 Digit PIN" maxlength="4" class="w-full p-3 mb-4 bg-black rounded">
     <button onclick="createAccount()" class="w-full gradient-btn text-black font-bold p-3 rounded">CREATE ACCOUNT</button>
-    <p class="text-center mt-4">Have account? <button onclick="showLogin()" class="text-yellow-400 underline font-bold">Login</button></p>
+    <p class="text-center mt-4">Have account? <button onclick="showLogin()" class="text-yellow-400 underline">Login</button></p>
   </div>
 
-  <!-- DASHBOARD SCREEN -->
   <div id="dashboard" class="hidden">
-    <div class="card p-4 rounded-xl">
-      <h1 class="text-2xl font-bold text-yellow-400">Welcome <span id="userName"></span></h1>
-      <p class="text-gray-400">Balance: Ksh <span id="userBalance">0</span></p>
+    <div class="card p-4 rounded-xl mb-4">
+      <h1 class="text-2xl font-bold text-yellow-400">Hi <span id="userName"></span></h1>
+      <p>Balance: Ksh <span id="userBalance">0</span></p>
+      <p>Package: <span id="userPackage">None</span></p>
+      <p>Days Left: <span id="daysLeft">0</span></p>
+      <p id="nextAdTime" class="text-sm text-gray-400"></p>
     </div>
-    <div class="card p-4 rounded-xl mt-4">
-      <p class="font-bold">Watch Ads & Earn</p>
-      <button onclick="watchAd()" class="w-full gradient-btn text-black font-bold p-3 rounded mt-2">WATCH AD +Ksh 2</button>
-    </div>
-    <button onclick="logout()" class="w-full bg-red-600 p-3 rounded mt-4 font-bold">LOGOUT</button>
-  </div>
 
+    <div id="packages" class="mb-4"></div>
+
+    <div class="card p-4 rounded-xl mb-4">
+      <h2 class="font-bold text-lg">Daily Task</h2>
+      <p class="text-sm text-gray-400">Watch 1 video. 1min. Earn instantly</p>
+      <button id="watchBtn" onclick="watchVideo()" class="w-full gradient-btn text-black font-bold p-3 rounded mt-2">WATCH 1MIN VIDEO</button>
+      <p id="timer" class="text-center text-yellow-400 font-bold mt-2"></p>
+    </div>
+    
+    <div class="card p-4 rounded-xl mb-4">
+      <h2 class="font-bold text-lg">Withdraw</h2>
+      <input id="withdrawAmount" type="number" placeholder="Amount Min 500" class="w-full p-3 mb-2 bg-black rounded">
+      <input id="withdrawNumber" type="tel" placeholder="M-PESA Number" class="w-full p-3 mb-2 bg-black rounded">
+      <button onclick="requestWithdraw()" class="w-full bg-green-600 p-3 rounded font-bold">REQUEST WITHDRAWAL</button>
+    </div>
+
+    <button onclick="logout()" class="w-full bg-red-600 p-3 rounded font-bold">LOGOUT</button>
+  </div>
 </div>
 
-
-<!-- FIREBASE SDK -->
 <script type="module">
-  // Import the functions you need
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getDatabase, ref, set, get, child, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-  // YOUR WEB APP'S FIREBASE CONFIGURATION
   const firebaseConfig = {
     apiKey: "AIzaSyD1ftJH9O9fbV9X5oUr8r5c9YkeV7N1ecI",
     authDomain: "nexa-view.firebaseapp.com",
@@ -68,80 +76,126 @@
     measurementId: "G-Q2ZD17234K"
   };
 
-  // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
-
   let currentUser = null;
 
-  // SCREEN FUNCTIONS
-  window.showSignup = function() {
-    document.getElementById('loginScreen').classList.add('hidden');
-    document.getElementById('signupScreen').classList.remove('hidden');
-  }
-  window.showLogin = function() {
-    document.getElementById('signupScreen').classList.add('hidden');
-    document.getElementById('loginScreen').classList.remove('hidden');
+  const PACKAGES = [
+    {name: "L1", price: 300, earning: 25, days: 20, total: 500},
+    {name: "L2", price: 700, earning: 50, days: 20, total: 1000},
+    {name: "L3", price: 1300, earning: 100, days: 20, total: 2000},
+    {name: "L4", price: 2500, earning: 150, days: 30, total: 4500},
+    {name: "L5", price: 3500, earning: 200, days: 30, total: 6000},
+    {name: "L6", price: 4800, earning: 250, days: 30, total: 7500},
+    {name: "L7", price: 7500, earning: 350, days: 30, total: 10500},
+    {name: "L8", price: 10000, earning: 500, days: 30, total: 15000}
+  ];
+
+  function getToday() { return new Date().toISOString().split('T')[0]; }
+
+  function showPackages() {
+    const div = document.getElementById('packages');
+    div.innerHTML = '<h2 class="text-xl font-bold text-yellow-400 mb-2">BUY PACKAGE</h2>';
+    PACKAGES.forEach(p => {
+      div.innerHTML += `
+      <div class="card package p-3 rounded-xl mb-2">
+        <p class="font-bold">${p.name}</p>
+        <p>Pay: Ksh ${p.price} | Earn: Ksh ${p.earning}/day</p>
+        <p>${p.days} Days | Total: Ksh ${p.total}</p>
+        <button onclick="buyPackage('${p.name}')" class="w-full gradient-btn text-black p-2 rounded mt-1">BUY</button>
+      </div>`;
+    });
   }
 
-  // CREATE ACCOUNT
-  window.createAccount = function() {
+  window.buyPackage = function(name) {
+    const pkg = PACKAGES.find(p => p.name === name);
+    if(currentUser.balance < pkg.price) return alert("Not enough balance");
+    const newBal = currentUser.balance - pkg.price;
+    const endDate = new Date(); endDate.setDate(endDate.getDate() + pkg.days);
+    update(ref(db, 'users/' + currentUser.phone), {
+      balance: newBal, package: name, dailyEarning: pkg.earning, packageEndDate: endDate.toISOString().split('T')[0]
+    }).then(() => {
+      currentUser.balance = newBal; currentUser.package = name; currentUser.dailyEarning = pkg.earning; currentUser.packageEndDate = endDate.toISOString().split('T')[0];
+      loadDashboard(); alert(name + " Activated for " + pkg.days + " days!");
+    });
+  }
+
+  window.watchVideo = function() {
+    if(!currentUser.package) return alert("Buy a package first");
+    if(new Date() > new Date(currentUser.packageEndDate)) return alert("Package Expired. Buy new one");
+    if(currentUser.lastWatchDate === getToday()) return alert("You already watched today. Come back tomorrow 0000hrs");
+    
+    document.getElementById('watchBtn').disabled = true;
+    let time = 60;
+    const timer = setInterval(() => {
+      document.getElementById('timer').innerText = `Watching... ${time}s`;
+      time--;
+      if(time < 0) {
+        clearInterval(timer);
+        document.getElementById('timer').innerText = "";
+        document.getElementById('watchBtn').disabled = false;
+        
+        const commission = currentUser.dailyEarning;
+        const newBal = currentUser.balance + commission;
+        update(ref(db, 'users/' + currentUser.phone), {
+          balance: newBal, lastWatchDate: getToday()
+        }).then(() => {
+          currentUser.balance = newBal; currentUser.lastWatchDate = getToday();
+          loadDashboard();
+          alert(`Video Complete! +Ksh ${commission} added`);
+        });
+      }
+    }, 1000);
+  }
+
+  window.requestWithdraw = function() {
+    const amount = parseInt(document.getElementById('withdrawAmount').value);
+    const number = document.getElementById('withdrawNumber').value;
+    if(amount < 500) return alert("Min withdraw Ksh 500");
+    if(amount > currentUser.balance) return alert("Not enough balance");
+    set(ref(db, 'withdrawals/' + currentUser.phone + '/' + Date.now()), {
+      amount: amount, number: number, status: "pending"
+    }).then(() => alert("Withdrawal request sent to Admin"));
+  }
+
+  function loadDashboard() {
+    document.getElementById('userName').innerText = currentUser.username;
+    document.getElementById('userBalance').innerText = currentUser.balance;
+    document.getElementById('userPackage').innerText = currentUser.package || "None";
+    const daysLeft = Math.ceil((new Date(currentUser.packageEndDate) - new Date()) / (1000*60*60*24));
+    document.getElementById('daysLeft').innerText = daysLeft > 0? daysLeft : 0;
+    if(currentUser.lastWatchDate === getToday()) {
+      document.getElementById('watchBtn').disabled = true;
+      document.getElementById('nextAdTime').innerText = "Next video: Tomorrow 0000hrs";
+    } else {
+      document.getElementById('watchBtn').disabled = false;
+      document.getElementById('nextAdTime').innerText = "Video Available";
+    }
+  }
+
+  window.showSignup = () => {document.getElementById('loginScreen').classList.add('hidden');document.getElementById('signupScreen').classList.remove('hidden');}
+  window.showLogin = () => {document.getElementById('signupScreen').classList.add('hidden');document.getElementById('loginScreen').classList.remove('hidden');}
+  window.createAccount = () => {
     const name = document.getElementById('signupName').value;
     const phone = document.getElementById('signupPhone').value;
     const pin = document.getElementById('signupPin').value;
-
-    if(!name || !phone || pin.length !== 4) return alert("Fill all fields. PIN must be 4 digits");
-
-    set(ref(db, 'users/' + phone), {
-      username: name,
-      pin: pin,
-      balance: 0,
-      package: null,
-      adsWatchedToday: 0
-    }).then(() => {
-      alert("Account Created! Now Login");
-      showLogin();
-    }).catch((error) => alert(error.message));
+    if(!name ||!phone || pin.length!== 4) return alert("Fill all. PIN 4 digits");
+    set(ref(db, 'users/' + phone), {username: name, pin: pin, balance: 0, package: null, dailyEarning: 0, lastWatchDate: "", packageEndDate: ""})
+  .then(() => {alert("Account Created!"); showLogin();});
   }
-
-  // LOGIN
-  window.login = function() {
+  window.login = () => {
     const phone = document.getElementById('loginPhone').value;
     const pin = document.getElementById('loginPin').value;
-
     get(child(ref(db), `users/${phone}`)).then((snapshot) => {
       if (snapshot.exists() && snapshot.val().pin === pin) {
-        currentUser = snapshot.val();
-        currentUser.phone = phone;
-        document.getElementById('userName').innerText = currentUser.username;
-        document.getElementById('userBalance').innerText = currentUser.balance;
+        currentUser = snapshot.val(); currentUser.phone = phone;
         document.getElementById('loginScreen').classList.add('hidden');
         document.getElementById('dashboard').classList.remove('hidden');
-      } else {
-        alert("Wrong phone or PIN");
-      }
+        loadDashboard(); showPackages();
+      } else {alert("Wrong phone or PIN");}
     });
   }
-
-  // WATCH AD - ADDS 2 KSH
-  window.watchAd = function() {
-    if(!currentUser) return;
-    const newBalance = currentUser.balance + 2;
-    update(ref(db, 'users/' + currentUser.phone), {
-      balance: newBalance
-    }).then(() => {
-      currentUser.balance = newBalance;
-      document.getElementById('userBalance').innerText = newBalance;
-      alert("Earned Ksh 2! New Balance: " + newBalance);
-    });
-  }
-
-  // LOGOUT
-  window.logout = function() {
-    currentUser = null;
-    document.getElementById('dashboard').classList.add('hidden');
-    document.getElementById('loginScreen').classList.remove('hidden');
-  }
+  window.logout = () => {currentUser = null; document.getElementById('dashboard').classList.add('hidden'); document.getElementById('loginScreen').classList.remove('hidden');}
 
 </script>
 </body>
