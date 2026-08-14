@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NEXA ADMIN</title>
+<style>
+body{background:#000;color:white;font-family:Poppins;padding:20px}
+.card{background:#111;padding:20px;border-radius:16px;margin:20px 0}
+input,btn{padding:14px;width:100%;margin:10px 0;border-radius:10px;background:#222;color:white;border:1px solid #333}
+.btn{background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;font-weight:bold;border:none;cursor:pointer}
+</style>
+</head>
+<body>
+<h1 style="color:#fbbf24">NEXA ADMIN PANEL</h1>
+<div class="card">
+<h3>Add Balance to User</h3>
+<input id="adminPhone" placeholder="254712345678">
+<input id="adminAmount" type="number" placeholder="Amount e.g 50000">
+<button class="btn" onclick="addBalance()">ADD BALANCE</button>
+<p id="adminMsg"></p>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {apiKey:"AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",authDomain:"nexa-view.firebaseapp.com",projectId:"nexa-view"};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+function addBalance(){
+  let phone = adminPhone.value;
+  let amount = parseFloat(adminAmount.value);
+  db.collection("users").doc(phone).get().then(doc=>{
+    if(doc.exists){
+      let newBal = doc.data().balance + amount;
+      db.collection("users").doc(phone).update({balance:newBal}).then(()=>{
+        adminMsg.style.color="#22c55e";
+        adminMsg.innerText = `✅ Added Ksh ${amount}. New Balance: ${newBal}`;
+      });
+    } else { adminMsg.innerText = "❌ User not found"; }
+  });
+}
+</script>
+</body>
+</html>
