@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXA VIEW - Dashboard</title>
+<style>
+  *{box-sizing:border-box;font-family:Arial}
+  body{background:#0f172a;color:white;margin:0;padding:20px;display:flex;justify-content:center}
+  .container{max-width:400px;width:100%}
+  .card{background:#1e293b;padding:25px;border-radius:15px;margin:15px 0;box-shadow:0 0 15px rgba(34,197,94,0.2)}
+  h2{color:#22c55e;text-align:center}
+  input{width:100%;padding:12px;margin:8px 0;border:none;border-radius:8px;background:#334155;color:white}
+  button{width:100%;padding:12px;background:#22c55e;border:none;border-radius:8px;color:black;font-weight:bold;cursor:pointer;margin-top:10px}
+  button:hover{background:#16a34a}
+  button:disabled{background:#475569;color:#94a3b8}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .stat{background:#334155;padding:15px;border-radius:10px;text-align:center}
+  .stat h3{margin:5px 0;color:#22c55e}
+  .stat p{margin:0;font-size:12px;color:#94a3b8}
+  .hidden{display:none}
+  .tab-btn{background:#334155;margin:5px}
+  .tab-btn.active{background:#22c55e}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="grid">
+    <button class="tab-btn active" onclick="showTab('register')">Register</button>
+    <button class="tab-btn" onclick="showTab('login')">Login</button>
+  </div>
+
+  <div id="register" class="card">
+    <h2>NEXA VIEW</h2>
+    <p style="text-align:center;font-size:12px">Invest. Watch 2 Minutes. Earn Daily.</p>
+    <input type="text" id="regUser" placeholder="Username" required>
+    <input type="tel" id="regPhone" placeholder="Phone: 07XXXXXXXX" required>
+    <input type="password" id="regPin" placeholder="4 Digit PIN" maxlength="4" required>
+    <button onclick="register()">Create Account</button>
+    <p id="regMsg" style="text-align:center;margin-top:10px"></p>
+  </div>
+
+  <div id="login" class="card hidden">
+    <h2>Login</h2>
+    <input type="tel" id="logPhone" placeholder="Phone Number" required>
+    <input type="password" id="logPin" placeholder="PIN" maxlength="4" required>
+    <button onclick="login()">Login</button>
+    <p id="logMsg" style="text-align:center;margin-top:10px"></p>
+  </div>
+
+  <div id="dashboard" class="hidden">
+    <div class="card">
+      <h2>Welcome <span id="dUser"></span></h2>
+      <p style="font-size:12px">NEXA ID: <span id="dID"></span> | Plan: <span id="dPlan"></span></p>
+    </div>
+    <div class="grid">
+      <div class="stat"><p>Invested</p><h3 id="dInvested">KES 0</h3></div>
+      <div class="stat"><p>Total Earned</p><h3 id="dEarned">KES 0</h3></div>
+      <div class="stat"><p>Today's Income</p><h3 id="dToday">KES 0</h3></div>
+      <div class="stat"><p>Commission</p><h3 id="dComm">KES 0</h3></div>
+    </div>
+    <div class="card">
+      <h3>Daily Task: Watch 2 Minutes</h3>
+      <button id="watchBtn" onclick="watchAds()">Watch & Earn Today</button>
+      <p id="taskMsg" style="font-size:12px;margin-top:10px"></p>
+    </div>
+    <div class="card">
+      <h3>Invite & Earn 10%</h3>
+      <input type="text" id="refLink" readonly>
+      <button onclick="copyRef()">Copy Link</button>
+    </div>
+    <button style="background:#ef4444" onclick="logout()">Logout</button>
+  </div>
+</div>
+
+<script>
+const planIncome = { "VIEWER 1":40, "VIEWER 2":80, "VIEWER 3":150, "VIEWER 4":200, "VIEWER 5":300, "VIEWER 6":500 };
+let currentUser = null;
+function showTab(tab){ document.querySelectorAll('.card').forEach(c=>c.classList.add('hidden')); document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); document.getElementById(tab).classList.remove('hidden'); event.target.classList.add('active'); }
+function register(){ const u = document.getElementById('regUser').value; const p = document.getElementById('regPhone').value; const pin = document.getElementById('regPin').value; if(!u || !p || pin.length<4){ document.getElementById('regMsg').innerText="Fill all fields"; return; } const id = "NV" + Date.now().toString().slice(-6) + Math.floor(Math.random()*90+10); const user = { uniqueID:id, username:u, phone:p, pin:pin, plan:"VIEWER 1", invested:500, earned:0, commission:0, todayDate:"", lastLogin:"" }; localStorage.setItem(p, JSON.stringify(user)); document.getElementById('regMsg').innerHTML = `✅ Account Created!<br>Your NEXA ID: <b>${id}</b>`; }
+function login(){ const p = document.getElementById('logPhone').value; const pin = document.getElementById('logPin').value; const user = JSON.parse(localStorage.getItem(p)); if(!user || user.pin !== pin){ document.getElementById('logMsg').innerText="Invalid Phone or PIN"; return; } currentUser = user; localStorage.setItem("loggedIn", p); loadDashboard(); }
+function loadDashboard(){ document.querySelector('.container').innerHTML = document.getElementById('dashboard').parentElement.innerHTML; document.getElementById('dashboard').classList.remove('hidden'); const u = currentUser; const today = new Date().toDateString(); if(u.lastLogin !== today){ u.todayDate = ""; } document.getElementById('dUser').innerText = u.username; document.getElementById('dID').innerText = u.uniqueID; document.getElementById('dPlan').innerText = u.plan; document.getElementById('dInvested').innerText = "KES " + u.invested; document.getElementById('dEarned').innerText = "KES " + u.earned; document.getElementById('dComm').innerText = "KES " + u.commission; document.getElementById('dToday').innerText = "KES " + planIncome[u.plan]; document.getElementById('refLink').value = "https://nexaview.com/r/" + u.uniqueID; if(u.todayDate === today){ document.getElementById('watchBtn').disabled = true; document.getElementById('taskMsg').innerText = "✅ Task completed for today"; } }
+function watchAds(){ const btn = document.getElementById('watchBtn'); btn.disabled = true; btn.innerText = "Playing ads... 2:00"; document.getElementById('taskMsg').innerText = "Watching ads. Don't close."; let time = 120; const timer = setInterval(()=>{ time--; btn.innerText = `Playing ads... 0:${time<10?'0':''+time}`; if(time<=0){ clearInterval(timer); const income = planIncome[currentUser.plan]; currentUser.earned += income; currentUser.todayDate = new Date().toDateString(); currentUser.lastLogin = new Date().toDateString(); localStorage.setItem(currentUser.phone, JSON.stringify(currentUser)); document.getElementById('dEarned').innerText = "KES " + currentUser.earned; document.getElementById('taskMsg').innerText = `✅ KES ${income} credited! Come back tomorrow.`; btn.innerText = "Completed"; } }, 1000); }
+function copyRef(){ navigator.clipboard.writeText(document.getElementById('refLink').value); alert("Referral link copied!"); }
+function logout(){ localStorage.removeItem("loggedIn"); location.reload(); }
+window.onload = () => { const logged = localStorage.getItem("loggedIn"); if(logged){ currentUser = JSON.parse(localStorage.getItem(logged)); loadDashboard(); }
+</script>
+</body>
+</html>
