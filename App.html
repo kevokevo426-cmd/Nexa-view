@@ -76,14 +76,95 @@
 <script>
 const planIncome = { "VIEWER 1":40, "VIEWER 2":80, "VIEWER 3":150, "VIEWER 4":200, "VIEWER 5":300, "VIEWER 6":500 };
 let currentUser = null;
-function showTab(tab){ document.querySelectorAll('.card').forEach(c=>c.classList.add('hidden')); document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); document.getElementById(tab).classList.remove('hidden'); event.target.classList.add('active'); }
-function register(){ const u = document.getElementById('regUser').value; const p = document.getElementById('regPhone').value; const pin = document.getElementById('regPin').value; if(!u || !p || pin.length<4){ document.getElementById('regMsg').innerText="Fill all fields"; return; } const id = "NV" + Date.now().toString().slice(-6) + Math.floor(Math.random()*90+10); const user = { uniqueID:id, username:u, phone:p, pin:pin, plan:"VIEWER 1", invested:500, earned:0, commission:0, todayDate:"", lastLogin:"" }; localStorage.setItem(p, JSON.stringify(user)); document.getElementById('regMsg').innerHTML = `✅ Account Created!<br>Your NEXA ID: <b>${id}</b>`; }
-function login(){ const p = document.getElementById('logPhone').value; const pin = document.getElementById('logPin').value; const user = JSON.parse(localStorage.getItem(p)); if(!user || user.pin !== pin){ document.getElementById('logMsg').innerText="Invalid Phone or PIN"; return; } currentUser = user; localStorage.setItem("loggedIn", p); loadDashboard(); }
-function loadDashboard(){ document.querySelector('.container').innerHTML = document.getElementById('dashboard').parentElement.innerHTML; document.getElementById('dashboard').classList.remove('hidden'); const u = currentUser; const today = new Date().toDateString(); if(u.lastLogin !== today){ u.todayDate = ""; } document.getElementById('dUser').innerText = u.username; document.getElementById('dID').innerText = u.uniqueID; document.getElementById('dPlan').innerText = u.plan; document.getElementById('dInvested').innerText = "KES " + u.invested; document.getElementById('dEarned').innerText = "KES " + u.earned; document.getElementById('dComm').innerText = "KES " + u.commission; document.getElementById('dToday').innerText = "KES " + planIncome[u.plan]; document.getElementById('refLink').value = "https://nexaview.com/r/" + u.uniqueID; if(u.todayDate === today){ document.getElementById('watchBtn').disabled = true; document.getElementById('taskMsg').innerText = "✅ Task completed for today"; } }
-function watchAds(){ const btn = document.getElementById('watchBtn'); btn.disabled = true; btn.innerText = "Playing ads... 2:00"; document.getElementById('taskMsg').innerText = "Watching ads. Don't close."; let time = 120; const timer = setInterval(()=>{ time--; btn.innerText = `Playing ads... 0:${time<10?'0':''+time}`; if(time<=0){ clearInterval(timer); const income = planIncome[currentUser.plan]; currentUser.earned += income; currentUser.todayDate = new Date().toDateString(); currentUser.lastLogin = new Date().toDateString(); localStorage.setItem(currentUser.phone, JSON.stringify(currentUser)); document.getElementById('dEarned').innerText = "KES " + currentUser.earned; document.getElementById('taskMsg').innerText = `✅ KES ${income} credited! Come back tomorrow.`; btn.innerText = "Completed"; } }, 1000); }
-function copyRef(){ navigator.clipboard.writeText(document.getElementById('refLink').value); alert("Referral link copied!"); }
-function logout(){ localStorage.removeItem("loggedIn"); location.reload(); }
-window.onload = () => { const logged = localStorage.getItem("loggedIn"); if(logged){ currentUser = JSON.parse(localStorage.getItem(logged)); loadDashboard(); }
+
+function showTab(tab){ 
+  document.querySelectorAll('.card').forEach(c=>c.classList.add('hidden')); 
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); 
+  document.getElementById(tab).classList.remove('hidden'); 
+  event.target.classList.add('active'); 
+}
+
+function register(){ 
+  const u = document.getElementById('regUser').value; 
+  const p = document.getElementById('regPhone').value; 
+  const pin = document.getElementById('regPin').value; 
+  if(!u || !p || pin.length<4){ document.getElementById('regMsg').innerText="Fill all fields"; return; } 
+  const id = "NV" + Date.now().toString().slice(-6) + Math.floor(Math.random()*90+10); 
+  const user = { uniqueID:id, username:u, phone:p, pin:pin, plan:"VIEWER 1", invested:500, earned:0, commission:0, todayDate:"", lastLogin:"" }; 
+  localStorage.setItem(p, JSON.stringify(user)); 
+  document.getElementById('regMsg').innerHTML = `✅ Account Created!<br>Your NEXA ID: <b>${id}</b>`; 
+}
+
+function login(){ 
+  const p = document.getElementById('logPhone').value; 
+  const pin = document.getElementById('logPin').value; 
+  const user = JSON.parse(localStorage.getItem(p)); 
+  if(!user || user.pin !== pin){ document.getElementById('logMsg').innerText="Invalid Phone or PIN"; return; } 
+  currentUser = user; 
+  localStorage.setItem("loggedIn", p); 
+  loadDashboard(); 
+}
+
+function loadDashboard(){ 
+  document.querySelector('.container').innerHTML = document.getElementById('dashboard').parentElement.innerHTML; 
+  document.getElementById('dashboard').classList.remove('hidden'); 
+  const u = currentUser; 
+  const today = new Date().toDateString(); 
+  if(u.lastLogin !== today){ u.todayDate = ""; } 
+  document.getElementById('dUser').innerText = u.username; 
+  document.getElementById('dID').innerText = u.uniqueID; 
+  document.getElementById('dPlan').innerText = u.plan; 
+  document.getElementById('dInvested').innerText = "KES " + u.invested; 
+  document.getElementById('dEarned').innerText = "KES " + u.earned; 
+  document.getElementById('dComm').innerText = "KES " + u.commission; 
+  document.getElementById('dToday').innerText = "KES " + planIncome[u.plan]; 
+  document.getElementById('refLink').value = "https://nexaview.com/r/" + u.uniqueID; 
+  if(u.todayDate === today){ 
+    document.getElementById('watchBtn').disabled = true; 
+    document.getElementById('taskMsg').innerText = "✅ Task completed for today"; 
+  } 
+}
+
+function watchAds(){ 
+  const btn = document.getElementById('watchBtn'); 
+  btn.disabled = true; 
+  btn.innerText = "Playing ads... 2:00"; 
+  document.getElementById('taskMsg').innerText = "Watching ads. Don't close."; 
+  let time = 120; 
+  const timer = setInterval(()=>{ 
+    time--; 
+    btn.innerText = `Playing ads... 0:${time<10?'0':''+time}`; 
+    if(time<=0){ 
+      clearInterval(timer); 
+      const income = planIncome[currentUser.plan]; 
+      currentUser.earned += income; 
+      currentUser.todayDate = new Date().toDateString(); 
+      currentUser.lastLogin = new Date().toDateString(); 
+      localStorage.setItem(currentUser.phone, JSON.stringify(currentUser)); 
+      document.getElementById('dEarned').innerText = "KES " + currentUser.earned; 
+      document.getElementById('taskMsg').innerText = `✅ KES ${income} credited! Come back tomorrow.`; 
+      btn.innerText = "Completed"; 
+    } 
+  }, 1000); 
+}
+
+function copyRef(){ 
+  navigator.clipboard.writeText(document.getElementById('refLink').value); 
+  alert("Referral link copied!"); 
+}
+
+function logout(){ 
+  localStorage.removeItem("loggedIn"); 
+  location.reload(); 
+}
+
+window.onload = () => { 
+  const logged = localStorage.getItem("loggedIn"); 
+  if(logged){ 
+    currentUser = JSON.parse(localStorage.getItem(logged)); 
+    loadDashboard(); 
+  }
+}
 </script>
 </body>
 </html>
