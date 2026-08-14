@@ -2,22 +2,38 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NEXA ADMIN</title>
 <style>
-body{background:#000;color:white;font-family:Poppins;padding:20px}
-.card{background:#111;padding:20px;border-radius:16px;margin:20px 0}
-input,btn{padding:14px;width:100%;margin:10px 0;border-radius:10px;background:#222;color:white;border:1px solid #333}
-.btn{background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;font-weight:bold;border:none;cursor:pointer}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+body{background:#000;color:white;font-family:Poppins;margin:0;padding:20px}
+.container{max-width:600px;margin:0 auto}
+h1{color:#fbbf24;text-align:center}
+.card{background:#111;padding:20px;border-radius:16px;margin:20px 0;border:1px solid #222}
+input{padding:16px;width:100%;margin:10px 0;border-radius:10px;background:#222;color:white;border:1px solid #333;font-size:16px;box-sizing:border-box}
+.btn{padding:16px;width:100%;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;font-weight:bold;border:none;border-radius:10px;font-size:16px;cursor:pointer;margin-top:10px}
+.user-list{background:#1a1a1a;padding:15px;border-radius:10px;margin:10px 0;display:flex;justify-content:space-between}
+.user-list span{color:#22c55e;font-weight:bold}
 </style>
 </head>
 <body>
-<h1 style="color:#fbbf24">NEXA ADMIN PANEL</h1>
+<div class="container">
+<h1>NEXA ADMIN PANEL</h1>
+
 <div class="card">
 <h3>Add Balance to User</h3>
-<input id="adminPhone" placeholder="254712345678">
+<input id="adminPhone" placeholder="Phone: 254712345678">
 <input id="adminAmount" type="number" placeholder="Amount e.g 50000">
 <button class="btn" onclick="addBalance()">ADD BALANCE</button>
-<p id="adminMsg"></p>
+<p id="adminMsg" style="text-align:center;"></p>
+</div>
+
+<div class="card">
+<h3>All Users</h3>
+<div id="userList">Loading...</div>
+<button class="btn" style="background:#444;color:white" onclick="loadUsers()">REFRESH USERS</button>
+</div>
+
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -30,16 +46,39 @@ const db = firebase.firestore();
 function addBalance(){
   let phone = adminPhone.value;
   let amount = parseFloat(adminAmount.value);
+  if(!phone || !amount){ adminMsg.innerText = "❌ Fill both fields"; return; }
+  
   db.collection("users").doc(phone).get().then(doc=>{
     if(doc.exists){
       let newBal = doc.data().balance + amount;
       db.collection("users").doc(phone).update({balance:newBal}).then(()=>{
         adminMsg.style.color="#22c55e";
-        adminMsg.innerText = `✅ Added Ksh ${amount}. New Balance: ${newBal}`;
+        adminMsg.innerText = `✅ Added Ksh ${amount}. New Balance: ${newBal.toFixed(2)}`;
+        adminPhone.value = "";
+        adminAmount.value = "";
+        loadUsers();
       });
-    } else { adminMsg.innerText = "❌ User not found"; }
+    } else { adminMsg.innerText = "❌ User not found. Tell them to register first"; }
   });
 }
+
+function loadUsers(){
+  userList.innerHTML = "Loading...";
+  db.collection("users").get().then(snapshot=>{
+    userList.innerHTML = "";
+    snapshot.forEach(doc=>{
+      let u = doc.data();
+      userList.innerHTML += `
+        <div class="user-list">
+          <div>${u.phone}<br><small>Balance: Ksh ${u.balance.toFixed(2)}</small></div>
+          <span>${u.package || 'None'}</span>
+        </div>
+      `;
+    });
+  });
+}
+
+loadUsers();
 </script>
 </body>
 </html>
