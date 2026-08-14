@@ -1,19 +1,37 @@
 <!DOCTYPE html>
-<html>
-<head><title>NEXA Login</title>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXA VIEW - Login</title>
 <style>
-body{background:#0a0a0a;color:#fff;display:flex;justify-content:center;align-items:center;height:100vh;font-family:sans-serif}
-.box{background:#111;padding:30px;border-radius:15px;border:1px solid #FFD700}
-input,button{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:none}
-button{background:#FFD700;color:#000;font-weight:bold;cursor:pointer}
+    body { background: #000; color: #fff; font-family: Arial; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+    .login-box { background: #111; padding: 30px; border-radius: 15px; border: 2px solid #FFD700; width: 90%; max-width: 400px; text-align: center; }
+    .login-box h1 { color: #FFD700; margin-bottom: 10px; }
+    .login-box input { width: 100%; padding: 12px; margin: 10px 0; background: #222; border: 1px solid #FFD700; border-radius: 8px; color: #fff; outline: none; }
+    .login-box button { width: 100%; padding: 12px; background: #FFD700; color: #000; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
 </style>
 </head>
 <body>
-<div class="box">
-<h2 style="color:#FFD700;text-align:center">NEXA LOGIN</h2>
-<input id="u" placeholder="Username">
-<input id="p" type="password" placeholder="Password">
-<button onclick="localStorage.setItem('nexaUser',u.value);location='dashboard.html'">Login</button>
-</div>
+    <div class="login-box">
+        <h1>NEXA VIEW</h1>
+        <p>Welcome Back</p>
+        <input type="text" placeholder="Phone Number" id="phone">
+        <input type="password" placeholder="Password" id="pass">
+        <button onclick="login()">LOGIN</button>
+        <p style="font-size:12px; margin-top:15px;">Don't have an account? <a href="#" style="color:#FFD700">Register</a></p>
+    </div>
+
+<script>
+function login() {
+    let phone = document.getElementById('phone').value;
+    if(phone) {
+        localStorage.setItem('userPhone', phone);
+        window.location.href = 'index.html'; // goes to your dashboard
+    } else {
+        alert('Enter phone number')
+    }
+}
+</script>
 </body>
 </html>
