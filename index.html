@@ -5,21 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NEXA VIEW</title>
 <style>
-  body { font-family: 'Poppins', sans-serif; background:#0f172a; color:white; margin:0; padding-bottom:80px; }
-  .tab { display:none; padding:20px; }
-  .tab.active { display:block; }
-  .nav { position:fixed; bottom:0; width:100%; background:#1e293b; display:flex; justify-content:space-around; padding:10px 0; }
-  .nav button { background:none; border:none; color:#94a3b8; font-size:12px; }
-  .nav button.active { color:#22c55e; }
-  .card { background:#1e293b; padding:15px; border-radius:12px; margin:15px 0; }
-  .btn { width:100%; padding:14px; background:#22c55e; color:black; border:none; border-radius:10px; font-weight:bold; font-size:16px; margin-top:10px; }
-  .btn-red { background:#ef4444; color:white; }
-  .amt-btn { background:#334155; color:white; border:none; padding:10px; border-radius:8px; flex:1; }
-  .amt-btn.active { background:#22c55e; color:black; }
-  input { width:100%; padding:12px; margin:8px 0; border-radius:8px; background:#334155; border:none; color:white; }
+  body { font-family: 'Poppins', sans-serif; background:#000; color:white; margin:0; padding-bottom:80px; }
+ .tab { display:none; padding:20px; }
+ .tab.active { display:block; }
+ .nav { position:fixed; bottom:0; width:100%; background:#111; display:flex; justify-content:space-around; padding:12px 0; border-top:1px solid #222; }
+ .nav button { background:none; border:none; color:#888; font-size:13px; font-weight:bold; }
+ .nav button.active { color:#fbbf24; }
+ .card { background:#111; padding:15px; border-radius:12px; margin:15px 0; border:1px solid #222; }
+ .btn { width:100%; padding:14px; background:linear-gradient(90deg,#fbbf24,#f59e0b); color:black; border:none; border-radius:10px; font-weight:bold; font-size:16px; margin-top:10px; }
+ .btn-red { background:#ef4444; color:white; }
+ .amt-btn { background:#222; color:white; border:1px solid #333; padding:10px; border-radius:8px; flex:1; }
+ .amt-btn.active { background:#fbbf24; color:black; border:1px solid #fbbf24; }
+  input { width:100%; padding:12px; margin:8px 0; border-radius:8px; background:#222; border:1px solid #333; color:white; box-sizing:border-box; }
   video { width:100%; border-radius:12px; margin-top:10px; }
-  .info-link { display:block; padding:12px; background:#334155; border-radius:8px; margin:8px 0; color:white; text-decoration:none; }
+ .info-link { display:block; padding:12px; background:#222; border-radius:8px; margin:8px 0; color:white; text-decoration:none; }
   #loginPage { padding:20px; text-align:center; }
+  h2 { color:#fbbf24; }
+  h3 { color:#fbbf24; }
 </style>
 </head>
 <body>
@@ -38,34 +40,39 @@
 
 <!-- APP -->
 <div id="app" style="display:none;">
+<!-- 1. HOME TAB -->
 <div id="home" class="tab active">
-  <h2>Welcome</h2>
   <div class="card">
-    <h3>Your Package: <span id="userPackage">L1</span></h3>
-    <p>Daily Income: <b>Ksh <span id="dailyIncome">25</span></b></p>
-    <p>Total Return: <b>Ksh <span id="totalReturn">500</span></b></p>
-    <p>Balance: <b>Ksh <span id="balance">0</span></b></p>
-    <button class="btn btn-red" onclick="logout()">Logout</button>
+    <h3 style="color:#fbbf24;">Hi <span id="userEmail">User</span></h3>
+    <p>Balance: Ksh <b id="balance">0</b></p>
+    <p>Package: <b id="userPackage">None</b></p>
+    <p>Days Left: <b id="daysLeft">0</b></p>
+    <p style="color:#888;">Video Available</p>
   </div>
-  <div class="card"><h3>Packages</h3><p>L1: 300 → 25/day → 500</p><p>L2: 700 → 50/day → 1000</p><p>L3: 1300 → 100/day → 2000</p><p>L4: 2500 → 150/day → 4500</p><p>L5: 3500 → 200/day → 6000</p><p>L6: 4800 → 250/day → 7500</p><p>L7: 7500 → 350/day → 10500</p><p>L8: 10000 → 500/day → 15000</p><p style="color:#fbbf24;">*Sunday = Rest Day*</p></div>
+
+  <h2>BUY PACKAGE</h2>
+  <div id="packagesList"></div>
+
 </div>
 
+<!-- 2. TASK TAB -->
 <div id="task" class="tab">
   <h2>Daily Task</h2>
   <div class="card">
     <p id="dayStatus">Loading...</p>
-    <button id="watchBtn" class="btn" onclick="startVideo()">Tap to Watch</button>
+    <button id="watchBtn" class="btn" onclick="startVideo()">WATCH 1MIN VIDEO</button>
     <video id="taskVideo" src="https://www.w3schools.com/html/mov_bbb.mp4" style="display:none;" controls></video>
     <p id="resultMsg"></p>
   </div>
 </div>
 
+<!-- 3. ME TAB -->
 <div id="me" class="tab">
-  <h2>My Account</h2>
+  <h2>Withdraw</h2>
   <div class="card">
-    <h3>Withdraw Earnings</h3>
     <p>Available Balance: <b>Ksh <span id="availBal">0</span></b></p>
     <p style="color:#fbbf24; font-size:12px;">Withdrawals: 9:00AM - 5:00PM | 1x per day | 15% Tax</p>
+
     <div style="display:flex; gap:10px; flex-wrap:wrap; margin:10px 0;">
       <button class="amt-btn" onclick="selectAmt(200)">Ksh 200</button>
       <button class="amt-btn" onclick="selectAmt(400)">Ksh 400</button>
@@ -73,26 +80,30 @@
       <button class="amt-btn" onclick="selectAmt(700)">Ksh 700</button>
       <button class="amt-btn" onclick="selectAmt(1000)">Ksh 1000</button>
     </div>
+
     <p>You Request: Ksh <span id="reqAmt">0</span></p>
     <p>Tax 15%: Ksh <span id="taxAmt">0</span></p>
     <p style="color:#22c55e;">You Receive: Ksh <span id="netAmt">0</span></p>
-    <input type="text" id="mpesa" placeholder="Enter M-PESA Number 07xx">
-    <button class="btn" onclick="submitWithdraw()">Withdraw Now</button>
+    <input type="text" id="mpesa" placeholder="M-PESA Number">
+    <button class="btn" style="background:#22c55e;" onclick="submitWithdraw()">REQUEST WITHDRAWAL</button>
     <p id="withdrawMsg"></p>
   </div>
+  <button class="btn btn-red" onclick="logout()">LOGOUT</button>
 </div>
 
+<!-- 4. INFO TAB -->
 <div id="info" class="tab">
   <h2>Info & Support</h2>
-  <div class="card"><h3>📜 Rules</h3><p>1. Watch full video to earn. 2. 1 Task per day. 3. Withdraw: 9AM-5PM. 4. 15% Tax</p></div>
+  <div class="card"><h3>📜 Rules</h3><p>1. Watch full video to earn. 2. 1 Task per day. Sunday Off. 3. Withdraw: 9AM-5PM. 4. 15% Tax. Min 200</p></div>
   <div class="card"><h3>📞 Contact Us</h3><a href="https://wa.me/2547XXXXXXXX" class="info-link">WhatsApp Support</a></div>
 </div>
 
+<!-- BOTTOM NAV -->
 <div class="nav">
-  <button onclick="showTab('home')" id="nav-home" class="active">Home</button>
-  <button onclick="showTab('task')" id="nav-task">Task</button>
-  <button onclick="showTab('me')" id="nav-me">Me</button>
-  <button onclick="showTab('info')" id="nav-info">Info</button>
+  <button onclick="showTab('home')" id="nav-home" class="active">HOME</button>
+  <button onclick="showTab('task')" id="nav-task">TASK</button>
+  <button onclick="showTab('me')" id="nav-me">ME</button>
+  <button onclick="showTab('info')" id="nav-info">INFO</button>
 </div>
 </div>
 
@@ -116,10 +127,10 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 const PACKAGE_DATA = {
-  "L1": {stake:300, daily:25, total:500}, "L2": {stake:700, daily:50, total:1000},
-  "L3": {stake:1300, daily:100, total:2000}, "L4": {stake:2500, daily:150, total:4500},
-  "L5": {stake:3500, daily:200, total:6000}, "L6": {stake:4800, daily:250, total:7500},
-  "L7": {stake:7500, daily:350, total:10500}, "L8": {stake:10000, daily:500, total:15000}
+  "L1": {stake:300, daily:25, total:500, days:20}, "L2": {stake:700, daily:50, total:1000, days:20},
+  "L3": {stake:1300, daily:100, total:2000, days:20}, "L4": {stake:2500, daily:150, total:4500, days:30},
+  "L5": {stake:3500, daily:200, total:6000, days:30}, "L6": {stake:4800, daily:250, total:7500, days:30},
+  "L7": {stake:7500, daily:350, total:10500, days:30}, "L8": {stake:10000, daily:500, total:15000, days:30}
 };
 
 let currentUser = null;
@@ -129,16 +140,16 @@ const today = new Date().toDateString();
 // AUTH
 function register() {
   auth.createUserWithEmailAndPassword(email.value, password.value)
-  .then(cred => {
+ .then(cred => {
     db.collection("users").doc(cred.user.uid).set({
-      email: email.value, balance: 0, package: "L1", 
-      lastTask: "", lastWithdraw: ""
+      email: email.value, balance: 0, package: "None", 
+      startDate: "", lastTask: "", lastWithdraw: ""
     });
   }).catch(e => authMsg.innerText = e.message);
 }
 function login() {
   auth.signInWithEmailAndPassword(email.value, password.value)
-  .catch(e => authMsg.innerText = e.message);
+ .catch(e => authMsg.innerText = e.message);
 }
 function logout() { auth.signOut(); }
 
@@ -147,7 +158,9 @@ auth.onAuthStateChanged(user => {
     currentUser = user;
     document.getElementById('loginPage').style.display = 'none';
     document.getElementById('app').style.display = 'block';
+    document.getElementById('userEmail').innerText = user.email.split('@')[0];
     loadUserData();
+    loadPackages();
   } else {
     document.getElementById('loginPage').style.display = 'block';
     document.getElementById('app').style.display = 'none';
@@ -169,16 +182,45 @@ function showTab(tab) {
   document.getElementById('nav-'+tab).classList.add('active');
 }
 function loadHome() {
-  let data = PACKAGE_DATA[userData.package];
-  document.getElementById('userPackage').innerText = userData.package;
-  document.getElementById('dailyIncome').innerText = data.daily;
-  document.getElementById('totalReturn').innerText = data.total;
   document.getElementById('balance').innerText = userData.balance;
   document.getElementById('availBal').innerText = userData.balance;
+  document.getElementById('userPackage').innerText = userData.package;
+  
+  if(userData.package!== "None" && userData.startDate) {
+    let data = PACKAGE_DATA[userData.package];
+    let start = new Date(userData.startDate);
+    let end = new Date(start.getTime() + data.days * 24 * 60 * 60 * 1000);
+    let daysLeft = Math.ceil((end - new Date()) / (1000 * 60 * 60 * 24));
+    document.getElementById('daysLeft').innerText = daysLeft > 0? daysLeft : 0;
+  }
+}
+
+function loadPackages() {
+  let html = '';
+  for(let key in PACKAGE_DATA) {
+    let p = PACKAGE_DATA[key];
+    html += `
+    <div class="card" style="border:2px solid #fbbf24;">
+      <h3>${key}</h3>
+      <p>Pay: Ksh ${p.stake} | Earn: Ksh ${p.daily}/day</p>
+      <p>${p.days} Days | Total: Ksh ${p.total}</p>
+      <button class="btn" onclick="buyPackage('${key}')">BUY</button>
+    </div>`;
+  }
+  document.getElementById('packagesList').innerHTML = html;
+}
+
+function buyPackage(pkg) {
+  alert("You selected " + pkg + ". Next we add M-PESA STK Push here");
+  // Later: db.collection("users").doc(currentUser.uid).update({package: pkg, startDate: new Date().toISOString()})
 }
 
 // TASK
 function loadTask() {
+  if(userData.package === "None") {
+    dayStatus.innerText = "⚠️ Buy a package first to unlock tasks";
+    watchBtn.style.display = 'none'; return;
+  }
   let data = PACKAGE_DATA[userData.package];
   let day = new Date().getDay();
   if(day === 0) {
@@ -189,8 +231,8 @@ function loadTask() {
     dayStatus.innerText = `✅ Earned Ksh ${data.daily} today. Come back tomorrow.`;
     watchBtn.style.display = 'none';
   } else {
-    dayStatus.innerText = `Task Available. Package: ${userData.package}`;
-    watchBtn.innerText = `Tap to Watch & Earn Ksh ${data.daily}`;
+    dayStatus.innerText = `Watch 1 video. 1min. Earn instantly`;
+    watchBtn.innerText = `WATCH 1MIN VIDEO & EARN KSH ${data.daily}`;
     watchBtn.style.display = 'block';
   }
 }
@@ -227,8 +269,6 @@ function submitWithdraw() {
   
   let newBal = userData.balance - selectedAmt;
   db.collection("users").doc(currentUser.uid).update({balance: newBal, lastWithdraw: today});
-  
-  // TODO: Also save request to "withdrawals" collection for Admin
   withdrawMsg.innerText = `✅ Request Sent! You will receive Ksh ${selectedAmt*0.85} via M-PESA`;
 }
 </script>
