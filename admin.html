@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXA ADMIN</title>
+<style>
+body{font-family:Arial;background:#0a0a0a;color:#fff;margin:0;padding:20px}
+.card{background:#1a1a1a;padding:15px;border-radius:10px;margin:10px 0}
+input,button,select{padding:10px;margin:5px;border-radius:6px;border:none}
+button{background:#00ff88;color:#000;font-weight:bold;cursor:pointer}
+.danger{background:#ff4444;color:#fff}
+.warn{background:#ffaa00;color:#000}
+.success{background:#00aaff;color:#fff}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+td,th{border:1px solid #333;padding:8px;text-align:left;font-size:14px}
+.hidden{display:none}
+.package{border:1px solid #00ff88;padding:10px;margin:5px 0;border-radius:8px}
+</style>
+</head>
+<body>
+<div id="login" class="card">
+  <h2>NEXA ADMIN LOGIN</h2>
+  <input id="adminPass" type="password" placeholder="Admin Password">
+  <button onclick="adminLogin()">Login</button>
+</div>
+
+<div id="panel" class="hidden">
+  <h2>NEXA VIEW - ADMIN PANEL</h2>
+  
+  <div class="card">
+    <h3>📦 Manage Packages</h3>
+    <input id="pkgName" placeholder="Package Name e.g Basic">
+    <input id="pkgPrice" type="number" placeholder="Investment KES">
+    <input id="pkgEarn" type="number" placeholder="Daily Earning KES">
+    <button onclick="addPackage()">Add/Update Package</button>
+    <div id="packagesList"></div>
+  </div>
+
+  <div class="card">
+    <h3>👥 All Users: <span id="userCount">0</span></h3>
+    <div id="usersList">Loading...</div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, updateDoc, setDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD1ftJH9O9fbV9X5oUr8r5c9YkeV7N1ecI",
+  authDomain: "nexa-view.firebaseapp.com",
+  projectId: "nexa-view",
+  storageBucket: "nexa-view.firebasestorage.app",
+  messagingSenderId: "947915083946",
+  appId: "1:947915083946:web:7f2cb69ddbc2f8bd2ec0d3",
+  measurementId: "G-Q2ZD17234K"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const ADMIN_PASSWORD = "1990";
+
+function adminLogin(){
+  if(document.getElementById('adminPass').value === ADMIN_PASSWORD){
+    document.getElementById('login').classList.add('hidden');
+    document.getElementById('panel').classList.remove('hidden');
+    loadUsers();
+    loadPackages();
+  } else { alert("Wrong password"); }
+}
+
+async function loadPackages(){
+  const snap = await getDoc(doc(db,"settings","packages"));
+  let html = "";
+  if(snap.exists()){
+    const pkgs = snap.data().list || [];
+    pkgs.forEach((p,i)=>{
+      html += `<div class="package">
+        <b>${p.name}</b> - Invest: KES ${p.price} | Earn: KES ${p.earn}/day 
+        <button class="danger" onclick="deletePackage(${i})">Delete</button>
+      </div>`;
+    });
+  }
+  document.getElementById('packagesList').innerHTML = html || "No packages yet";
+}
+
+async function addPackage(){
+  const name = document.getElementById('pkgName').value;
+  const price = Number(document.getElementById('pkgPrice').value);
+  const earn = Number(document.getElementById('pkgEarn').value);
+  if(!name || !price || !earn) return alert("Fill all fields");
+  
+  const snap = await getDoc(doc(db,"settings","packages"));
+  let pkgs = snap.exists() ? snap.data().list : [];
+  pkgs.push({name,price,earn});
+  
+  await setDoc(doc(db,"settings","packages"),{list:pkgs});
+  document.getElementById('pkgName').value = "";
+  document.getElementById('pkgPrice').value = "";
+  document.getElementById('pkgEarn').value = "";
+  loadPackages();
+  alert("Package added");
+}
+
+async function deletePackage(index){
+  if(!confirm("Delete this package?")) return;
+  const snap = await getDoc(doc(db,"settings","packages"));
+  let pkgs = snap.data().list;
+  pkgs.splice(index,1);
+  await setDoc(doc(db,"settings","packages"),{list:pkgs});
+  loadPackages();
+}
+
+async function loadUsers(){
+  const querySnapshot = await getDocs(collection(db, "users"));
+  document.getElementById('userCount').innerText = querySnapshot.size;
+  let html = `<table><tr><th>Email</th><th>Invested</th><th>Earned</th><th>Actions</th></tr>`;
+  querySnapshot.forEach((docSnap) => {
+    const u = docSnap.data();
+    html += `<tr>
+      <td>${u.email}</td>
+      <td>KES ${u.invested}</td>
+      <td>KES ${u.earned}</td>
+      <td>
+        <button class="success" onclick="rewardUser('${docSnap.id}','${u.email}')">Reward</button>
+        <button class="warn" onclick="resetUser('${docSnap.id}')">Reset</button>
+        <button class="danger" onclick="deleteUser('${docSnap.id}','${u.email}')">Delete</button>
+      </td>
+    </tr>`;
+  });
+  html += `</table>`;
+  document.getElementById('usersList').innerHTML = html;
+}
+
+async function rewardUser(uid, email){
+  const amount = prompt(`How much KES to reward ${email}?`);
+  if(amount && !isNaN(amount)){
+    const userRef = doc(db,"users",uid);
+    const snap = await getDoc(userRef);
+    const newEarned = snap.data().earned + Number(amount);
+    await updateDoc(userRef,{earned:newEarned});
+    loadUsers();
+    alert(`KES ${amount} added to ${email}`);
+  }
+}
+
+async function resetUser(uid){
+  if(confirm("Reset this user's earnings to 0?")){
+    await updateDoc(doc(db,"users",uid),{earned:0});
+    loadUsers();
+  }
+}
+
+async function deleteUser(uid, email){
+  if(confirm(`DELETE ${email} PERMANENTLY?`)){
+    await deleteDoc(doc(db,"users",uid));
+    loadUsers();
+  }
+}
+</script>
+</body>
+</html>
