@@ -7,30 +7,28 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
   body { font-family: 'Poppins', sans-serif; background:#000; color:white; margin:0; padding-bottom:80px; }
-  .card { background:#111; padding:20px; border-radius:16px; margin:15px 20px; border:1px solid #222; }
-  .balance-card { background:linear-gradient(135deg,#fbbf24,#f59e0b); color:black; padding:20px; border-radius:16px; margin:15px 20px; }
-  .balance-card h3,.balance-card h1 { color:black; margin:5px 0; }
-  input { width:100%; padding:14px; margin:8px 0; border-radius:10px; background:#222; border:1px solid #333; color:white; box-sizing:border-box; font-size:16px; }
-  .btn { width:100%; padding:14px; background:linear-gradient(90deg,#fbbf24,#f59e0b); color:black; border:none; border-radius:10px; font-weight:bold; font-size:16px; margin-top:10px; cursor:pointer; }
-  .btn:disabled { background:#444; color:#888; cursor:not-allowed; }
-  label { font-size:13px; color:#888; }
-  .hidden { display:none; }
-  .welcome { padding:20px 20px 0 20px; font-size:22px; font-weight:bold; }
-  table { width:100%; border-collapse:collapse; font-size:14px; margin:10px 0; }
+ .card { background:#111; padding:20px; border-radius:16px; margin:15px 20px; border:1px solid #222; }
+ .balance-card { background:linear-gradient(135deg,#fbbf24,#f59e0b); color:black; padding:20px; border-radius:16px; margin:15px 20px; }
+ .balance-card h3,.balance-card h1 { color:black; margin:5px 0; }
+ .btn { width:100%; padding:14px; background:linear-gradient(90deg,#fbbf24,#f59e0b); color:black; border:none; border-radius:10px; font-weight:bold; font-size:16px; margin-top:10px; cursor:pointer; }
+ .btn:disabled { background:#444; color:#888; cursor:not-allowed; }
+ .welcome { padding:20px 20px 0 20px; font-size:22px; font-weight:bold; }
+  table { width:100%; font-size:14px; margin:10px 0; }
   td { padding:8px; border-bottom:1px solid #222; }
-  .bottom-nav { position:fixed; bottom:0; left:0; right:0; background:#111; display:flex; justify-content:space-around; padding:12px 0; border-top:1px solid #222; }
-  .nav-item { text-align:center; color:#888; font-size:11px; cursor:pointer; }
-  .nav-item.active { color:#fbbf24; }
-  .nav-icon { font-size:24px; display:block; margin-bottom:3px; }
-  .tab-content { display:none; }
-  .tab-content.active { display:block; }
+ .bottom-nav { position:fixed; bottom:0; left:0; right:0; background:#111; display:flex; justify-content:space-around; padding:12px 0; border-top:1px solid #222; }
+ .nav-item { text-align:center; color:#888; font-size:11px; cursor:pointer; }
+ .nav-item.active { color:#fbbf24; }
+ .nav-icon { font-size:24px; display:block; margin-bottom:3px; }
+ .tab-content { display:none; }
+ .tab-content.active { display:block; }
+  input { width:100%; padding:14px; margin:8px 0; border-radius:10px; background:#222; border:1px solid #333; color:white; box-sizing:border-box; }
 </style>
 </head>
 <body>
 
 <div id="appPage">
   <div class="welcome">Welcome <span id="userPhone"></span></div>
-  
+
   <div class="balance-card">
     <h3>Total Balance</h3>
     <h1>Ksh <span id="userBalance">0.00</span></h1>
@@ -40,15 +38,23 @@
   <!-- HOME TAB -->
   <div id="homeTab" class="tab-content active">
     <div class="card">
-      <h2>🏠 HOME</h2>
-      <p>Welcome to NEXA VIEW</p>
-      <p><b>Your Package:</b> <span id="userPackage">None</span></p>
+      <h2>🏠 Dashboard</h2>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div style="background:#222; padding:12px; border-radius:10px; text-align:center;">
+          <p style="margin:0; font-size:12px; color:#888;">Daily Income</p>
+          <h3 style="margin:5px 0; color:#fbbf24;">Ksh <span id="homeDaily">0</span></h3>
+        </div>
+        <div style="background:#222; padding:12px; border-radius:10px; text-align:center;">
+          <p style="margin:0; font-size:12px; color:#888;">Total Earned</p>
+          <h3 style="margin:5px 0; color:#22c55e;">Ksh <span id="homeEarned">0</span></h3>
+        </div>
+      </div>
+      <p style="margin-top:15px;"><b>Package:</b> <span id="homePackage">None</span></p>
+      <button class="btn" onclick="switchTab('taskTab', document.querySelectorAll('.nav-item')[1])">Start Earning</button>
     </div>
     <div class="card">
-      <h2>📢 How It Works</h2>
-      <p>1. Buy a Package</p>
-      <p>2. Complete 1 Task Daily</p>
-      <p>3. Earn & Withdraw</p>
+      <h2>💎 Popular Packages</h2>
+      <div id="homePackages"></div>
     </div>
   </div>
 
@@ -59,17 +65,17 @@
       <p>Your Daily Earning: <b style="color:#fbbf24;">Ksh <span id="dailyEarn">0</span></b></p>
       <p style="color:#888; font-size:13px;">1 Task per day. Resets at 12AM</p>
     </div>
-    <div id="videoList"></div>
+    <div id="videoList">Loading...</div>
   </div>
 
-  <!-- PACKAGE TAB - FILLED -->
+  <!-- PACKAGE TAB -->
   <div id="packageTab" class="tab-content">
     <div class="card">
       <h2>💎 INVESTMENT PACKAGES</h2>
       <p>Buy a package to unlock daily tasks</p>
       <p style="color:#fbbf24; font-size:13px;">Your Balance: Ksh <span id="packageBalance">0</span></p>
     </div>
-    <div id="packagesList"></div>
+    <div id="packagesList">Loading...</div>
   </div>
 
   <!-- INFO TAB -->
@@ -133,15 +139,16 @@ function switchTab(tabId, el){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById(tabId).classList.add('active');
   el.classList.add('active');
-  
+
   if(tabId === 'taskTab') loadTasks();
   if(tabId === 'packageTab') loadPackages();
+  if(tabId === 'homeTab') loadHome();
 }
 
 function loadApp(){
   const saved = localStorage.getItem('nexaUser');
   if(!saved) { window.location.href = 'index.html'; return; }
-  
+
   db.collection("users").doc(saved).get().then(doc=>{
     if(doc.exists){
       currentUser = doc.data();
@@ -150,11 +157,33 @@ function loadApp(){
       userBalance.innerText = currentUser.balance.toFixed(2);
       dailyIncome.innerText = currentUser.dailyIncome || 0;
       invested.innerText = currentUser.invested || 0;
-      userPackage.innerText = currentUser.package || 'None';
-      refLink.value = window.location.origin + '/index.html?ref=' + currentUser.phone;
+
+      // LOAD EVERYTHING ON START
+      loadHome();
+      loadTasks();
+      loadPackages();
+
     } else {
       logout();
     }
+  });
+}
+
+function loadHome(){
+  homeDaily.innerText = currentUser.dailyIncome || 0;
+  homeEarned.innerText = currentUser.totalEarned || 0;
+  homePackage.innerText = currentUser.package || 'None';
+
+  homePackages.innerHTML = '';
+  [packages[0], packages[2], packages[4]].forEach(p=>{
+    homePackages.innerHTML += `
+    <div style="background:#222; padding:12px; border-radius:10px; margin-bottom:10px;">
+      <div style="display:flex; justify-content:space-between;">
+        <b>${p.level}</b>
+        <span style="color:#fbbf24;">Ksh ${p.price}</span>
+      </div>
+      <small>Earn Ksh ${p.daily}/day for ${p.days} days</small>
+    </div>`;
   });
 }
 
@@ -173,41 +202,39 @@ function getDailyReward(){
 function loadTasks(){
   let today = new Date().toDateString();
   let lastDate = localStorage.getItem('taskDate_'+currentUser.phone);
-  
-  if(lastDate !== today){
+
+  if(lastDate!== today){
     localStorage.setItem('taskDone_'+currentUser.phone, 0);
     localStorage.setItem('taskDate_'+currentUser.phone, today);
   }
-  
+
   let taskDone = parseInt(localStorage.getItem('taskDone_'+currentUser.phone)||0);
   let reward = getDailyReward();
   dailyEarn.innerText = reward;
-  
-  videoList.innerHTML = '';
-  
+
   if(reward === 0){
     videoList.innerHTML = `<div class="card" style="text-align:center;">
       <h3>🔒 Buy a Package First</h3>
-      <button class="btn" onclick="switchTab('packageTab', document.querySelectorAll('.nav-item')[2])">Buy Package</button>
+      <button class="btn" onclick="switchTab('packageTab', document.querySelectorAll('.nav-item')[2])">Go to Packages</button>
     </div>`;
     return;
   }
-  
+
   let canWatch = taskDone === 0;
-  
+
   videoList.innerHTML = `
   <div class="card" style="display:flex; align-items:center; justify-content:space-between;">
     <div>
       <h4>Today's Task</h4>
       <small>${taskDone?'✅ Completed Today':'▶️ Available'} - Reward: Ksh ${reward}</small>
     </div>
-    ${canWatch ? `<button class="btn" style="width:120px;" onclick="doTask()">Start</button>` : ''}
+    ${canWatch? `<button class="btn" style="width:120px;" onclick="doTask()">Start</button>` : ''}
   </div>`;
 }
 
 function doTask(){
   if(!confirm("Watch ad for 10s to earn Ksh "+getDailyReward()+"?")) return;
-  
+
   let btn = event.target;
   btn.innerText = "10s";
   btn.disabled = true;
@@ -227,30 +254,30 @@ function finishTask(){
   currentUser.balance += reward;
   currentUser.dailyIncome = reward;
   currentUser.totalEarned = (currentUser.totalEarned || 0) + reward;
-  
+
   localStorage.setItem('taskDone_'+currentUser.phone, 1);
   db.collection("users").doc(currentUser.phone).update(currentUser);
-  
+
   userBalance.innerText = currentUser.balance.toFixed(2);
   dailyIncome.innerText = reward;
   loadTasks();
+  loadHome();
   alert('✅ Ksh '+reward+' Credited!');
 }
 
-// PACKAGE PAGE LOGIC
 function loadPackages(){
   packageBalance.innerText = currentUser.balance.toFixed(2);
   packagesList.innerHTML = '';
-  
+
   packages.forEach(p=>{
     let bought = currentUser.package === p.level;
-    let canBuy = currentUser.balance >= p.price && !bought;
-    
+    let canBuy = currentUser.balance >= p.price &&!bought;
+
     packagesList.innerHTML += `
     <div class="card" style="border:2px solid ${bought?'#22c55e':'#333'};">
       <div style="display:flex; justify-content:space-between;">
         <h3>${p.level} Package</h3>
-        ${bought ? '<span style="color:#22c55e;">✓ ACTIVE</span>' : ''}
+        ${bought? '<span style="color:#22c55e;">✓ ACTIVE</span>' : ''}
       </div>
       <table>
         <tr><td>💰 Stake</td><td><b>Ksh ${p.price}</b></td></tr>
@@ -258,10 +285,10 @@ function loadPackages(){
         <tr><td>⏰ Duration</td><td><b>${p.days} Days</b></td></tr>
         <tr><td>🎯 Total</td><td><b>Ksh ${p.total}</b></td></tr>
       </table>
-      ${!bought ? 
+      ${!bought?
         `<button class="btn" ${!canBuy?'disabled':''} onclick="buyPackage('${p.level}',${p.price},${p.daily})">
-          ${canBuy ? 'Buy Now' : 'Insufficient Balance'}
-        </button>` 
+          ${canBuy? 'Buy Now' : 'Insufficient Balance'}
+        </button>`
         : '<button class="btn" disabled>Active</button>'
       }
     </div>`;
@@ -274,21 +301,21 @@ function buyPackage(level,price,daily){
     return;
   }
   if(!confirm("Buy "+level+" for Ksh "+price+"?")) return;
-  
+
   currentUser.balance -= price;
   currentUser.invested = (currentUser.invested || 0) + price;
   currentUser.package = level;
   currentUser.dailyIncome = daily;
-  
+
   db.collection("users").doc(currentUser.phone).update(currentUser);
-  
+
   userBalance.innerText = currentUser.balance.toFixed(2);
   invested.innerText = currentUser.invested;
   dailyIncome.innerText = daily;
-  userPackage.innerText = level;
-  
+
   loadPackages();
   loadTasks();
+  loadHome();
   alert('✅ '+level+' Activated!');
 }
 
