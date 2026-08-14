@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEXA VIEW</title>
+<title>NEXA VIEW v2</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
   body { font-family: 'Poppins', sans-serif; background:#000; color:white; margin:0; padding-bottom:80px; }
@@ -34,6 +34,17 @@
   .nav-item.active { color:#fbbf24; }
   .tab-content { display:none; }
   .tab-content.active { display:block; }
+
+  /* PACKAGES */
+  .package-grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; }
+  .package { background:#1a1a1a; padding:15px; border-radius:12px; border:2px solid #333; text-align:center; }
+  .package.active { border-color:#fbbf24; background:#2a1f00; }
+  .package h4 { color:#fbbf24; margin:0 0 10px 0; }
+  .package .price { font-size:20px; font-weight:bold; }
+  .package .earn { font-size:12px; color:#22c55e; margin:5px 0; }
+  .package button { width:100%; padding:10px; margin-top:10px; background:#fbbf24; color:black; border:none; border-radius:8px; font-weight:bold; cursor:pointer; }
+  .task-btn { width:100%; padding:16px; background:#22c55e; color:white; border:none; border-radius:12px; font-weight:bold; font-size:16px; margin-top:15px; cursor:pointer; }
+  .task-btn:disabled { background:#444; color:#888; }
 </style>
 </head>
 <body>
@@ -86,11 +97,29 @@
     <h1>Ksh <span id="userBalance">0.00</span></h1>
   </div>
 
-  <div id="homeTab" class="tab-content active"><div class="card"><h2>HOME</h2><p>Welcome to NEXA VIEW. Complete tasks to earn.</p></div></div>
-  <div id="taskTab" class="tab-content"><div class="card"><h2>TASKS</h2><p>0/20 Tasks completed today</p></div></div>
-  <div id="packageTab" class="tab-content"><div class="card"><h2>PACKAGES</h2><p>Buy a package to unlock tasks</p></div></div>
-  <div id="infoTab" class="tab-content"><div class="card"><h2>INFO</h2><p>Support & Withdrawal Rules</p></div></div>
-  <div id="meTab" class="tab-content"><div class="card"><h2>ME</h2><button class="btn" style="background:#ef4444;color:white;" onclick="logout()">Logout</button></div></div>
+  <div id="homeTab" class="tab-content active"><div class="card"><h2>HOME</h2><p>Welcome to NEXA VIEW. Buy a package to start earning.</p></div></div>
+  
+  <div id="taskTab" class="tab-content">
+    <div class="card">
+      <h2>DAILY TASKS</h2>
+      <p>Tasks Done: <span id="tasksDone">0</span>/20</p>
+      <p>Earning per Task: Ksh <span id="earnPerTask">0</span></p>
+      <button class="task-btn" id="doTaskBtn" onclick="doTask()">CLAIM TASK +Ksh 0</button>
+      <p id="taskMsg" style="text-align:center; margin-top:10px;"></p>
+    </div>
+  </div>
+
+  <div id="packageTab" class="tab-content">
+    <div class="card">
+      <h2>PACKAGES</h2>
+      <p style="color:#888; font-size:13px;">Buy a package to unlock daily tasks</p>
+      <div class="package-grid" id="packageGrid"></div>
+      <p id="packageMsg" style="text-align:center; margin-top:10px;"></p>
+    </div>
+  </div>
+
+  <div id="infoTab" class="tab-content"><div class="card"><h2>INFO</h2><p>Support & Withdrawal Rules</p><p>Min Withdraw: Ksh 100</p></div></div>
+  <div id="meTab" class="tab-content"><div class="card"><h2>ME</h2><p>Package: <span id="userPackage">None</span></p><button class="btn" style="background:#ef4444;color:white;" onclick="logout()">Logout</button></div></div>
 
   <div class="bottom-nav">
     <div class="nav-item active" onclick="switchTab('homeTab', this)">🏠<br>Home</div>
@@ -109,12 +138,23 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 let currentUser = null;
 
-// AUTO INVITE
+const PACKAGES = [
+  {id:1, name:"L1", price:500, daily:50, tasks:20},
+  {id:2, name:"L2", price:1500, daily:180, tasks:20},
+  {id:3, name:"L3", price:3500, daily:450, tasks:20},
+  {id:4, name:"L4", price:7000, daily:950, tasks:20},
+  {id:5, name:"L5", price:15000, daily:2100, tasks:20},
+  {id:6, name:"L6", price:30000, daily:4300, tasks:20},
+  {id:7, name:"L7", price:60000, daily:8800, tasks:20},
+  {id:8, name:"L8", price:120000, daily:18000, tasks:20},
+];
+
 const refCode = new URLSearchParams(window.location.search).get('ref');
 if(refCode) regInvite.value = refCode;
 generateCaptcha();
 agreeTerms.onchange = () => regBtn.disabled = !agreeTerms.checked;
 regBtn.disabled = true;
+loadPackages();
 
 function generateCaptcha(){ regCaptcha.innerText = Math.floor(1000 + Math.random() * 9000); }
 function showLogin(){ registerForm.classList.add('hidden'); loginForm.classList.remove('hidden'); }
@@ -126,7 +166,10 @@ function register(){
   if(phone.length!==12){ regMsg.innerText="❌ Invalid phone"; return; }
   if(regPass.value.length<4){ regMsg.innerText="❌ Min 4 digits"; return; }
   
-  db.collection("users").doc(phone).set({phone, password:regPass.value, balance:0, package:"None", invitedBy:regInvite.value||"None"}).then(()=>{
+  db.collection("users").doc(phone).set({
+    phone, password:regPass.value, balance:0, package:"None", 
+    tasksDone:0, lastTaskDate:"", invitedBy:regInvite.value||"None"
+  }).then(()=>{
     regMsg.style.color="#22c55e"; regMsg.innerText="✅ Registered! Login now.";
   });
 }
@@ -147,6 +190,56 @@ function loadApp(){
   appPage.classList.remove('hidden');
   userPhone.innerText = currentUser.phone;
   userBalance.innerText = currentUser.balance.toFixed(2);
+  userPackage.innerText = currentUser.package;
+  updateTaskUI();
+}
+
+function loadPackages(){
+  packageGrid.innerHTML = "";
+  PACKAGES.forEach(p=>{
+    let earnPerTask = (p.daily / p.tasks).toFixed(2);
+    packageGrid.innerHTML += `
+      <div class="package ${currentUser?.package==p.name?'active':''}">
+        <h4>${p.name}</h4>
+        <div class="price">Ksh ${p.price}</div>
+        <div class="earn">Earn: Ksh ${p.daily}/day</div>
+        <div class="earn">${earnPerTask} per task</div>
+        <button onclick="buyPackage('${p.name}', ${p.price})">${currentUser?.package==p.name?'ACTIVE':'BUY NOW'}</button>
+      </div>
+    `;
+  });
+}
+
+function buyPackage(name, price){
+  if(currentUser.balance < price){ packageMsg.innerText="❌ Not enough balance"; return; }
+  let newBalance = currentUser.balance - price;
+  db.collection("users").doc(currentUser.phone).update({package:name, balance:newBalance}).then(()=>{
+    currentUser.package = name; currentUser.balance = newBalance;
+    packageMsg.style.color="#22c55e"; packageMsg.innerText=`✅ ${name} Activated!`;
+    loadApp(); loadPackages();
+  });
+}
+
+function updateTaskUI(){
+  let pkg = PACKAGES.find(p=>p.name==currentUser.package);
+  if(!pkg){ earnPerTask.innerText=0; doTaskBtn.disabled=true; doTaskBtn.innerText="BUY PACKAGE FIRST"; return; }
+  let earnPerTaskVal = (pkg.daily / pkg.tasks).toFixed(2);
+  earnPerTask.innerText = earnPerTaskVal;
+  doTaskBtn.innerText = `CLAIM TASK +Ksh ${earnPerTaskVal}`;
+  doTaskBtn.disabled = currentUser.tasksDone >= 20;
+  tasksDone.innerText = currentUser.tasksDone;
+}
+
+function doTask(){
+  let pkg = PACKAGES.find(p=>p.name==currentUser.package);
+  let earnPerTaskVal = (pkg.daily / pkg.tasks);
+  let newBalance = currentUser.balance + earnPerTaskVal;
+  let newTasks = currentUser.tasksDone + 1;
+  db.collection("users").doc(currentUser.phone).update({balance:newBalance, tasksDone:newTasks}).then(()=>{
+    currentUser.balance = newBalance; currentUser.tasksDone = newTasks;
+    taskMsg.style.color="#22c55e"; taskMsg.innerText=`+Ksh ${earnPerTaskVal.toFixed(2)} Credited!`;
+    loadApp(); updateTaskUI();
+  });
 }
 
 function switchTab(tabId, el){
@@ -158,7 +251,6 @@ function switchTab(tabId, el){
 
 function logout(){ localStorage.removeItem('nexaUser'); location.reload(); }
 
-// AUTO LOGIN
 const saved = localStorage.getItem('nexaUser');
 if(saved){ db.collection("users").doc(saved).get().then(d=>{ if(d.exists){currentUser=d.data(); loadApp();}})}
 </script>
