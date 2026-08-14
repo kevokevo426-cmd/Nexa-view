@@ -12,21 +12,18 @@
   .balance-card h3,.balance-card h1 { color:black; margin:5px 0; }
   input { width:100%; padding:14px; margin:8px 0; border-radius:10px; background:#222; border:1px solid #333; color:white; box-sizing:border-box; font-size:16px; }
   .btn { width:100%; padding:14px; background:linear-gradient(90deg,#fbbf24,#f59e0b); color:black; border:none; border-radius:10px; font-weight:bold; font-size:16px; margin-top:10px; cursor:pointer; }
-  .btn:disabled { background:#444; color:#888; }
+  .btn:disabled { background:#444; color:#888; cursor:not-allowed; }
   label { font-size:13px; color:#888; }
   .hidden { display:none; }
   .welcome { padding:20px 20px 0 20px; font-size:22px; font-weight:bold; }
-  table { width:100%; border-collapse:collapse; font-size:13px; margin:10px 0; }
-  td,th { border:1px solid #333; padding:10px; text-align:center; }
-  th { color:#fbbf24; }
+  table { width:100%; border-collapse:collapse; font-size:14px; margin:10px 0; }
+  td { padding:8px; border-bottom:1px solid #222; }
   .bottom-nav { position:fixed; bottom:0; left:0; right:0; background:#111; display:flex; justify-content:space-around; padding:12px 0; border-top:1px solid #222; }
   .nav-item { text-align:center; color:#888; font-size:11px; cursor:pointer; }
   .nav-item.active { color:#fbbf24; }
   .nav-icon { font-size:24px; display:block; margin-bottom:3px; }
   .tab-content { display:none; }
   .tab-content.active { display:block; }
-  .package-card { border:1px solid #333; }
-  .package-card.active { border:2px solid #22c55e; }
 </style>
 </head>
 <body>
@@ -37,22 +34,21 @@
   <div class="balance-card">
     <h3>Total Balance</h3>
     <h1>Ksh <span id="userBalance">0.00</span></h1>
-    <p style="margin:0;">Daily Income: Ksh <span id="dailyIncome">0</span> | Invested: Ksh <span id="invested">0</span></p>
+    <p style="margin:0;">Daily: Ksh <span id="dailyIncome">0</span> | Invested: Ksh <span id="invested">0</span></p>
   </div>
 
   <!-- HOME TAB -->
   <div id="homeTab" class="tab-content active">
     <div class="card">
       <h2>🏠 HOME</h2>
-      <p>Welcome to NEXA VIEW. Complete tasks to earn.</p>
+      <p>Welcome to NEXA VIEW</p>
       <p><b>Your Package:</b> <span id="userPackage">None</span></p>
     </div>
     <div class="card">
       <h2>📢 How It Works</h2>
       <p>1. Buy a Package</p>
-      <p>2. Watch 1 Ad Daily</p>
-      <p>3. Earn Daily Income</p>
-      <p>4. Withdraw Anytime</p>
+      <p>2. Complete 1 Task Daily</p>
+      <p>3. Earn & Withdraw</p>
     </div>
   </div>
 
@@ -61,16 +57,17 @@
     <div class="card">
       <h2>📋 DAILY TASKS</h2>
       <p>Your Daily Earning: <b style="color:#fbbf24;">Ksh <span id="dailyEarn">0</span></b></p>
-      <p style="color:#888; font-size:13px;">Complete 1 task per day. Resets at 12AM</p>
+      <p style="color:#888; font-size:13px;">1 Task per day. Resets at 12AM</p>
     </div>
     <div id="videoList"></div>
   </div>
 
-  <!-- PACKAGE TAB -->
+  <!-- PACKAGE TAB - FILLED -->
   <div id="packageTab" class="tab-content">
     <div class="card">
       <h2>💎 INVESTMENT PACKAGES</h2>
       <p>Buy a package to unlock daily tasks</p>
+      <p style="color:#fbbf24; font-size:13px;">Your Balance: Ksh <span id="packageBalance">0</span></p>
     </div>
     <div id="packagesList"></div>
   </div>
@@ -81,8 +78,7 @@
       <h2>ℹ️ INFO</h2>
       <p><b>Support:</b> WhatsApp 0712 345 678</p>
       <p><b>Min Withdrawal:</b> Ksh 200</p>
-      <p><b>Withdrawal Tax:</b> 15%</p>
-      <p><b>1 Withdrawal per day</b></p>
+      <p><b>Tax:</b> 15%</p>
     </div>
   </div>
 
@@ -110,7 +106,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <script>
-// FIREBASE CONFIG - YOURS
+// YOUR FIREBASE CONFIG
 const firebaseConfig = {
   apiKey: "AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",
   authDomain: "nexa-view.firebaseapp.com",
@@ -130,15 +126,6 @@ const packages = [
   {level:"L6", price:4800, daily:250, days:30, total:7500},
   {level:"L7", price:7500, daily:350, days:30, total:10500},
   {level:"L8", price:10000, daily:500, days:30, total:15000}
-];
-
-const weeklyTasks = [
-  {id:1,title:"Task 1 - Watch Ad"},
-  {id:2,title:"Task 2 - Watch Ad"},
-  {id:3,title:"Task 3 - Watch Ad"},
-  {id:4,title:"Task 4 - Watch Ad"},
-  {id:5,title:"Task 5 - Watch Ad"},
-  {id:6,title:"Task 6 - Watch Ad"}
 ];
 
 function switchTab(tabId, el){
@@ -201,27 +188,25 @@ function loadTasks(){
   if(reward === 0){
     videoList.innerHTML = `<div class="card" style="text-align:center;">
       <h3>🔒 Buy a Package First</h3>
-      <p>Go to Package tab to unlock daily tasks</p>
       <button class="btn" onclick="switchTab('packageTab', document.querySelectorAll('.nav-item')[2])">Buy Package</button>
     </div>`;
     return;
   }
   
   let canWatch = taskDone === 0;
-  let watched = taskDone === 1;
   
   videoList.innerHTML = `
-  <div class="card" style="display:flex; align-items:center; justify-content:space-between; opacity:${!canWatch&&watched?'0.4':1};">
+  <div class="card" style="display:flex; align-items:center; justify-content:space-between;">
     <div>
       <h4>Today's Task</h4>
-      <small>Reward: Ksh ${reward} | ${watched?'✅ Completed Today':canWatch?'▶️ Available':'🔒 Come back tomorrow'}</small>
+      <small>${taskDone?'✅ Completed Today':'▶️ Available'} - Reward: Ksh ${reward}</small>
     </div>
     ${canWatch ? `<button class="btn" style="width:120px;" onclick="doTask()">Start</button>` : ''}
   </div>`;
 }
 
 function doTask(){
-  if(!confirm("Watch this ad for 10 seconds to earn Ksh "+getDailyReward()+"?")) return;
+  if(!confirm("Watch ad for 10s to earn Ksh "+getDailyReward()+"?")) return;
   
   let btn = event.target;
   btn.innerText = "10s";
@@ -244,53 +229,67 @@ function finishTask(){
   currentUser.totalEarned = (currentUser.totalEarned || 0) + reward;
   
   localStorage.setItem('taskDone_'+currentUser.phone, 1);
-  
   db.collection("users").doc(currentUser.phone).update(currentUser);
   
   userBalance.innerText = currentUser.balance.toFixed(2);
   dailyIncome.innerText = reward;
   loadTasks();
-  alert('✅ Ksh '+reward+' Credited to your balance!');
+  alert('✅ Ksh '+reward+' Credited!');
 }
 
+// PACKAGE PAGE LOGIC
 function loadPackages(){
+  packageBalance.innerText = currentUser.balance.toFixed(2);
   packagesList.innerHTML = '';
+  
   packages.forEach(p=>{
     let bought = currentUser.package === p.level;
+    let canBuy = currentUser.balance >= p.price && !bought;
+    
     packagesList.innerHTML += `
-    <div class="card package-card ${bought?'active':''}">
-      <h3>${p.level} Package ${bought?'<span style="color:#22c55e;">✓ Active</span>':''}</h3>
+    <div class="card" style="border:2px solid ${bought?'#22c55e':'#333'};">
+      <div style="display:flex; justify-content:space-between;">
+        <h3>${p.level} Package</h3>
+        ${bought ? '<span style="color:#22c55e;">✓ ACTIVE</span>' : ''}
+      </div>
       <table>
-        <tr><td>Stake</td><td>Ksh ${p.price}</td></tr>
-        <tr><td>Daily</td><td>Ksh ${p.daily}</td></tr>
-        <tr><td>Duration</td><td>${p.days} Days</td></tr>
-        <tr><td>Total Return</td><td>Ksh ${p.total}</td></tr>
+        <tr><td>💰 Stake</td><td><b>Ksh ${p.price}</b></td></tr>
+        <tr><td>📅 Daily</td><td><b>Ksh ${p.daily}</b></td></tr>
+        <tr><td>⏰ Duration</td><td><b>${p.days} Days</b></td></tr>
+        <tr><td>🎯 Total</td><td><b>Ksh ${p.total}</b></td></tr>
       </table>
-      ${!bought ? `<button class="btn" onclick="buyPackage('${p.level}',${p.price},${p.daily})">Buy Now</button>` : '<button class="btn" disabled>Active</button>'}
+      ${!bought ? 
+        `<button class="btn" ${!canBuy?'disabled':''} onclick="buyPackage('${p.level}',${p.price},${p.daily})">
+          ${canBuy ? 'Buy Now' : 'Insufficient Balance'}
+        </button>` 
+        : '<button class="btn" disabled>Active</button>'
+      }
     </div>`;
   });
 }
 
 function buyPackage(level,price,daily){
   if(currentUser.balance < price){
-    alert('❌ Insufficient Balance. Deposit first.');
+    alert('❌ Insufficient Balance');
     return;
   }
   if(!confirm("Buy "+level+" for Ksh "+price+"?")) return;
   
   currentUser.balance -= price;
-  currentUser.invested += price;
+  currentUser.invested = (currentUser.invested || 0) + price;
   currentUser.package = level;
   currentUser.dailyIncome = daily;
   
   db.collection("users").doc(currentUser.phone).update(currentUser);
+  
   userBalance.innerText = currentUser.balance.toFixed(2);
   invested.innerText = currentUser.invested;
   dailyIncome.innerText = daily;
   userPackage.innerText = level;
+  
   loadPackages();
   loadTasks();
-  alert('✅ '+level+' Package Activated!');
+  alert('✅ '+level+' Activated!');
 }
 
 function logout(){
