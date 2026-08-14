@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXA VIEW</title>
+<style>
+body{font-family:Arial;background:#0a0a0a;color:#fff;margin:0;padding:20px}
+.card{background:#1a1a1a;padding:20px;border-radius:12px;max-width:400px;margin:40px auto}
+input,button{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:none;font-size:16px}
+button{background:#00ff88;color:#000;font-weight:bold;cursor:pointer}
+.hidden{display:none}
+.nav{display:flex;gap:10px;margin-bottom:20px}
+.nav button{flex:1;background:#222;color:#fff}
+.timer{font-size:48px;text-align:center;margin:20px 0}
+</style>
+</head>
+<body>
+<div id="auth" class="card">
+  <h2>NEXA VIEW</h2>
+  <input id="email" placeholder="Email">
+  <input id="pass" type="password" placeholder="Password">
+  <button onclick="register()">Register - Invest KES 500</button>
+  <button onclick="login()">Login</button>
+</div>
+
+<div id="app" class="hidden">
+  <div class="nav">
+    <button onclick="show('home')">Home</button>
+    <button onclick="show('watch')">Earn</button>
+    <button onclick="show('withdraw')">Withdraw</button>
+  </div>
+  <div id="home" class="card"></div>
+  <div id="watch" class="card hidden">
+    <h3>Watch & Earn</h3>
+    <p>Watch ad for 2 minutes to earn KES 40</p>
+    <div class="timer" id="timer">02:00</div>
+    <button id="startBtn" onclick="startTimer()">Start</button>
+  </div>
+  <div id="withdraw" class="card hidden">
+    <h3>Withdraw</h3>
+    <p>Balance: KES <span id="bal">0</span></p>
+    <input id="mpesa" placeholder="M-Pesa Number">
+    <button onclick="withdraw()">Request Withdraw</button>
+  </div>
+  <button onclick="logout()">Logout</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD1ftJH9O9fbV9X5oUr8r5c9YkeV7N1ecI",
+  authDomain: "nexa-view.firebaseapp.com",
+  projectId: "nexa-view",
+  storageBucket: "nexa-view.firebasestorage.app",
+  messagingSenderId: "947915083946",
+  appId: "1:947915083946:web:7f2cb69ddbc2f8bd2ec0d3",
+  measurementId: "G-Q2ZD17234K"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+let currentUser = null;
+let timerInterval = null;
+
+onAuthStateChanged(auth, async (user)=>{
+  if(user){
+    currentUser = user.uid;
+    document.getElementById('auth').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+    loadUser();
+  }
+});
+
+async function register(){
+  const email = document.getElementById('email').value;
+  const pass = document.getElementById('pass').value;
+  const userCred = await createUserWithEmailAndPassword(auth,email,pass);
+  await setDoc(doc(db,"users",userCred.user.uid),{
+    email, invested:500, earned:0, today:40, lastWatch:''
+  });
+  alert("Registered! Invest KES 500 via M-Pesa to admin");
+}
+
+async function login(){
+  const email = document.getElementById('email').value;
+  const pass = document.getElementById('pass').value;
+  await signInWithEmailAndPassword(auth,email,pass);
+}
+
+async function loadUser(){
+  const snap = await getDoc(doc(db,"users",currentUser));
+  const data = snap.data();
+  document.getElementById('home').innerHTML = `
+    <h3>Welcome</h3>
+    <p>Invested: KES ${data.invested}</p>
+    <p>Today: KES ${data.today}</p>
+    <p>Total Earned: KES ${data.earned}</p>
+  `;
+  document.getElementById('bal').innerText = data.earned;
+}
+
+function show(id){
+  ['home','watch','withdraw'].forEach(x=>document.getElementById(x).classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+
+function startTimer(){
+  let time = 120;
+  document.getElementById('startBtn').disabled = true;
+  timerInterval = setInterval(async ()=>{
+    time--;
+    let m = String(Math.floor(time/60)).padStart(2,'0');
+    let s = String(time%60).padStart(2,'0');
+    document.getElementById('timer').innerText = `${m}:${s}`;
+    if(time<=0){
+      clearInterval(timerInterval);
+      const userRef = doc(db,"users",currentUser);
+      const snap = await getDoc(userRef);
+      await updateDoc(userRef,{earned: snap.data().earned + 40});
+      alert("KES 40 Added!");
+      loadUser();
+      document.getElementById('startBtn').disabled = false;
+      document.getElementById('timer').innerText = "02:00";
+    }
+  },1000);
+}
+
+function withdraw(){
+  alert("Withdraw request sent to admin");
+}
+
+function logout(){ signOut(auth); location.reload(); }
+</script>
+</body>
+</html>
