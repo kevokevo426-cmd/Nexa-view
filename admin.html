@@ -9,8 +9,11 @@
 *{box-sizing:border-box}
 body{background:#000;color:white;font-family:Poppins;padding:15px;margin:0}
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.header-actions{display:flex;gap:8px}
 .logout-btn{background:#ef4444;color:white;border:none;padding:8px 14px;border-radius:8px;font-weight:700;cursor:pointer;font-size:12px}
+.broadcast-btn{background:#8b5cf6;color:white;border:none;padding:8px 14px;border-radius:8px;font-weight:700;cursor:pointer;font-size:12px}
 .box{background:#111;border:1px solid #333;border-radius:12px;padding:14px;margin-bottom:15px}
+.pending-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:15px}
 .stat-card{background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:12px;text-align:center}
 .stat-card h4{color:#888;font-size:11px;margin:0;font-weight:400}
@@ -25,21 +28,28 @@ h3{color:#fbbf24;margin:0 0 12px 0;font-size:15px}
 .btn-red{background:#ef4444;color:white}
 .btn-yellow{background:#f59e0b;color:#000}
 .btn-blue{background:#3b82f6;color:white}
+.btn-purple{background:#8b5cf6;color:white}
 .req-card{background:#1a1a1a;padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid #333;font-size:12px;line-height:1.6}
-.user-card{background:#1a1a1a;padding:10px;border-radius:10px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:flex-start;border:1px solid #333;gap:10px}
+.user-card{background:#1a1a1a;padding:10px;border-radius:10px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:flex-start;border:1px solid #333;gap:10px;cursor:pointer;transition:0.2s}
+.user-card:hover{border-color:#fbbf24;background:#1f1f1f}
 .user-num{background:#fbbf24;color:#000;font-weight:700;font-size:11px;border-radius:6px;padding:4px 8px;min-width:28px;text-align:center;margin-top:3px}
 .user-info{font-size:12px;line-height:1.7;flex:1}
 .user-info b{color:#fbbf24}
 .btn-group{display:flex;flex-direction:column;gap:4px}
-input[type="number"], input[type="password"]{padding:10px;background:#222;border:1px solid #444;color:white;border-radius:8px;width:100%;font-family:Poppins;font-size:14px}
+input[type="number"], input[type="password"], textarea{padding:10px;background:#222;border:1px solid #444;color:white;border-radius:8px;width:100%;font-family:Poppins;font-size:14px}
+textarea{resize:vertical;min-height:80px}
 .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:999;justify-content:center;align-items:center}
 .modal-content{background:#111;width:90%;max-width:400px;border-radius:16px;padding:20px;border:1px solid #333}
-.modal-content h3{margin-top:0;text-align:center}
-/* LOGIN SCREEN */
+.modal-content h3{margin-top:0;text-align:center;color:#fbbf24}
+.info-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #222;font-size:13px}
+.info-row:last-child{border:none}
+.info-label{color:#888}
+.info-value{color:white;font-weight:600}
 #loginScreen{display:flex;position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:9999;justify-content:center;align-items:center}
 .login-box{background:#111;padding:25px;border-radius:16px;border:1px solid #333;width:90%;max-width:350px;text-align:center}
 .login-box h2{margin-bottom:15px}
 .login-box input{margin-bottom:15px}
+@media(max-width:768px){.pending-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -58,7 +68,10 @@ input[type="number"], input[type="password"]{padding:10px;background:#222;border
 <div id="mainPanel" style="display:none">
   <div class="header">
     <h2>👑 NEXA ADMIN PANEL</h2>
-    <button class="logout-btn" onclick="logout()">Logout</button>
+    <div class="header-actions">
+      <button class="broadcast-btn" onclick="openBroadcastModal()">📢 To All</button>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
   </div>
 
   <!-- TOP STATS -->
@@ -69,10 +82,16 @@ input[type="number"], input[type="password"]{padding:10px;background:#222;border
     <div class="stat-card"><h4>Today's Income</h4><p id="todayIncome">Ksh 0.00</p></div>
   </div>
 
-  <!-- PENDING WITHDRAWALS -->
-  <div class="box">
-    <h3>💸 Pending Withdrawals</h3>
-    <div id="withdrawList">Loading...</div>
+  <!-- PENDING REQUESTS - 2 COLUMNS -->
+  <div class="pending-grid">
+    <div class="box">
+      <h3>💸 Pending Withdrawals</h3>
+      <div id="withdrawList">Loading...</div>
+    </div>
+    <div class="box">
+      <h3>🎁 Pending Referral Bonus</h3>
+      <div id="referralList">Loading...</div>
+    </div>
   </div>
 
   <!-- USERS -->
@@ -85,6 +104,19 @@ input[type="number"], input[type="password"]{padding:10px;background:#222;border
     <div id="userList">Loading...</div>
   </div>
 
+  <!-- USER INFO BOX MODAL -->
+  <div id="userInfoModal" class="modal" onclick="closeUserInfoModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <h3>👤 User Information</h3>
+      <div id="userInfoContent"></div>
+      <div style="margin-top:15px;display:flex;gap:8px">
+        <button class="btn btn-purple" style="flex:1" onclick="sendMsgFromInfo()">Send Message</button>
+        <button class="btn btn-blue" style="flex:1" onclick="depositFromInfo()">Deposit</button>
+        <button class="btn btn-red" style="flex:1" onclick="closeUserInfoModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
   <!-- DEPOSIT MODAL -->
   <div id="depositModal" class="modal" onclick="closeDepositModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
@@ -95,6 +127,33 @@ input[type="number"], input[type="password"]{padding:10px;background:#222;border
       <div style="margin-top:15px;display:flex;gap:8px">
         <button class="btn btn-blue" style="flex:1" onclick="confirmDeposit()">Add Money</button>
         <button class="btn btn-red" style="flex:1" onclick="closeDepositModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MESSAGE USER MODAL -->
+  <div id="messageModal" class="modal" onclick="closeMessageModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <h3>📩 Send Message to User</h3>
+      <p id="messageUserPhone" style="color:#fbbf24;font-weight:600"></p>
+      <label>Message</label>
+      <textarea id="userMessageInput" placeholder="Type message for this user..."></textarea>
+      <div style="margin-top:15px;display:flex;gap:8px">
+        <button class="btn btn-purple" style="flex:1" onclick="sendUserMessage()">Send</button>
+        <button class="btn btn-red" style="flex:1" onclick="closeMessageModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BROADCAST MODAL -->
+  <div id="broadcastModal" class="modal" onclick="closeBroadcastModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <h3>📢 Send Message to All Users</h3>
+      <label>Message</label>
+      <textarea id="broadcastMessage" placeholder="Enter message for all users..."></textarea>
+      <div style="margin-top:15px;display:flex;gap:8px">
+        <button class="btn btn-blue" style="flex:1" onclick="sendBroadcast()">Send to All</button>
+        <button class="btn btn-red" style="flex:1" onclick="closeBroadcastModal()">Cancel</button>
       </div>
     </div>
   </div>
@@ -111,15 +170,13 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// ===== ADMIN PASSWORD SETTINGS =====
-const ADMIN_PASSWORD = "nexa2026"; // <-- CHANGE THIS PASSWORD
-// ===================================
+const ADMIN_PASSWORD = "nexa2026";
 
 let selectedUserPhone = "";
+let selectedUserData = {};
 let userCounter = 1;
 let allUsers = [];
 
-// CHECK LOGIN ON LOAD
 window.onload = function(){
   if(localStorage.getItem('nexaAdminLoggedIn') === 'true'){
     showPanel();
@@ -141,6 +198,7 @@ function showPanel(){
   document.getElementById('mainPanel').style.display = 'block';
   loadUsers();
   loadWithdrawals();
+  loadReferralRequests();
 }
 
 function logout(){
@@ -148,7 +206,91 @@ function logout(){
   location.reload();
 }
 
-// LOAD USERS WITH STATS
+// USER INFO BOX
+function openUserInfoModal(user){
+  selectedUserData = user;
+  selectedUserPhone = user.phone;
+  let totalRefs = allUsers.filter(x => x.referredBy === user.myReferralCode).length;
+  
+  let html = `
+    <div class="info-row"><span class="info-label">Phone</span><span class="info-value">${user.phone}</span></div>
+    <div class="info-row"><span class="info-label">User ID</span><span class="info-value">${user.userID || 'NO ID'}</span></div>
+    <div class="info-row"><span class="info-label">Referral Code</span><span class="info-value">${user.myReferralCode || 'NO CODE'}</span></div>
+    <div class="info-row"><span class="info-label">Referred By</span><span class="info-value">${user.referredBy || 'NONE'}</span></div>
+    <div class="info-row"><span class="info-label">Balance</span><span class="info-value" style="color:#22c55e">Ksh ${(user.balance||0).toFixed(2)}</span></div>
+    <div class="info-row"><span class="info-label">Products Bought</span><span class="info-value">${user.productsBought || 0}</span></div>
+    <div class="info-row"><span class="info-label">Total Invested</span><span class="info-value" style="color:#3b82f6">Ksh ${(user.totalInvested||0).toFixed(2)}</span></div>
+    <div class="info-row"><span class="info-label">Total Income</span><span class="info-value" style="color:#22c55e">Ksh ${(user.totalIncome||0).toFixed(2)}</span></div>
+    <div class="info-row"><span class="info-label">Today's Income</span><span class="info-value" style="color:#f59e0b">Ksh ${(user.todayIncome||0).toFixed(2)}</span></div>
+    <div class="info-row"><span class="info-label">Total Referrals</span><span class="info-value" style="color:#a855f7">${totalRefs}</span></div>
+  `;
+  
+  document.getElementById('userInfoContent').innerHTML = html;
+  document.getElementById('userInfoModal').style.display = 'flex';
+}
+
+function closeUserInfoModal(){
+  document.getElementById('userInfoModal').style.display = 'none';
+}
+
+function sendMsgFromInfo(){
+  closeUserInfoModal();
+  openMessageModal(selectedUserPhone);
+}
+
+function depositFromInfo(){
+  closeUserInfoModal();
+  openDepositModal(selectedUserPhone);
+}
+
+// MESSAGE SINGLE USER
+function openMessageModal(phone){
+  selectedUserPhone = phone;
+  document.getElementById('messageUserPhone').innerText = "To: " + phone;
+  document.getElementById('messageModal').style.display = 'flex';
+}
+function closeMessageModal(){
+  document.getElementById('messageModal').style.display = 'none';
+  document.getElementById('userMessageInput').value = "";
+}
+function sendUserMessage(){
+  let msg = document.getElementById('userMessageInput').value;
+  if(!msg){ alert("Enter a message"); return; }
+  
+  db.collection("userMessages").add({
+    phone: selectedUserPhone,
+    message: msg,
+    date: firebase.firestore.FieldValue.serverTimestamp(),
+    read: false
+  }).then(()=>{
+    alert(`✅ Message sent to ${selectedUserPhone}`);
+    closeMessageModal();
+  }).catch(err=>alert("Error: " + err.message))
+}
+
+// BROADCAST
+function openBroadcastModal(){
+  document.getElementById('broadcastModal').style.display = 'flex';
+}
+function closeBroadcastModal(){
+  document.getElementById('broadcastModal').style.display = 'none';
+  document.getElementById('broadcastMessage').value = "";
+}
+function sendBroadcast(){
+  let msg = document.getElementById('broadcastMessage').value;
+  if(!msg){ alert("Enter a message"); return; }
+  
+  db.collection("broadcasts").add({
+    message: msg,
+    date: firebase.firestore.FieldValue.serverTimestamp(),
+    sentTo: "all"
+  }).then(()=>{
+    alert("✅ Message sent to all users!");
+    closeBroadcastModal();
+  }).catch(err=>alert("Error: " + err.message))
+}
+
+// LOAD USERS
 function loadUsers(){
   userCounter = 1;
   let totalUsers = 0;
@@ -179,8 +321,6 @@ function loadUsers(){
     document.getElementById('totalInvested').innerText = `Ksh ${totalInvested.toFixed(2)}`;
     document.getElementById('totalIncome').innerText = `Ksh ${totalIncome.toFixed(2)}`;
     document.getElementById('todayIncome').innerText = `Ksh ${todayIncome.toFixed(2)}`;
-  }).catch(err=>{
-    document.getElementById('userList').innerHTML = "<p style='color:red'>Error loading users</p>";
   })
 }
 
@@ -193,7 +333,7 @@ function renderUsers(users){
     let income = u.totalIncome || 0;
     let todayInc = u.todayIncome || 0;
 
-    html += `<div class="user-card">
+    html += `<div class="user-card" onclick='openUserInfoModal(${JSON.stringify(u).replace(/'/g, "&apos;")})'>
       <div class="user-num">#${userCounter}</div>
       <div class="user-info">
         <b>${u.phone}</b><br>
@@ -204,7 +344,8 @@ function renderUsers(users){
         📈 Total Income: <b style="color:#22c55e">Ksh ${income.toFixed(2)}</b><br>
         🔥 Today: <b style="color:#f59e0b">Ksh ${todayInc.toFixed(2)}</b>
       </div>
-      <div class="btn-group">
+      <div class="btn-group" onclick="event.stopPropagation()">
+        <button class="btn btn-purple" onclick="openMessageModal('${u.phone}')">Msg</button>
         <button class="btn btn-blue" onclick="openDepositModal('${u.phone}')">Deposit</button>
         <button class="btn btn-yellow" onclick="resetPass('${u.phone}')">Reset</button>
         <button class="btn btn-red" onclick="deleteUser('${u.phone}')">Delete</button>
@@ -215,7 +356,7 @@ function renderUsers(users){
   document.getElementById('userList').innerHTML = html || "<p style='color:#888;text-align:center'>No users found</p>";
 }
 
-// SEARCH FUNCTION
+// SEARCH
 document.getElementById('searchInput').addEventListener('keyup', function(){
   let query = this.value.toLowerCase();
   let filtered = allUsers.filter(u=>{
@@ -226,18 +367,16 @@ document.getElementById('searchInput').addEventListener('keyup', function(){
   renderUsers(filtered);
 });
 
-// DEPOSIT FUNCTIONS
+// DEPOSIT
 function openDepositModal(phone){
   selectedUserPhone = phone;
   document.getElementById('depositUserPhone').innerText = "User: " + phone;
   document.getElementById('depositModal').style.display = 'flex';
 }
-
 function closeDepositModal(){
   document.getElementById('depositModal').style.display = 'none';
   document.getElementById('depositAmountInput').value = "";
 }
-
 function confirmDeposit(){
   let amount = parseFloat(document.getElementById('depositAmountInput').value);
   if(!amount || amount <= 0){ alert("Enter valid amount"); return; }
@@ -251,58 +390,82 @@ function confirmDeposit(){
   })
 }
 
-// USER MANAGEMENT
+// USER MGMT
 function resetPass(phone){
   let newPass = prompt("Enter new password for " + phone);
-  if(newPass){ 
-    db.collection("users").doc(phone).update({password: newPass})
-    .then(()=>alert("✅ Password reset"))
-  }
+  if(newPass){ db.collection("users").doc(phone).update({password: newPass}).then(()=>alert("✅ Password reset")) }
 }
-
 function deleteUser(phone){
-  if(confirm("Delete user " + phone + "? This cannot be undone.")){ 
-    db.collection("users").doc(phone).delete()
-    .then(()=>{alert("✅ User deleted"); loadUsers();})
-  }
+  if(confirm("Delete user " + phone + "?")){ db.collection("users").doc(phone).delete().then(()=>{alert("✅ User deleted"); loadUsers();}) }
 }
 
 // LOAD WITHDRAWALS
 function loadWithdrawals(){
   db.collection("withdrawals").where("status","==","pending").orderBy("date","desc").get().then(snapshot=>{
     let html = "";
-    if(snapshot.empty){ html = "<p style='color:#888;text-align:center'>No pending withdrawals</p>"; }
+    if(snapshot.empty){ html = "<p style='color:#888;text-align:center'>No pending</p>"; }
     snapshot.forEach(doc=>{
       let d = doc.data();
-      let date = d.date ? d.date.toDate().toLocaleString() : 'N/A';
       html += `<div class="req-card">
         <b>User:</b> ${d.phone}<br>
         <b>Amount:</b> Ksh ${d.amount}<br>
-        <b>Time:</b> ${date}<br>
         <button class="btn" onclick="approveWithdraw('${doc.id}')">Mark Paid</button>
         <button class="btn-red" onclick="rejectWithdraw('${doc.id}')">Reject</button>
       </div>`;
     });
     document.getElementById('withdrawList').innerHTML = html;
-  }).catch(err=>{
-    document.getElementById('withdrawList').innerHTML = "<p style='color:red'>Error loading withdrawals</p>";
   })
 }
 
+// LOAD REFERRAL REQUESTS
+function loadReferralRequests(){
+  db.collection("referralRequests").where("status","==","pending").orderBy("date","desc").get().then(snapshot=>{
+    let html = "";
+    if(snapshot.empty){ html = "<p style='color:#888;text-align:center'>No pending</p>"; }
+    snapshot.forEach(doc=>{
+      let d = doc.data();
+      html += `<div class="req-card">
+        <b>User:</b> ${d.phone}<br>
+        <b>Bonus:</b> Ksh ${d.amount}<br>
+        <button class="btn" onclick="approveReferral('${doc.id}')">Approve</button>
+        <button class="btn-red" onclick="rejectReferral('${doc.id}')">Reject</button>
+      </div>`;
+    });
+    document.getElementById('referralList').innerHTML = html;
+  })
+}
+
+// APPROVE/REJECT
 function approveWithdraw(id){
   db.collection("withdrawals").doc(id).update({status:"paid"})
-  .then(()=>{alert("✅ Marked as Paid. Send MPESA manually"); loadWithdrawals();});
+  .then(()=>{alert("✅ Marked as Paid"); loadWithdrawals();});
 }
-
 function rejectWithdraw(id){
-  db.collection("withdrawals").doc(id).update({status:"rejected"})
-  .then(()=>loadWithdrawals());
+  db.collection("withdrawals").doc(id).update({status:"rejected"}).then(()=>loadWithdrawals());
 }
 
-// Auto refresh withdrawals
+function approveReferral(id){
+  db.collection("referralRequests").doc(id).get().then(doc=>{
+    let data = doc.data();
+    db.collection("users").doc(data.phone).get().then(userDoc=>{
+      let newBal = (userDoc.data().balance || 0) + data.amount;
+      db.collection("users").doc(data.phone).update({balance: newBal});
+      db.collection("referralRequests").doc(id).update({status:"paid"});
+      alert(`✅ Bonus Ksh ${data.amount} sent to ${data.phone}`);
+      loadReferralRequests();
+      loadUsers();
+    })
+  })
+}
+function rejectReferral(id){
+  db.collection("referralRequests").doc(id).update({status:"rejected"}).then(()=>loadReferralRequests());
+}
+
+// Auto refresh
 setInterval(()=>{
   if(localStorage.getItem('nexaAdminLoggedIn') === 'true'){
     loadWithdrawals();
+    loadReferralRequests();
   }
 }, 10000);
 </script>
