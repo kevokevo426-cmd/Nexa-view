@@ -82,16 +82,17 @@ textarea{resize:vertical;min-height:80px}
     </div>
   </div>
 
-  <!-- TOP STATS -->
+  <!-- TOP STATS - 6 CARDS -->
   <div class="stats">
     <div class="stat-card"><h4>Total Users</h4><p id="totalUsers" style="color:#fbbf24">0</p></div>
     <div class="stat-card"><h4>Total Invested</h4><p id="totalInvested" style="color:#22c55e">+Ksh 0.00</p></div>
-    <div class="stat-card"><h4>Total Spenditure</h4><p id="totalSpenditure" style="color:#ef4444">-Ksh 0.00</p></div>
+    <div class="stat-card"><h4>Total Income</h4><p id="totalIncome" style="color:#22c55e">+Ksh 0.00</p></div>
     <div class="stat-card"><h4>Today's Invested</h4><p id="todayInvested" style="color:#22c55e">+Ksh 0.00</p></div>
-    <div class="stat-card"><h4>Today's Expenditure</h4><p id="todayExpenditure" style="color:#ef4444">-Ksh 0.00</p></div>
+    <div class="stat-card"><h4>Today's Income</h4><p id="todayIncome" style="color:#22c55e">+Ksh 0.00</p></div>
+    <div class="stat-card"><h4>Total Withdrawn</h4><p id="totalWithdrawn" style="color:#ef4444">-Ksh 0.00</p></div>
   </div>
 
-  <!-- PENDING REQUESTS - 2 COLUMNS -->
+  <!-- PENDING REQUESTS -->
   <div class="pending-grid">
     <div class="box">
       <h3>💸 Pending Withdrawals</h3>
@@ -113,7 +114,7 @@ textarea{resize:vertical;min-height:80px}
     <div id="userList">Loading...</div>
   </div>
 
-  <!-- MESSAGES MODAL - PUBLIC + PRIVATE -->
+  <!-- MESSAGES MODAL -->
   <div id="messagesModal" class="modal" onclick="closeMessagesModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
       <h3>📩 All Messages</h3>
@@ -230,7 +231,7 @@ function showPanel(){
   loadMessages();
 }
 
-// LOAD MESSAGES - PRIVATE + PUBLIC
+// LOAD MESSAGES
 function loadMessages(){
   db.collection("userMessages").orderBy("date","desc").limit(50).onSnapshot(snapshot=>{
     let unreadCount = 0;
@@ -306,7 +307,14 @@ function openUserInfoModal(user){
   selectedUserPhone = user.phone;
   let referredUsers = allUsers.filter(x => x.referredBy === user.myReferralCode);
   let totalRefs = referredUsers.length;
-  let refSpend = referredUsers.reduce((sum, ru) => sum + (ru.totalSpent || 0), 0);
+  let refIncome = referredUsers.reduce((sum, ru) => sum + (ru.totalIncome || 0), 0);
+  
+  let invested = user.totalInvested || 0;
+  let withdrawn = user.totalWithdrawn || 0;
+  let income = user.totalIncome || 0;
+  let todayInv = user.todayInvested || 0;
+  let todayInc = user.todayIncome || 0;
+  let todayWith = user.todayWithdrawn || 0;
   
   let html = `
     <div class="info-row"><span class="info-label">Phone</span><span class="info-value">${user.phone}</span></div>
@@ -315,12 +323,14 @@ function openUserInfoModal(user){
     <div class="info-row"><span class="info-label">Referred By</span><span class="info-value">${user.referredBy || 'NONE'}</span></div>
     <div class="info-row"><span class="info-label">Balance</span><span class="info-value" style="color:#22c55e">Ksh ${(user.balance||0).toFixed(2)}</span></div>
     <div class="info-row"><span class="info-label">Products Bought</span><span class="info-value">${user.productsBought || 0}</span></div>
-    <div class="info-row"><span class="info-label">Total Invested</span><span class="info-value" style="color:#22c55e">+Ksh ${(user.totalInvested||0).toFixed(2)}</span></div>
-    <div class="info-row"><span class="info-label">Total Spent</span><span class="info-value" style="color:#ef4444">-Ksh ${(user.totalSpent||0).toFixed(2)}</span></div>
-    <div class="info-row"><span class="info-label">Today's Invested</span><span class="info-value" style="color:#22c55e">+Ksh ${(user.todayInvested||0).toFixed(2)}</span></div>
-    <div class="info-row"><span class="info-label">Today's Spent</span><span class="info-value" style="color:#ef4444">-Ksh ${(user.todaySpent||0).toFixed(2)}</span></div>
+    <div class="info-row"><span class="info-label">Total Invested</span><span class="info-value" style="color:#22c55e">+Ksh ${invested.toFixed(2)}</span></div>
+    <div class="info-row"><span class="info-label">Total Income</span><span class="info-value" style="color:#22c55e">+Ksh ${income.toFixed(2)}</span></div>
+    <div class="info-row"><span class="info-label">Total Withdrawn</span><span class="info-value" style="color:#ef4444">-Ksh ${withdrawn.toFixed(2)}</span></div>
+    <div class="info-row"><span class="info-label">Today's Invested</span><span class="info-value" style="color:#22c55e">+Ksh ${todayInv.toFixed(2)}</span></div>
+    <div class="info-row"><span class="info-label">Today's Income</span><span class="info-value" style="color:#22c55e">+Ksh ${todayInc.toFixed(2)}</span></div>
+    <div class="info-row"><span class="info-label">Today's Withdrawn</span><span class="info-value" style="color:#ef4444">-Ksh ${todayWith.toFixed(2)}</span></div>
     <div class="info-row"><span class="info-label">Total Referrals</span><span class="info-value" style="color:#a855f7">${totalRefs}</span></div>
-    <div class="info-row"><span class="info-label">Referral Spenditure</span><span class="info-value" style="color:#ef4444">-Ksh ${refSpend.toFixed(2)}</span></div>
+    <div class="info-row"><span class="info-label">Referral Income</span><span class="info-value" style="color:#22c55e">+Ksh ${refIncome.toFixed(2)}</span></div>
   `;
   
   document.getElementById('userInfoContent').innerHTML = html;
@@ -346,9 +356,11 @@ function viewReferrals(user){
     html = "<p style='color:#888;text-align:center'>No referrals yet</p>";
   } else {
     referredUsers.forEach((ru, i)=>{
+      let invested = ru.totalInvested || 0;
+      let income = ru.totalIncome || 0;
       html += `<div class="referral-item">
         <b>#${i+1} ${ru.phone}</b><br>
-        Balance: Ksh ${(ru.balance||0).toFixed(2)} | Invested: +Ksh ${(ru.totalInvested||0).toFixed(2)} | Spent: -Ksh ${(ru.totalSpent||0).toFixed(2)}
+        Balance: Ksh ${(ru.balance||0).toFixed(2)} | Invested: +Ksh ${invested.toFixed(2)} | Income: +Ksh ${income.toFixed(2)}
       </div>`;
     })
   }
@@ -417,14 +429,15 @@ function sendBroadcast(){
   }).catch(err=>alert("Error: " + err.message))
 }
 
-// LOAD USERS
+// LOAD USERS - FINAL VERSION
 function loadUsers(){
   userCounter = 1;
   let totalUsers = 0;
   let totalInvested = 0;
-  let totalSpenditure = 0;  
+  let totalIncome = 0;  
   let todayInvested = 0; 
-  let todayExpenditure = 0;
+  let todayIncome = 0;
+  let totalWithdrawn = 0;
 
   db.collection("users").orderBy("phone").get().then(snapshot=>{
     allUsers = [];
@@ -436,22 +449,25 @@ function loadUsers(){
       allUsers.push(u);
       
       let invested = u.totalInvested || 0;
-      let spent = u.totalSpent || 0;  
+      let income = u.totalIncome || 0;
+      let withdrawn = u.totalWithdrawn || 0;
       let todayInv = u.todayInvested || 0; 
-      let todaySpent = u.todaySpent || 0;
+      let todayInc = u.todayIncome || 0;
 
       totalInvested += invested;
-      totalSpenditure += spent;
+      totalIncome += income;
+      totalWithdrawn += withdrawn;
       todayInvested += todayInv;
-      todayExpenditure += todaySpent;
+      todayIncome += todayInc;
     });
     
     renderUsers(allUsers);
     document.getElementById('totalUsers').innerText = totalUsers;
     document.getElementById('totalInvested').innerText = `+Ksh ${totalInvested.toFixed(2)}`;
-    document.getElementById('totalSpenditure').innerText = `-Ksh ${totalSpenditure.toFixed(2)}`;
+    document.getElementById('totalIncome').innerText = `+Ksh ${totalIncome.toFixed(2)}`;
     document.getElementById('todayInvested').innerText = `+Ksh ${todayInvested.toFixed(2)}`;
-    document.getElementById('todayExpenditure').innerText = `-Ksh ${todayExpenditure.toFixed(2)}`;
+    document.getElementById('todayIncome').innerText = `+Ksh ${todayIncome.toFixed(2)}`;
+    document.getElementById('totalWithdrawn').innerText = `-Ksh ${totalWithdrawn.toFixed(2)}`;
   })
 }
 
@@ -461,13 +477,14 @@ function renderUsers(users){
   users.forEach(u=>{
     let products = u.productsBought || 0;
     let invested = u.totalInvested || 0;
-    let spent = u.totalSpent || 0;
+    let income = u.totalIncome || 0;
+    let withdrawn = u.totalWithdrawn || 0;
     let todayInv = u.todayInvested || 0;
-    let todaySpent = u.todaySpent || 0;
+    let todayInc = u.todayIncome || 0;
 
     let referredUsers = allUsers.filter(x => x.referredBy === u.myReferralCode);
     let totalRefs = referredUsers.length;
-    let refSpend = referredUsers.reduce((sum, ru) => sum + (ru.totalSpent || 0), 0);
+    let refIncome = referredUsers.reduce((sum, ru) => sum + (ru.totalIncome || 0), 0);
 
     html += `<div class="user-card" onclick='openUserInfoModal(${JSON.stringify(u).replace(/'/g, "&apos;")})'>
       <div class="user-num">#${userCounter}</div>
@@ -477,11 +494,12 @@ function renderUsers(users){
         Balance: <b style="color:#22c55e">Ksh ${(u.balance||0).toFixed(2)}</b><br>
         📦 Products: <b>${products}</b><br>
         💰 Invested: <b style="color:#22c55e">+Ksh ${invested.toFixed(2)}</b><br>
-        💸 Spent: <b style="color:#ef4444">-Ksh ${spent.toFixed(2)}</b><br>
-        📈 Today In: <b style="color:#22c55e">+Ksh ${todayInv.toFixed(2)}</b><br>
-        📉 Today Out: <b style="color:#ef4444">-Ksh ${todaySpent.toFixed(2)}</b><br>
+        📈 Income: <b style="color:#22c55e">+Ksh ${income.toFixed(2)}</b><br>
+        💸 Withdrawn: <b style="color:#ef4444">-Ksh ${withdrawn.toFixed(2)}</b><br>
+        📊 Today Invest: <b style="color:#22c55e">+Ksh ${todayInv.toFixed(2)}</b><br>
+        📊 Today Income: <b style="color:#22c55e">+Ksh ${todayInc.toFixed(2)}</b><br>
         👥 Referrals: <b style="color:#a855f7">${totalRefs}</b><br>
-        🎁 Ref Spent: <b style="color:#ef4444">-Ksh ${refSpend.toFixed(2)}</b>
+        🎁 Ref Income: <b style="color:#22c55e">+Ksh ${refIncome.toFixed(2)}</b>
       </div>
       <div class="btn-group" onclick="event.stopPropagation()">
         <button class="btn btn-purple" onclick="openMessageModal('${u.phone}')">Msg</button>
@@ -579,34 +597,4 @@ function approveWithdraw(id){
   db.collection("withdrawals").doc(id).update({status:"paid"})
   .then(()=>{alert("✅ Marked as Paid"); loadWithdrawals();});
 }
-function rejectWithdraw(id){
-  db.collection("withdrawals").doc(id).update({status:"rejected"}).then(()=>loadWithdrawals());
-}
-
-function approveReferral(id){
-  db.collection("referralRequests").doc(id).get().then(doc=>{
-    let data = doc.data();
-    db.collection("users").doc(data.phone).get().then(userDoc=>{
-      let newBal = (userDoc.data().balance || 0) + data.amount;
-      db.collection("users").doc(data.phone).update({balance: newBal});
-      db.collection("referralRequests").doc(id).update({status:"paid"});
-      alert(`✅ Bonus Ksh ${data.amount} sent to ${data.phone}`);
-      loadReferralRequests();
-      loadUsers();
-    })
-  })
-}
-function rejectReferral(id){
-  db.collection("referralRequests").doc(id).update({status:"rejected"}).then(()=>loadReferralRequests());
-}
-
-// Auto refresh
-setInterval(()=>{
-  if(localStorage.getItem('nexaAdminLoggedIn') === 'true'){
-    loadWithdrawals();
-    loadReferralRequests();
-  }
-}, 10000);
-</script>
-</body>
-</html>
+function reject
