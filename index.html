@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEXA REGISTER</title>
+<title>NEXA LOGIN</title>
 <style>
 body{background:#000;color:white;font-family:Poppins;display:flex;justify-content:center;align-items:center;height:100vh;margin:0}
 .box{background:#111;padding:30px;border-radius:16px;border:1px solid #fbbf24;width:90%;max-width:400px}
@@ -14,12 +14,11 @@ a{color:#fbbf24}
 </head>
 <body>
 <div class="box">
-  <h2>CREATE ACCOUNT</h2>
+  <h2>NEXA LOGIN</h2>
   <input type="tel" id="phone" placeholder="Phone: 0712345678">
-  <input type="text" id="name" placeholder="Real Name">
   <input type="password" id="pass" placeholder="Password">
-  <button onclick="register()">REGISTER</button>
-  <p style="text-align:center">Have account? <a href="index.html">Login</a></p>
+  <button onclick="login()">LOGIN</button>
+  <p style="text-align:center">No account? <a href="register.html">Register here</a></p>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -37,21 +36,16 @@ function formatPhone(p){
   return p;
 }
 
-function register(){
+function login(){
   let phone = formatPhone(document.getElementById('phone').value.trim());
-  let name = document.getElementById('name').value.trim();
   let pass = document.getElementById('pass').value.trim();
-  if(!phone || !name || !pass){ alert('Fill all'); return; }
+  if(!phone || !pass){ alert('Fill all'); return; }
   
   db.collection("users").doc(phone).get().then(doc=>{
-    if(doc.exists){ alert('❌ Phone number already registered'); return; }
-    db.collection("users").doc(phone).set({
-      phone, realName:name, password:pass, balance:0, ownedPackages:{}, tasksDone:0, referralBonus:0, createdAt:new Date()
-    }).then(()=>{
-      alert('✅ Account Created');
-      localStorage.setItem("nexaPhone", phone);
-      window.location.href = "dashboard.html";
-    });
+    if(!doc.exists){ alert('❌ Account not found'); return; }
+    if(doc.data().password !== pass){ alert('❌ Wrong Password'); return; }
+    localStorage.setItem("nexaPhone", phone);
+    window.location.href = "dashboard.html";
   });
 }
 </script>
