@@ -18,10 +18,25 @@ input{padding:14px;width:100%;margin:8px 0;border-radius:10px;background:#222;co
 .package-row{display:flex;gap:10px;margin:10px 0}
 .package-row input{flex:1}
 .withdraw-card{background:#1a1a1a;padding:15px;border-radius:10px;margin:10px 0;border-left:4px solid #fbbf24}
+#loginScreen{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;display:flex;justify-content:center;align-items:center;z-index:9999}
+.logout{position:fixed;top:20px;right:20px;background:#ef4444;color:white;border:none;padding:10px 15px;border-radius:8px;cursor:pointer;font-weight:bold}
 </style>
 </head>
 <body>
-<div class="container">
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen">
+  <div class="card" style="max-width:350px">
+    <h2 style="text-align:center;color:#fbbf24">ADMIN LOGIN</h2>
+    <input id="adminPass" type="password" placeholder="Enter Admin Password">
+    <button class="btn" onclick="checkLogin()">LOGIN</button>
+    <p id="loginError" style="color:#ef4444;text-align:center"></p>
+  </div>
+</div>
+
+<button class="logout" onclick="logout()">LOGOUT</button>
+
+<div class="container" id="adminPanel" style="display:none">
 <h1>👑 NEXA ADMIN PANEL</h1>
 
 <!-- 1. MANAGE USERS -->
@@ -49,7 +64,7 @@ input{padding:14px;width:100%;margin:8px 0;border-radius:10px;background:#222;co
 <h3>📦 Edit Packages</h3>
 <div id="packageEditor"></div>
 <button class="btn" onclick="savePackages()">SAVE PACKAGES</button>
-<p style="color:#999;font-size:12px">Changes will apply to all users after refresh</p>
+<p style="color:#999;font-size:12px">Changes apply after users refresh dashboard</p>
 </div>
 
 <!-- 4. APPROVE WITHDRAWALS -->
@@ -71,6 +86,8 @@ input{padding:14px;width:100%;margin:8px 0;border-radius:10px;background:#222;co
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <script>
+const ADMIN_PASSWORD = "nexa2025"; // CHANGE THIS PASSWORD
+
 const firebaseConfig = {apiKey:"AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",authDomain:"nexa-view.firebaseapp.com",projectId:"nexa-view"};
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
@@ -85,6 +102,35 @@ let PACKAGES = [
   {name:"L7", price:7500, daily:350, days:30},
   {name:"L8", price:10000, daily:500, days:30},
 ];
+
+// CHECK LOGIN
+function checkLogin(){
+  let pass = document.getElementById('adminPass').value;
+  if(pass === ADMIN_PASSWORD){
+    localStorage.setItem("nexaAdmin","true");
+    document.getElementById('loginScreen').style.display = "none";
+    document.getElementById('adminPanel').style.display = "block";
+    loadUsers();
+    loadWithdrawals();
+    loadPackageEditor();
+  } else {
+    document.getElementById('loginError').innerText = "❌ Wrong Password";
+  }
+}
+
+function logout(){
+  localStorage.removeItem("nexaAdmin");
+  location.reload();
+}
+
+// Auto login if already logged in
+if(localStorage.getItem("nexaAdmin") === "true"){
+  document.getElementById('loginScreen').style.display = "none";
+  document.getElementById('adminPanel').style.display = "block";
+  loadUsers();
+  loadWithdrawals();
+  loadPackageEditor();
+}
 
 // 1. ADD USER
 function addUser(){
@@ -127,7 +173,7 @@ function addBalance(){
 
 // 3. REMOVE USER
 function deleteUser(phone){
-  if(confirm("Delete user " + phone + "?")){
+  if(confirm("Delete user " + phone + "? This cannot be undone")){
     db.collection("users").doc(phone).delete().then(()=>{
       alert("User deleted");
       loadUsers();
@@ -162,7 +208,7 @@ function loadPackageEditor(){
   PACKAGES.forEach((p,i)=>{
     packageEditor.innerHTML += `
       <div class="package-row">
-        <input value="${p.name}" id="pname${i}" readonly>
+        <input value="${p.name}" id="pname${i}" readonly style="width:60px">
         <input type="number" value="${p.price}" id="pprice${i}" placeholder="Price">
         <input type="number" value="${p.daily}" id="pdaily${i}" placeholder="Daily">
         <input type="number" value="${p.days}" id="pdays${i}" placeholder="Days">
@@ -178,7 +224,7 @@ function savePackages(){
     p.days = parseInt(document.getElementById('pdays'+i).value);
   });
   localStorage.setItem("nexaPackages", JSON.stringify(PACKAGES));
-  alert("✅ Packages saved. Tell users to refresh");
+  alert("✅ Packages saved. Tell users to refresh dashboard");
 }
 
 // 6. WITHDRAWALS
@@ -194,7 +240,8 @@ function loadWithdrawals(){
           <b>Special ID:</b> ${w.phone}<br>
           <b>Amount:</b> Ksh ${w.amount}<br>
           <b>M-Pesa:</b> ${w.mpesa}<br>
-          <b>Account Balance:</b> Ksh ${w.currentBalance.toFixed(2)}<br><br>
+          <b>Account Balance:</b> Ksh ${w.currentBalance.toFixed(2)}<br>
+          <b>Requested:</b> ${w.requestedAt.toDate().toLocaleString()}<br><br>
           <button class="btn-success" style="width:48%" onclick="approveWithdraw('${doc.id}', '${w.phone}', ${w.amount})">APPROVE</button>
           <button class="btn-danger" style="width:48%" onclick="rejectWithdraw('${doc.id}')">REJECT</button>
         </div>
@@ -205,7 +252,7 @@ function loadWithdrawals(){
 
 function approveWithdraw(id, phone, amount){
   db.collection("withdrawals").doc(id).update({status:"approved", approvedAt: new Date()});
-  alert("✅ Approved. Send Ksh " + amount + " to " + phone + " manually");
+  alert("✅ Approved. Send Ksh " + amount + " to " + phone + " manually via M-Pesa");
   loadWithdrawals();
 }
 
@@ -214,10 +261,6 @@ function rejectWithdraw(id){
   alert("❌ Rejected");
   loadWithdrawals();
 }
-
-loadUsers();
-loadWithdrawals();
-loadPackageEditor();
 </script>
 </body>
 </html>
