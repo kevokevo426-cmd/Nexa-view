@@ -5,43 +5,44 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NEXA VIEW - Login</title>
 <style>
-    body { background: #000; color: #fff; font-family: Arial; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-    .login-box { background: #111; padding: 30px; border-radius: 15px; border: 2px solid #FFD700; width: 90%; max-width: 400px; text-align: center; }
-    .login-box h1 { color: #FFD700; margin-bottom: 10px; font-size:28px }
-    .login-box p{color:#999;margin-bottom:20px}
-    .login-box input { width: 100%; padding: 14px; margin: 10px 0; background: #222; border: 1px solid #333; border-radius: 8px; color: #fff; outline: none; font-size:15px }
-    .login-box button { width: 100%; padding: 14px; background: #FFD700; color: #000; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size:16px; margin-top:10px }
-    .login-box button:hover{background:#ffc800}
-    .login-box a{color:#FFD700;text-decoration:underline;font-weight:bold}
+    *{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+    body{background:#000;color:#fff;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
+    .box{background:#1a1a1a;padding:30px;border-radius:20px;border:2px solid #FFD700;width:100%;max-width:400px;text-align:center}
+    .box h1{color:#FFD700;font-size:28px;margin-bottom:10px}
+    .box p{color:#999;margin-bottom:20px}
+    input{width:100%;padding:14px;margin:10px 0;background:#2a2a2a;border:1px solid #333;border-radius:12px;color:#fff;font-size:15px;outline:none}
+    .btn{width:100%;padding:15px;background:#FFD700;color:#000;border:none;border-radius:12px;font-size:16px;font-weight:bold;cursor:pointer;margin-top:10px}
+    .btn:hover{background:#ffc800}
+    .footer{margin-top:20px;font-size:14px}
+    .footer a{color:#FFD700;text-decoration:none;font-weight:bold}
 </style>
 </head>
 <body>
-    <div class="login-box">
+    <div class="box">
         <h1>NEXA VIEW</h1>
         <p>Welcome Back</p>
-        <input type="text" placeholder="Phone Number" id="phone">
+        <input type="tel" placeholder="Phone Number" id="phone">
         <input type="password" placeholder="Password" id="pass">
-        <button onclick="login()">LOGIN</button>
-        <p style="font-size:14px; margin-top:20px;">Don't have an account? <a href="/register.html">Register</a></p>
+        <button class="btn" onclick="login()">LOGIN</button>
+        <div class="footer">Don't have an account? <a href="/register.html">Register</a></div>
     </div>
 
 <script>
 function login() {
-    let phone = document.getElementById('phone').value;
-    let pass = document.getElementById('pass').value;
+    let phone = document.getElementById('phone').value.trim();
+    let pass = document.getElementById('pass').value.trim();
     
-    if(!phone || !pass) {
-        alert('Please enter phone number and password')
+    if(phone === '' || pass === '') {
+        alert('Please enter phone number and password');
         return;
     }
     
-    // For now: accept any login and go to dashboard
-    // Later we will check database here
+    // Save login data
     localStorage.setItem('userPhone', phone);
     localStorage.setItem('isLoggedIn', 'true');
     
-    alert('Login Successful! Welcome ' + phone);
-    window.location.href = '/index.html'; // FORCES redirect to dashboard
+    // Force go to dashboard
+    window.location.href = 'index.html'; 
 }
 </script>
 </body>
