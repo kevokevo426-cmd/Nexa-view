@@ -42,7 +42,7 @@ h3{color:#fbbf24;margin:0 0 12px 0;font-size:15px}
 .user-info{font-size:12px;line-height:1.7;flex:1}
 .user-info b{color:#fbbf24}
 .btn-group{display:flex;flex-direction:column;gap:4px}
-input[type="number"], input[type="password"], textarea{padding:10px;background:#222;border:1px solid #444;color:white;border-radius:8px;width:100%;font-family:Poppins;font-size:14px}
+input[type="number"], input[type="password"], input[type="text"], textarea{padding:10px;background:#222;border:1px solid #444;color:white;border-radius:8px;width:100%;font-family:Poppins;font-size:14px}
 textarea{resize:vertical;min-height:80px}
 .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:999;justify-content:center;align-items:center}
 .modal-content{background:#111;width:90%;max-width:450px;border-radius:16px;padding:20px;border:1px solid #333;max-height:90vh;overflow-y:auto}
@@ -55,7 +55,10 @@ textarea{resize:vertical;min-height:80px}
 #loginScreen{display:flex;position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:9999;justify-content:center;align-items:center}
 .login-box{background:#111;padding:25px;border-radius:16px;border:1px solid #333;width:90%;max-width:350px;text-align:center}
 .login-box h2{margin-bottom:15px}
-.login-box input{margin-bottom:15px}
+.password-wrapper{position:relative;margin-bottom:15px}
+.password-wrapper input{padding-right:40px}
+.eye-icon{position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;color:#888;user-select:none}
+.eye-icon:hover{color:#fbbf24}
 @media(max-width:768px){.pending-grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
@@ -64,7 +67,10 @@ textarea{resize:vertical;min-height:80px}
 <div id="loginScreen">
   <div class="login-box">
     <h2>👑 NEXA ADMIN LOGIN</h2>
-    <input type="password" id="adminPassword" placeholder="Enter Admin Password">
+    <div class="password-wrapper">
+      <input type="password" id="adminPassword" placeholder="Enter Admin Password">
+      <span class="eye-icon" onclick="togglePassword()">👁️</span>
+    </div>
     <button class="btn btn-blue" style="width:100%;padding:10px;font-size:14px" onclick="checkLogin()">Login</button>
     <p id="loginError" style="color:#ef4444;font-size:12px;margin-top:10px"></p>
   </div>
@@ -115,6 +121,18 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const ADMIN_PASSWORD = "admin123";
 let selectedUserPhone = "";let selectedUserData = {};let userCounter = 1;let allUsers = [];
+
+function togglePassword(){
+  let passInput = document.getElementById('adminPassword');
+  let eye = document.querySelector('.eye-icon');
+  if(passInput.type === "password"){
+    passInput.type = "text";
+    eye.innerText = "🙈";
+  } else {
+    passInput.type = "password";
+    eye.innerText = "👁️";
+  }
+}
 
 window.onload = function(){if(localStorage.getItem('nexaAdminLoggedIn') === 'true'){showPanel();}}
 function checkLogin(){let pass = document.getElementById('adminPassword').value;if(pass === ADMIN_PASSWORD){localStorage.setItem('nexaAdminLoggedIn', 'true');showPanel();} else {document.getElementById('loginError').innerText = "❌ Wrong Password";}}
