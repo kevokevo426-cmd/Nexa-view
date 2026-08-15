@@ -9,7 +9,8 @@
     .login-box { background: #111; padding: 30px; border-radius: 15px; border: 2px solid #FFD700; width: 90%; max-width: 400px; text-align: center; }
     .login-box h1 { color: #FFD700; margin-bottom: 10px; }
     .login-box input { width: 100%; padding: 12px; margin: 10px 0; background: #222; border: 1px solid #FFD700; border-radius: 8px; color: #fff; outline: none; }
-    .login-box button { width: 100%; padding: 12px; background: #FFD700; color: #000; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    .login-box button { width: 100%; padding: 12px; background: #FFD700; color: #000; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size:16px }
+    .login-box button:hover{background:#ffc800}
 </style>
 </head>
 <body>
@@ -19,17 +20,18 @@
         <input type="text" placeholder="Phone Number" id="phone">
         <input type="password" placeholder="Password" id="pass">
         <button onclick="login()">LOGIN</button>
-        <p style="font-size:12px; margin-top:15px;">Don't have an account? <a href="#" style="color:#FFD700">Register</a></p>
+        <p style="font-size:14px; margin-top:15px;">Don't have an account? <a href="/register.html" style="color:#FFD700;text-decoration:underline;font-weight:bold">Register</a></p>
     </div>
 
 <script>
 function login() {
     let phone = document.getElementById('phone').value;
-    if(phone) {
+    let pass = document.getElementById('pass').value;
+    if(phone && pass) {
         localStorage.setItem('userPhone', phone);
-        window.location.href = 'index.html'; // goes to your dashboard
+        window.location.href = '/index.html'; // goes to your dashboard
     } else {
-        alert('Enter phone number')
+        alert('Please enter phone number and password')
     }
 }
 </script>
