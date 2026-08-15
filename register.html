@@ -5,22 +5,23 @@
 <title>NEXA REGISTER</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-body{background:#000;color:white;font-family:Poppins;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:20px}
-.box{background:#111;padding:30px;border-radius:20px;border:1px solid #222;width:100%;max-width:420px}
-h2{color:#fbbf24;text-align:center;font-size:28px;margin-bottom:25px;font-weight:700}
-label{font-size:13px;color:#aaa;margin-bottom:8px;display:block;font-weight:600}
-input{width:100%;padding:15px;background:#1a1a1a;border:1px solid #333;color:white;border-radius:12px;font-size:15px;margin-bottom:18px;box-sizing:border-box}
-.phone-wrap{display:flex;gap:10px}
-.phone-wrap select{width:30%;padding:15px;background:#1a1a1a;border:1px solid #333;color:white;border-radius:12px}
-.phone-wrap input{width:70%;margin-bottom:0}
-button{width:100%;padding:16px;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:12px;font-weight:bold;font-size:16px;cursor:pointer;margin-top:10px}
-.checkbox{display:flex;align-items:center;gap:10px;margin:15px 0;font-size:13px}
-.checkbox input{width:18px;height:18px;margin:0;accent-color:#fbbf24}
+*{box-sizing:border-box}
+body{background:#000;color:white;font-family:Poppins;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:15px}
+.box{background:#111;padding:24px;border-radius:18px;border:1px solid #222;width:100%;max-width:380px} /* MADE NARROW */
+h2{color:#fbbf24;text-align:center;font-size:24px;margin:0 0 20px 0;font-weight:700}
+label{font-size:12px;color:#aaa;margin-bottom:6px;display:block;font-weight:600;letter-spacing:0.5px}
+input,select{width:100%;padding:13px;background:#1a1a1a;border:1px solid #333;color:white;border-radius:10px;font-size:14px;margin-bottom:14px}
+.phone-wrap{display:flex;gap:8px}
+.phone-wrap select{width:28%;padding:13px 5px}
+.phone-wrap input{width:72%;margin-bottom:0}
+button{width:100%;padding:15px;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:10px;font-weight:700;font-size:15px;cursor:pointer;margin-top:8px}
+.checkbox{display:flex;align-items:center;gap:8px;margin:12px 0 0 0;font-size:12px}
+.checkbox input{width:16px;height:16px;margin:0;accent-color:#fbbf24}
 .checkbox a{color:#fbbf24;text-decoration:none}
 a{color:#fbbf24;text-decoration:none}
-.code-box{display:flex;gap:10px}
-.code-box input{flex:1}
-.code-display{background:#1a1a1a;border:1px solid #fbbf24;color:#fbbf24;font-weight:bold;font-size:18px;letter-spacing:3px;text-align:center;padding:15px;border-radius:12px;min-width:100px;display:flex;align-items:center;justify-content:center}
+.code-box{display:flex;gap:8px}
+.code-box input{flex:1;margin-bottom:0}
+.code-display{background:#1a1a1a;border:1px solid #fbbf24;color:#fbbf24;font-weight:700;font-size:16px;letter-spacing:2px;text-align:center;padding:13px;border-radius:10px;min-width:90px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 </style>
 </head>
 <body>
@@ -33,7 +34,7 @@ a{color:#fbbf24;text-decoration:none}
   <label>PHONE NUMBER</label>
   <div class="phone-wrap">
     <select id="countryCode">
-      <option>+254 KE</option>
+      <option>+254</option>
     </select>
     <input type="tel" id="phone" placeholder="712345678">
   </div>
@@ -47,17 +48,17 @@ a{color:#fbbf24;text-decoration:none}
   <label>VERIFICATION CODE - KENYA</label>
   <div class="code-box">
     <input type="text" id="captchaInput" placeholder="Enter code">
-    <div class="code-display" id="captchaCode">8519</div>
+    <div class="code-display" id="captchaCode" onclick="newCaptcha()">8259</div>
   </div>
 
   <div class="checkbox">
     <input type="checkbox" id="terms">
-    <span>I agree to <a href="#" onclick="alert('NEXA Terms and Conditions')">Terms</a></span>
+    <span>I agree to <a href="#" onclick="alert('By registering you agree to NEXA Terms and Conditions')">Terms</a></span>
   </div>
 
   <button onclick="register()">REGISTER</button>
   
-  <p style="text-align:center;margin-top:20px">Have account? <a href="index.html">Login</a></p>
+  <p style="text-align:center;margin-top:16px;font-size:13px">Have account? <a href="index.html">Login</a></p>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -67,12 +68,16 @@ const firebaseConfig = {apiKey:"AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",authDom
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// Generate random captcha
+// 1. AUTO FILL REFERRAL CODE FROM LINK ?ref=NEXA7A9B2
+const urlParams = new URLSearchParams(window.location.search);
+const refFromUrl = urlParams.get('ref');
+if(refFromUrl){ document.getElementById('refCode').value = refFromUrl; }
+
+// 2. CAPTCHA
 function newCaptcha(){
   document.getElementById('captchaCode').innerText = Math.floor(1000 + Math.random() * 9000);
 }
 newCaptcha();
-document.getElementById('captchaCode').onclick = newCaptcha;
 
 function formatPhone(p){
   p = p.replace(/\D/g,'');
@@ -80,12 +85,19 @@ function formatPhone(p){
   return '254' + p;
 }
 
-function generateCode(){
+// 3. GENERATE UNIQUE USER ID: NEXAU + 6 chars
+function generateUserID(){
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let code = 'NEXA';
-  for(let i=0; i<5; i++){
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
+  let id = 'NEXAU';
+  for(let i=0; i<6; i++){ id += chars.charAt(Math.floor(Math.random() * chars.length)); }
+  return id;
+}
+
+// 4. GENERATE REFERRAL CODE: NEXAR + 5 chars - DIFFERENT FROM USERID
+function generateRefCode(){
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code = 'NEXAR';
+  for(let i=0; i<5; i++){ code += chars.charAt(Math.floor(Math.random() * chars.length)); }
   return code;
 }
 
@@ -98,22 +110,24 @@ function register(){
   let realCaptcha = document.getElementById('captchaCode').innerText;
   
   if(!username || !phone || !pass){ alert('❌ Fill Username, Phone and Password'); return; }
-  if(captcha !== realCaptcha){ alert('❌ Wrong Verification Code. Click code to refresh'); newCaptcha(); return; }
-  if(!document.getElementById('terms').checked){ alert('❌ Please agree to Terms to continue'); return; }
+  if(captcha !== realCaptcha){ alert('❌ Wrong Verification Code'); newCaptcha(); return; }
+  if(!document.getElementById('terms').checked){ alert('❌ Please agree to Terms'); return; }
   
-  let myCode = generateCode();
+  let userID = generateUserID(); // For Wallet: NEXAU7A9B2C
+  let myRefCode = generateRefCode(); // For Sharing: NEXAR7A9B2
   
   db.collection("users").doc(phone).get().then(doc=>{
     if(doc.exists){ alert('❌ Phone number already registered'); return; }
     
     db.collection("users").doc(phone).set({
-      phone, username, realName: username, // username is display name
+      phone, username, realName: username,
+      userID: userID, // UNIQUE ID FOR WALLET/PROFILE
       password:pass, balance:0, ownedPackages:{}, tasksDone:0, referralBonus:0,
-      myReferralCode: myCode, 
+      myReferralCode: myRefCode, // DIFFERENT CODE FOR REFERRALS
       referredBy: refBy || '', 
       createdAt:new Date()
     }).then(()=>{
-      alert(`✅ Account Created Successfully!\n\nUsername: ${username}\nYour Referral Code: ${myCode}\n\nShare your code to earn bonuses`);
+      alert(`✅ Account Created!\n\nUsername: ${username}\nUser ID: ${userID}\nYour Referral Code: ${myRefCode}`);
       localStorage.setItem("nexaPhone", phone);
       window.location.href = "dashboard.html";
     });
