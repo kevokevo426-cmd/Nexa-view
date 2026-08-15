@@ -7,29 +7,61 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 body{background:#000;color:white;font-family:Poppins;margin:0;padding:20px}
-.container{max-width:600px;margin:0 auto}
+.container{max-width:900px;margin:0 auto}
 h1{color:#fbbf24;text-align:center}
 .card{background:#111;padding:20px;border-radius:16px;margin:20px 0;border:1px solid #222}
-input{padding:16px;width:100%;margin:10px 0;border-radius:10px;background:#222;color:white;border:1px solid #333;font-size:16px;box-sizing:border-box}
-.btn{padding:16px;width:100%;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;font-weight:bold;border:none;border-radius:10px;font-size:16px;cursor:pointer;margin-top:10px}
-.user-list{background:#1a1a1a;padding:15px;border-radius:10px;margin:10px 0;display:flex;justify-content:space-between}
-.user-list span{color:#22c55e;font-weight:bold}
+input{padding:14px;width:100%;margin:8px 0;border-radius:10px;background:#222;color:white;border:1px solid #333;font-size:15px;box-sizing:border-box}
+.btn{padding:14px;width:100%;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;font-weight:bold;border:none;border-radius:10px;font-size:15px;cursor:pointer;margin-top:8px}
+.btn-danger{background:#ef4444;color:white}
+.btn-success{background:#22c55e;color:white}
+.user-list{background:#1a1a1a;padding:15px;border-radius:10px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.package-row{display:flex;gap:10px;margin:10px 0}
+.package-row input{flex:1}
+.withdraw-card{background:#1a1a1a;padding:15px;border-radius:10px;margin:10px 0;border-left:4px solid #fbbf24}
 </style>
 </head>
 <body>
 <div class="container">
-<h1>NEXA ADMIN PANEL</h1>
+<h1>👑 NEXA ADMIN PANEL</h1>
 
+<!-- 1. MANAGE USERS -->
 <div class="card">
-<h3>Add Balance to User</h3>
+<h3>➕ Add / Remove User</h3>
+<input id="newPhone" placeholder="Phone: 254712345678">
+<input id="newName" placeholder="Real Name">
+<input id="newPass" placeholder="Password">
+<input id="newBalance" type="number" placeholder="Starting Balance e.g 0">
+<button class="btn" onclick="addUser()">ADD USER</button>
+<p id="userMsg" style="text-align:center;"></p>
+</div>
+
+<!-- 2. ADD BALANCE -->
+<div class="card">
+<h3>💰 Add Balance to User</h3>
 <input id="adminPhone" placeholder="Phone: 254712345678">
 <input id="adminAmount" type="number" placeholder="Amount e.g 50000">
 <button class="btn" onclick="addBalance()">ADD BALANCE</button>
 <p id="adminMsg" style="text-align:center;"></p>
 </div>
 
+<!-- 3. MANAGE PACKAGES -->
 <div class="card">
-<h3>All Users</h3>
+<h3>📦 Edit Packages</h3>
+<div id="packageEditor"></div>
+<button class="btn" onclick="savePackages()">SAVE PACKAGES</button>
+<p style="color:#999;font-size:12px">Changes will apply to all users after refresh</p>
+</div>
+
+<!-- 4. APPROVE WITHDRAWALS -->
+<div class="card">
+<h3>💸 Pending Withdrawals</h3>
+<div id="withdrawList">Loading...</div>
+<button class="btn" style="background:#444;color:white" onclick="loadWithdrawals()">REFRESH</button>
+</div>
+
+<!-- 5. ALL USERS -->
+<div class="card">
+<h3>👥 All Users</h3>
 <div id="userList">Loading...</div>
 <button class="btn" style="background:#444;color:white" onclick="loadUsers()">REFRESH USERS</button>
 </div>
@@ -43,6 +75,38 @@ const firebaseConfig = {apiKey:"AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",authDom
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+let PACKAGES = [
+  {name:"L1", price:300, daily:25, days:20},
+  {name:"L2", price:700, daily:50, days:20},
+  {name:"L3", price:1300, daily:100, days:20},
+  {name:"L4", price:2500, daily:150, days:30},
+  {name:"L5", price:3500, daily:200, days:30},
+  {name:"L6", price:4800, daily:250, days:30},
+  {name:"L7", price:7500, daily:350, days:30},
+  {name:"L8", price:10000, daily:500, days:30},
+];
+
+// 1. ADD USER
+function addUser(){
+  let phone = newPhone.value.trim();
+  let name = newName.value.trim();
+  let pass = newPass.value.trim();
+  let bal = parseFloat(newBalance.value) || 0;
+  if(!phone || !name || !pass){ userMsg.innerText = "❌ Fill all fields"; return; }
+  
+  db.collection("users").doc(phone).set({
+    phone, realName:name, password:pass, balance:bal, 
+    ownedPackages:{}, tasksDone:0, referralBonus:0,
+    withdrawPhone:"", createdAt: new Date()
+  }).then(()=>{
+    userMsg.style.color="#22c55e";
+    userMsg.innerText = `✅ User ${phone} created`;
+    newPhone.value=newName.value=newPass.value=newBalance.value="";
+    loadUsers();
+  });
+}
+
+// 2. ADD BALANCE
 function addBalance(){
   let phone = adminPhone.value;
   let amount = parseFloat(adminAmount.value);
@@ -54,31 +118,106 @@ function addBalance(){
       db.collection("users").doc(phone).update({balance:newBal}).then(()=>{
         adminMsg.style.color="#22c55e";
         adminMsg.innerText = `✅ Added Ksh ${amount}. New Balance: ${newBal.toFixed(2)}`;
-        adminPhone.value = "";
-        adminAmount.value = "";
+        adminPhone.value = ""; adminAmount.value = "";
         loadUsers();
       });
-    } else { adminMsg.innerText = "❌ User not found. Tell them to register first"; }
+    } else { adminMsg.innerText = "❌ User not found"; }
   });
 }
 
+// 3. REMOVE USER
+function deleteUser(phone){
+  if(confirm("Delete user " + phone + "?")){
+    db.collection("users").doc(phone).delete().then(()=>{
+      alert("User deleted");
+      loadUsers();
+    });
+  }
+}
+
+// 4. LOAD USERS
 function loadUsers(){
   userList.innerHTML = "Loading...";
   db.collection("users").get().then(snapshot=>{
     userList.innerHTML = "";
     snapshot.forEach(doc=>{
       let u = doc.data();
+      let pkgCount = Object.values(u.ownedPackages || {}).reduce((a,b)=>a+b,0);
       userList.innerHTML += `
         <div class="user-list">
-          <div>${u.phone}<br><small>Balance: Ksh ${u.balance.toFixed(2)}</small></div>
-          <span>${u.package || 'None'}</span>
+          <div>
+            <b>${u.phone}</b><br>
+            <small>Name: ${u.realName || 'N/A'} | Balance: Ksh ${u.balance.toFixed(2)} | Packages: ${pkgCount}</small>
+          </div>
+          <button class="btn-danger" style="padding:8px 12px;width:auto" onclick="deleteUser('${u.phone}')">DELETE</button>
         </div>
       `;
     });
   });
 }
 
+// 5. EDIT PACKAGES
+function loadPackageEditor(){
+  packageEditor.innerHTML = "";
+  PACKAGES.forEach((p,i)=>{
+    packageEditor.innerHTML += `
+      <div class="package-row">
+        <input value="${p.name}" id="pname${i}" readonly>
+        <input type="number" value="${p.price}" id="pprice${i}" placeholder="Price">
+        <input type="number" value="${p.daily}" id="pdaily${i}" placeholder="Daily">
+        <input type="number" value="${p.days}" id="pdays${i}" placeholder="Days">
+      </div>
+    `;
+  });
+}
+
+function savePackages(){
+  PACKAGES.forEach((p,i)=>{
+    p.price = parseFloat(document.getElementById('pprice'+i).value);
+    p.daily = parseFloat(document.getElementById('pdaily'+i).value);
+    p.days = parseInt(document.getElementById('pdays'+i).value);
+  });
+  localStorage.setItem("nexaPackages", JSON.stringify(PACKAGES));
+  alert("✅ Packages saved. Tell users to refresh");
+}
+
+// 6. WITHDRAWALS
+function loadWithdrawals(){
+  withdrawList.innerHTML = "Loading...";
+  db.collection("withdrawals").where("status","==","pending").get().then(snapshot=>{
+    if(snapshot.empty){ withdrawList.innerHTML = "No pending requests"; return; }
+    withdrawList.innerHTML = "";
+    snapshot.forEach(doc=>{
+      let w = doc.data();
+      withdrawList.innerHTML += `
+        <div class="withdraw-card">
+          <b>Special ID:</b> ${w.phone}<br>
+          <b>Amount:</b> Ksh ${w.amount}<br>
+          <b>M-Pesa:</b> ${w.mpesa}<br>
+          <b>Account Balance:</b> Ksh ${w.currentBalance.toFixed(2)}<br><br>
+          <button class="btn-success" style="width:48%" onclick="approveWithdraw('${doc.id}', '${w.phone}', ${w.amount})">APPROVE</button>
+          <button class="btn-danger" style="width:48%" onclick="rejectWithdraw('${doc.id}')">REJECT</button>
+        </div>
+      `;
+    });
+  });
+}
+
+function approveWithdraw(id, phone, amount){
+  db.collection("withdrawals").doc(id).update({status:"approved", approvedAt: new Date()});
+  alert("✅ Approved. Send Ksh " + amount + " to " + phone + " manually");
+  loadWithdrawals();
+}
+
+function rejectWithdraw(id){
+  db.collection("withdrawals").doc(id).update({status:"rejected"});
+  alert("❌ Rejected");
+  loadWithdrawals();
+}
+
 loadUsers();
+loadWithdrawals();
+loadPackageEditor();
 </script>
 </body>
 </html>
