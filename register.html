@@ -16,18 +16,11 @@
   .captcha{display:flex;gap:10px;align-items:center}
   .captcha-box{background:#2a2a2a;border:1px solid #333;border-radius:12px;padding:14px 20px;font-size:22px;font-weight:bold;color:#FFD700;letter-spacing:5px;user-select:none;cursor:pointer}
   .check{display:flex;align-items:center;gap:8px;margin:20px 0;font-size:14px;color:#999}
-  .check a{color:#FFD700;text-decoration:none;cursor:pointer}
+  .check a{color:#FFD700;text-decoration:underline;cursor:pointer}
   .btn{width:100%;padding:15px;background:#444;color:#888;border:none;border-radius:12px;font-size:16px;font-weight:bold;cursor:pointer}
   .btn.active{background:#FFD700;color:#000}
   .footer{text-align:center;margin-top:20px;font-size:15px}
   .footer a{color:#FFD700;text-decoration:none;font-weight:bold}
-   
-   /* POPUP STYLE */
-  .popup{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);justify-content:center;align-items:center;z-index:999}
-  .popup-content{background:#1a1a1a;padding:20px;border-radius:15px;border:2px solid #FFD700;max-width:90%;max-height:70%;overflow-y:auto}
-  .popup-content h2{color:#FFD700;margin-bottom:10px}
-  .popup-content p{color:#ccc;font-size:14px;line-height:1.6;margin-bottom:15px}
-  .popup-content button{padding:10px 20px;background:#FFD700;color:#000;border:none;border-radius:8px;font-weight:bold;cursor:pointer}
 </style>
 </head>
 <body>
@@ -56,25 +49,12 @@
 
         <div class="check">
             <input type="checkbox" id="agree" onchange="checkBtn()">
-            <label>I agree to <a onclick="showTerms()">Terms</a></label>
+            <label>I agree to <a href="/terms.html" target="_blank">Terms</a></label>
         </div>
 
         <button class="btn" id="regBtn" onclick="register()">REGISTER</button>
 
         <div class="footer">Have account? <a href="/login.html">Login</a></div>
-    </div>
-
-    <!-- TERMS POPUP -->
-    <div class="popup" id="termsPopup">
-        <div class="popup-content">
-            <h2>NEXA VIEW - Terms & Conditions</h2>
-            <p>1. You must be 18+ to register.</p>
-            <p>2. All deposits are final. NEXA VIEW is not responsible for losses.</p>
-            <p>3. One account per person. Multiple accounts will be banned.</p>
-            <p>4. We can suspend any account for suspicious activity.</p>
-            <p>5. By clicking Register you agree to all terms.</p>
-            <button onclick="hideTerms()">I Agree & Close</button>
-        </div>
     </div>
 
 <script>
@@ -119,9 +99,6 @@ function register(){
     alert('Account Created for ' + fullPhone);
     window.location.href = '/index.html';
 }
-
-function showTerms(){document.getElementById('termsPopup').style.display='flex'}
-function hideTerms(){document.getElementById('termsPopup').style.display='none'}
 
 genCaptcha(); checkBtn();
 </script>
