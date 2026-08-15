@@ -1,151 +1,258 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEXA ADMIN</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXA ADMIN PANEL</title>
 <style>
-body{background:#000;color:white;font-family:Poppins;padding:20px}
-h1{color:#fbbf24;text-align:center}
-.box{background:#111;padding:15px;border-radius:12px;margin-bottom:15px;border:1px solid #222}
-input,textarea{width:100%;padding:12px;margin:6px 0;background:#1a1a1a;border:1px solid #333;color:white;border-radius:8px}
-button{padding:12px 16px;background:#fbbf24;color:black;border:none;border-radius:8px;font-weight:700;cursor:pointer;margin:4px 2px}
-.orange{background:#f59e0b}
-.red{background:#ef4444}
-.green{background:#22c55e}
-.user-row{display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid #222;font-size:13px}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+*{box-sizing:border-box}
+body{background:#000;color:white;font-family:Poppins;padding:15px;margin:0}
+.box{background:#111;border:1px solid #333;border-radius:12px;padding:14px;margin-bottom:15px}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:15px}
+.stat-card{background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:12px;text-align:center}
+.stat-card h4{color:#888;font-size:11px;margin:0;font-weight:400}
+.stat-card p{color:#fbbf24;font-size:18px;font-weight:700;margin:5px 0 0 0}
+.search-box{display:flex;align-items:center;background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:10px;margin-bottom:15px}
+.search-box input{flex:1;background:transparent;border:none;color:white;font-size:14px;outline:none;font-family:Poppins}
+.search-icon{color:#fbbf24;font-size:18px;margin-right:8px}
+h2{color:#fbbf24;text-align:center;margin:0 0 20px 0}
+h3{color:#fbbf24;margin:0 0 12px 0;font-size:15px}
+.btn{padding:6px 10px;background:#22c55e;color:#000;border:none;border-radius:6px;font-weight:700;cursor:pointer;margin:2px;font-size:10px;font-family:Poppins}
+.btn:hover{opacity:0.8}
+.btn-red{background:#ef4444;color:white}
+.btn-yellow{background:#f59e0b;color:#000}
+.btn-blue{background:#3b82f6;color:white}
+.req-card{background:#1a1a1a;padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid #333;font-size:12px;line-height:1.6}
+.user-card{background:#1a1a1a;padding:10px;border-radius:10px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:flex-start;border:1px solid #333;gap:10px}
+.user-num{background:#fbbf24;color:#000;font-weight:700;font-size:11px;border-radius:6px;padding:4px 8px;min-width:28px;text-align:center;margin-top:3px}
+.user-info{font-size:12px;line-height:1.7;flex:1}
+.user-info b{color:#fbbf24}
+.btn-group{display:flex;flex-direction:column;gap:4px}
+input[type="number"]{padding:8px;background:#222;border:1px solid #444;color:white;border-radius:6px;width:100%;font-family:Poppins}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:999;justify-content:center;align-items:center}
+.modal-content{background:#111;width:90%;max-width:400px;border-radius:16px;padding:18px;border:1px solid #333}
+.modal-content h3{margin-top:0}
+.modal-content label{font-size:12px;color:#888}
 </style>
 </head>
 <body>
-<h1>NEXA ADMIN PANEL</h1>
 
-<div class="box">
-  <h3>Settings</h3>
-  <button onclick="showTab('users',this)">Users</button>
-  <button class="orange" onclick="showTab('referrals',this)">Referral Bonuses</button>
-  <button class="orange" onclick="showTermsEditor()">Edit Terms</button>
-  <button class="green" onclick="logout()">Logout</button>
+<h2>👑 NEXA ADMIN PANEL</h2>
+
+<!-- TOP STATS -->
+<div class="stats">
+  <div class="stat-card"><h4>Total Users</h4><p id="totalUsers">0</p></div>
+  <div class="stat-card"><h4>Total Invested</h4><p id="totalInvested">Ksh 0.00</p></div>
+  <div class="stat-card"><h4>Total Income</h4><p id="totalIncome">Ksh 0.00</p></div>
+  <div class="stat-card"><h4>Today's Income</h4><p id="todayIncome">Ksh 0.00</p></div>
 </div>
 
-<div class="box" id="usersTab">
-  <h3>Users</h3>
+<!-- PENDING WITHDRAWALS -->
+<div class="box">
+  <h3>💸 Pending Withdrawals</h3>
+  <div id="withdrawList">Loading...</div>
+</div>
+
+<!-- USERS -->
+<div class="box">
+  <h3>👥 All Users</h3>
+  <!-- SEARCH BAR -->
+  <div class="search-box">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Search by Phone, User ID, or Ref Code...">
+  </div>
   <div id="userList">Loading...</div>
 </div>
 
-<div class="box" id="refTab" style="display:none">
-  <h3>Pending Referral Bonuses - 10%</h3>
-  <div id="refList">Loading...</div>
-</div>
-
-<!-- TERMS EDITOR POPUP -->
-<div id="termsEditor" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:999;overflow-y:auto;padding:15px">
-  <div style="background:#111;border:1px solid #fbbf24;border-radius:16px;padding:20px;max-width:700px;margin:20px auto">
-    <h2 style="color:#fbbf24;text-align:center">Edit Terms & Conditions</h2>
-    <textarea id="termsText" style="width:100%;height:400px;background:#1a1a1a;color:white;border:1px solid #333;border-radius:10px;padding:15px;font-family:Poppins;font-size:13px;line-height:1.6"></textarea>
-    <button onclick="saveTerms()" style="width:100%;margin-top:10px;padding:14px;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:10px;font-weight:700">SAVE TERMS</button>
-    <button onclick="closeTermsEditor()" style="width:100%;margin-top:8px;padding:14px;background:#333;color:white;border:none;border-radius:10px;font-weight:700">CLOSE</button>
+<!-- DEPOSIT MODAL -->
+<div id="depositModal" class="modal" onclick="closeDepositModal()">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <h3>Add Balance to User</h3>
+    <p id="depositUserPhone" style="color:#fbbf24;font-weight:600"></p>
+    <label>Amount to Add KSH</label>
+    <input id="depositAmountInput" type="number" placeholder="500">
+    <div style="margin-top:15px;display:flex;gap:8px">
+      <button class="btn btn-blue" style="flex:1" onclick="confirmDeposit()">Add Money</button>
+      <button class="btn btn-red" style="flex:1" onclick="closeDepositModal()">Cancel</button>
+    </div>
   </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <script>
-const firebaseConfig = {apiKey:"AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",authDomain:"nexa-view.firebaseapp.com",projectId:"nexa-view"};
+const firebaseConfig = {
+  apiKey:"AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",
+  authDomain:"nexa-view.firebaseapp.com",
+  projectId:"nexa-view"
+};
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// CHECK ADMIN LOGIN
-if(localStorage.getItem("nexaAdmin") !== "true"){ window.location.href = "index.html"; }
+let selectedUserPhone = "";
+let userCounter = 1;
+let allUsers = [];
 
-function logout(){ localStorage.removeItem("nexaAdmin"); window.location.href = "index.html"; }
+// LOAD USERS WITH STATS
+function loadUsers(){
+  userCounter = 1;
+  let totalUsers = 0;
+  let totalInvested = 0;
+  let totalIncome = 0;
+  let todayIncome = 0;
 
-function showTab(tab,el){
-  document.getElementById('usersTab').style.display = tab=='users'?'block':'none';
-  document.getElementById('refTab').style.display = tab=='referrals'?'block':'none';
-  if(tab=='referrals') loadReferrals();
+  db.collection("users").orderBy("phone").get().then(snapshot=>{
+    allUsers = [];
+    totalUsers = snapshot.size;
+    
+    snapshot.forEach(doc=>{
+      let u = doc.data();
+      u.docId = doc.id;
+      allUsers.push(u);
+      
+      let invested = u.totalInvested || 0;
+      let income = u.totalIncome || 0;
+      let todayInc = u.todayIncome || 0;
+
+      totalInvested += invested;
+      totalIncome += income;
+      todayIncome += todayInc;
+    });
+    
+    renderUsers(allUsers);
+    document.getElementById('totalUsers').innerText = totalUsers;
+    document.getElementById('totalInvested').innerText = `Ksh ${totalInvested.toFixed(2)}`;
+    document.getElementById('totalIncome').innerText = `Ksh ${totalIncome.toFixed(2)}`;
+    document.getElementById('todayIncome').innerText = `Ksh ${todayIncome.toFixed(2)}`;
+  }).catch(err=>{
+    document.getElementById('userList').innerHTML = "<p style='color:red'>Error loading users</p>";
+  })
 }
 
-// LOAD USERS
-function loadUsers(){
-  db.collection("users").get().then(snap=>{
-    let html = '';
-    snap.forEach(d=>{
-      let u = d.data();
-      html+=`<div class="user-row">
-        <div>
-          <b>${u.username || d.id}</b><br>
-          <small>ID: ${u.userID || 'NO ID'}</small><br>
-          <small>Ref: ${u.myReferralCode || 'NO CODE'}</small><br>
-          <small>Phone: ${d.id}</small><br>
-          <small>Balance: Ksh ${u.balance}</small>
-        </div>
-        <div>
-          <button class="orange" onclick="resetPass('${d.id}')">Reset Pass</button>
-          <button class="red" onclick="deleteUser('${d.id}')">Delete</button>
-        </div>
+function renderUsers(users){
+  let html = "";
+  userCounter = 1;
+  users.forEach(u=>{
+    let products = u.productsBought || 0;
+    let invested = u.totalInvested || 0;
+    let income = u.totalIncome || 0;
+    let todayInc = u.todayIncome || 0;
+
+    html += `<div class="user-card">
+      <div class="user-num">#${userCounter}</div>
+      <div class="user-info">
+        <b>${u.phone}</b><br>
+        ID: ${u.userID || 'NO ID'} | Ref: ${u.myReferralCode || 'NO CODE'}<br>
+        Balance: <b style="color:#22c55e">Ksh ${(u.balance||0).toFixed(2)}</b><br>
+        📦 Products: <b>${products}</b><br>
+        💰 Invested: <b style="color:#3b82f6">Ksh ${invested.toFixed(2)}</b><br>
+        📈 Total Income: <b style="color:#22c55e">Ksh ${income.toFixed(2)}</b><br>
+        🔥 Today: <b style="color:#f59e0b">Ksh ${todayInc.toFixed(2)}</b>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-blue" onclick="openDepositModal('${u.phone}')">Deposit</button>
+        <button class="btn btn-yellow" onclick="resetPass('${u.phone}')">Reset</button>
+        <button class="btn btn-red" onclick="deleteUser('${u.phone}')">Delete</button>
+      </div>
+    </div>`;
+    userCounter++;
+  });
+  document.getElementById('userList').innerHTML = html || "<p style='color:#888;text-align:center'>No users found</p>";
+}
+
+// SEARCH FUNCTION
+document.getElementById('searchInput').addEventListener('keyup', function(){
+  let query = this.value.toLowerCase();
+  let filtered = allUsers.filter(u=>{
+    return (u.phone && u.phone.toLowerCase().includes(query)) ||
+           (u.userID && u.userID.toLowerCase().includes(query)) ||
+           (u.myReferralCode && u.myReferralCode.toLowerCase().includes(query));
+  });
+  renderUsers(filtered);
+});
+
+// DEPOSIT FUNCTIONS
+function openDepositModal(phone){
+  selectedUserPhone = phone;
+  document.getElementById('depositUserPhone').innerText = "User: " + phone;
+  document.getElementById('depositModal').style.display = 'flex';
+}
+
+function closeDepositModal(){
+  document.getElementById('depositModal').style.display = 'none';
+  document.getElementById('depositAmountInput').value = "";
+}
+
+function confirmDeposit(){
+  let amount = parseFloat(document.getElementById('depositAmountInput').value);
+  if(!amount || amount <= 0){ alert("Enter valid amount"); return; }
+  db.collection("users").doc(selectedUserPhone).get().then(doc=>{
+    let newBal = (doc.data().balance || 0) + amount;
+    db.collection("users").doc(selectedUserPhone).update({balance: newBal}).then(()=>{
+      alert(`✅ Added Ksh ${amount} to ${selectedUserPhone}`);
+      closeDepositModal();
+      loadUsers();
+    })
+  }).catch(err=>alert("Error: " + err.message))
+}
+
+// USER MANAGEMENT
+function resetPass(phone){
+  let newPass = prompt("Enter new password for " + phone);
+  if(newPass){ 
+    db.collection("users").doc(phone).update({password: newPass})
+    .then(()=>alert("✅ Password reset"))
+    .catch(err=>alert("Error: " + err.message)); 
+  }
+}
+
+function deleteUser(phone){
+  if(confirm("Delete user " + phone + "? This cannot be undone.")){ 
+    db.collection("users").doc(phone).delete()
+    .then(()=>{alert("✅ User deleted"); loadUsers();})
+    .catch(err=>alert("Error: " + err.message)); 
+  }
+}
+
+// LOAD WITHDRAWALS
+function loadWithdrawals(){
+  db.collection("withdrawals").where("status","==","pending").orderBy("date","desc").get().then(snapshot=>{
+    let html = "";
+    if(snapshot.empty){ html = "<p style='color:#888;text-align:center'>No pending withdrawals</p>"; }
+    snapshot.forEach(doc=>{
+      let d = doc.data();
+      let date = d.date ? d.date.toDate().toLocaleString() : 'N/A';
+      html += `<div class="req-card">
+        <b>User:</b> ${d.phone}<br>
+        <b>Amount:</b> Ksh ${d.amount}<br>
+        <b>Time:</b> ${date}<br>
+        <button class="btn" onclick="approveWithdraw('${doc.id}')">Mark Paid</button>
+        <button class="btn-red" onclick="rejectWithdraw('${doc.id}')">Reject</button>
       </div>`;
     });
-    document.getElementById('userList').innerHTML = html || "No users yet";
+    document.getElementById('withdrawList').innerHTML = html;
+  }).catch(err=>{
+    document.getElementById('withdrawList').innerHTML = "<p style='color:red'>Error loading withdrawals</p>";
   })
 }
+
+function approveWithdraw(id){
+  db.collection("withdrawals").doc(id).update({status:"paid"})
+  .then(()=>{alert("✅ Marked as Paid. Send MPESA manually"); loadWithdrawals();})
+  .catch(err=>alert("Error: " + err.message));
+}
+
+function rejectWithdraw(id){
+  db.collection("withdrawals").doc(id).update({status:"rejected"})
+  .then(()=>loadWithdrawals())
+  .catch(err=>alert("Error: " + err.message));
+}
+
+// INIT
 loadUsers();
-
-function resetPass(phone){
-  let np = prompt("New password for " + phone);
-  if(np){ db.collection("users").doc(phone).update({password:np}).then(()=>alert('✅ Password Reset')) }
-}
-function deleteUser(phone){
-  if(confirm("Delete " + phone + "?")){ db.collection("users").doc(phone).delete().then(()=>{alert('✅ Deleted'); loadUsers();}) }
-}
-
-// REFERRAL BONUSES
-function loadReferrals(){
-  db.collection("referralBonuses").where("status", "==", "pending").get().then(snap=>{
-    let html = '';
-    snap.forEach(d=>{
-      let b = d.data();
-      html+=`<div class="user-row">
-        <div>
-          <b>Referrer:</b> ${b.referrerPhone}<br>
-          <b>Referred:</b> ${b.referredName} - ${b.referredPhone}<br>
-          <b>Package:</b> Ksh ${b.packagePrice}<br>
-          <b>Bonus 10%:</b> Ksh ${b.bonusAmount}
-        </div>
-        <button class="green" onclick="approveBonus('${d.id}','${b.referrerPhone}',${b.bonusAmount})">APPROVE</button>
-      </div>`;
-    })
-    document.getElementById('refList').innerHTML = html || "No pending bonuses";
-  })
-}
-
-function approveBonus(bonusID, refPhone, amount){
-  db.collection("users").doc(refPhone).update({
-    balance: firebase.firestore.FieldValue.increment(amount),
-    referralBonus: firebase.firestore.FieldValue.increment(amount)
-  })
-  db.collection("referralBonuses").doc(bonusID).update({status: 'approved', approvedAt: new Date()})
-  alert(`✅ Ksh ${amount} Bonus sent to ${refPhone}`);
-  loadReferrals();
-}
-
-// TERMS EDITOR
-function showTermsEditor(){
-  document.getElementById('termsEditor').style.display = 'block';
-  db.collection("settings").doc("terms").get().then(doc=>{
-    if(doc.exists){
-      document.getElementById('termsText').value = doc.data().content;
-    }else{
-      document.getElementById('termsText').value = `1. About: NEXA VIEW is an online platform where users earn rewards by completing daily tasks.\nAvailable in Kenya, Uganda, and Tanzania.\n\n2. Eligibility: You must be 18+ years old and have a valid phone number from KE, UG, or TZ.\n\n3. Earnings: Earnings are NOT guaranteed. Tasks depend on advertisers. Sunday is a rest day.\n\n4. Withdrawals: Min: Ksh 200 / UGX 6,000 / TZS 4,000. 15% fee. 9AM-5PM. 1 per day.`;
-    }
-  })
-}
-function closeTermsEditor(){ document.getElementById('termsEditor').style.display = 'none'; }
-function saveTerms(){
-  let content = document.getElementById('termsText').value;
-  db.collection("settings").doc("terms").set({content: content, updated: new Date()}).then(()=>{
-    alert('✅ Terms Updated Successfully');
-    closeTermsEditor();
-  })
-}
+loadWithdrawals();
+setInterval(()=>{loadWithdrawals();}, 10000);
 </script>
 </body>
 </html>
