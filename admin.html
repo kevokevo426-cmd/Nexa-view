@@ -14,12 +14,16 @@ input{padding:14px;width:100%;margin:8px 0;border-radius:10px;background:#222;co
 .btn{padding:14px;width:100%;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;font-weight:bold;border:none;border-radius:10px;font-size:15px;cursor:pointer;margin-top:8px}
 .btn-danger{background:#ef4444;color:white}
 .btn-success{background:#22c55e;color:white}
-.user-list{background:#1a1a1a;padding:15px;border-radius:10px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.btn-warning{background:#f59e0b;color:black}
+.user-list{background:#1a1a1a;padding:15px;border-radius:10px;margin:10px 0}
+.user-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 .package-row{display:flex;gap:10px;margin:10px 0}
 .package-row input{flex:1}
 .withdraw-card{background:#1a1a1a;padding:15px;border-radius:10px;margin:10px 0;border-left:4px solid #fbbf24}
 #loginScreen{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;display:flex;justify-content:center;align-items:center;z-index:9999}
 .logout{position:fixed;top:20px;right:20px;background:#ef4444;color:white;border:none;padding:10px 15px;border-radius:8px;cursor:pointer;font-weight:bold}
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:#000000aa;display:none;justify-content:center;align-items:center;z-index:999}
+.modal-content{background:#111;padding:20px;border-radius:16px;width:90%;max-width:400px;border:1px solid #333}
 </style>
 </head>
 <body>
@@ -35,6 +39,18 @@ input{padding:14px;width:100%;margin:8px 0;border-radius:10px;background:#222;co
 </div>
 
 <button class="logout" onclick="logout()">LOGOUT</button>
+
+<!-- RESET MODAL -->
+<div class="modal" id="resetModal">
+  <div class="modal-content">
+    <h3 id="modalTitle">Reset User</h3>
+    <input id="modalInput" placeholder="">
+    <div style="display:flex;gap:10px">
+      <button class="btn" onclick="confirmReset()">CONFIRM</button>
+      <button class="btn-danger" onclick="closeModal()">CANCEL</button>
+    </div>
+  </div>
+</div>
 
 <div class="container" id="adminPanel" style="display:none">
 <h1>👑 NEXA ADMIN PANEL</h1>
@@ -64,7 +80,6 @@ input{padding:14px;width:100%;margin:8px 0;border-radius:10px;background:#222;co
 <h3>📦 Edit Packages</h3>
 <div id="packageEditor"></div>
 <button class="btn" onclick="savePackages()">SAVE PACKAGES</button>
-<p style="color:#999;font-size:12px">Changes apply after users refresh dashboard</p>
 </div>
 
 <!-- 4. APPROVE WITHDRAWALS -->
@@ -86,7 +101,7 @@ input{padding:14px;width:100%;margin:8px 0;border-radius:10px;background:#222;co
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <script>
-const ADMIN_PASSWORD = "nexa2025"; // CHANGE THIS PASSWORD
+const ADMIN_PASSWORD = "nexa2025"; // CHANGE THIS
 
 const firebaseConfig = {apiKey:"AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",authDomain:"nexa-view.firebaseapp.com",projectId:"nexa-view"};
 firebase.initializeApp(firebaseConfig);
@@ -103,36 +118,68 @@ let PACKAGES = [
   {name:"L8", price:10000, daily:500, days:30},
 ];
 
-// CHECK LOGIN
+let resetTarget = null;
+let resetType = null;
+
+// LOGIN
 function checkLogin(){
   let pass = document.getElementById('adminPass').value;
   if(pass === ADMIN_PASSWORD){
     localStorage.setItem("nexaAdmin","true");
     document.getElementById('loginScreen').style.display = "none";
     document.getElementById('adminPanel').style.display = "block";
-    loadUsers();
-    loadWithdrawals();
-    loadPackageEditor();
+    loadUsers(); loadWithdrawals(); loadPackageEditor();
   } else {
     document.getElementById('loginError').innerText = "❌ Wrong Password";
   }
 }
-
-function logout(){
-  localStorage.removeItem("nexaAdmin");
-  location.reload();
-}
-
-// Auto login if already logged in
+function logout(){ localStorage.removeItem("nexaAdmin"); location.reload(); }
 if(localStorage.getItem("nexaAdmin") === "true"){
   document.getElementById('loginScreen').style.display = "none";
   document.getElementById('adminPanel').style.display = "block";
-  loadUsers();
-  loadWithdrawals();
-  loadPackageEditor();
+  loadUsers(); loadWithdrawals(); loadPackageEditor();
 }
 
-// 1. ADD USER
+// MODAL FUNCTIONS
+function openResetModal(type, phone){
+  resetTarget = phone;
+  resetType = type;
+  document.getElementById('modalTitle').innerText = type === 'pass' ? 'Reset Password for ' + phone : 'Change Phone for ' + phone;
+  document.getElementById('modalInput').placeholder = type === 'pass' ? 'New Password' : 'New Phone: 2547XXXXXXXX';
+  document.getElementById('modalInput').value = '';
+  document.getElementById('resetModal').style.display = 'flex';
+}
+function closeModal(){ document.getElementById('resetModal').style.display = 'none'; }
+
+function confirmReset(){
+  let newValue = document.getElementById('modalInput').value.trim();
+  if(!newValue){ alert('Enter a value'); return; }
+  
+  if(resetType === 'pass'){
+    db.collection("users").doc(resetTarget).update({password: newValue}).then(()=>{
+      alert('✅ Password reset for ' + resetTarget);
+      closeModal();
+    });
+  } 
+  if(resetType === 'phone'){
+    // Copy user data to new phone doc, then delete old
+    db.collection("users").doc(resetTarget).get().then(doc=>{
+      if(doc.exists){
+        let data = doc.data();
+        data.phone = newValue;
+        db.collection("users").doc(newValue).set(data).then(()=>{
+          db.collection("users").doc(resetTarget).delete().then(()=>{
+            alert('✅ Phone changed to ' + newValue);
+            closeModal();
+            loadUsers();
+          });
+        });
+      }
+    });
+  }
+}
+
+// ADD USER
 function addUser(){
   let phone = newPhone.value.trim();
   let name = newName.value.trim();
@@ -152,36 +199,31 @@ function addUser(){
   });
 }
 
-// 2. ADD BALANCE
+// ADD BALANCE
 function addBalance(){
   let phone = adminPhone.value;
   let amount = parseFloat(adminAmount.value);
   if(!phone || !amount){ adminMsg.innerText = "❌ Fill both fields"; return; }
-  
   db.collection("users").doc(phone).get().then(doc=>{
     if(doc.exists){
       let newBal = doc.data().balance + amount;
       db.collection("users").doc(phone).update({balance:newBal}).then(()=>{
         adminMsg.style.color="#22c55e";
         adminMsg.innerText = `✅ Added Ksh ${amount}. New Balance: ${newBal.toFixed(2)}`;
-        adminPhone.value = ""; adminAmount.value = "";
-        loadUsers();
+        adminPhone.value = ""; adminAmount.value = ""; loadUsers();
       });
     } else { adminMsg.innerText = "❌ User not found"; }
   });
 }
 
-// 3. REMOVE USER
+// DELETE USER
 function deleteUser(phone){
-  if(confirm("Delete user " + phone + "? This cannot be undone")){
-    db.collection("users").doc(phone).delete().then(()=>{
-      alert("User deleted");
-      loadUsers();
-    });
+  if(confirm("Delete user " + phone + "?")){
+    db.collection("users").doc(phone).delete().then(()=>{ alert("User deleted"); loadUsers(); });
   }
 }
 
-// 4. LOAD USERS
+// LOAD USERS
 function loadUsers(){
   userList.innerHTML = "Loading...";
   db.collection("users").get().then(snapshot=>{
@@ -195,28 +237,31 @@ function loadUsers(){
             <b>${u.phone}</b><br>
             <small>Name: ${u.realName || 'N/A'} | Balance: Ksh ${u.balance.toFixed(2)} | Packages: ${pkgCount}</small>
           </div>
-          <button class="btn-danger" style="padding:8px 12px;width:auto" onclick="deleteUser('${u.phone}')">DELETE</button>
+          <div class="user-actions">
+            <button class="btn-warning" style="padding:8px 12px;width:auto" onclick="openResetModal('pass','${u.phone}')">RESET PASS</button>
+            <button class="btn-warning" style="padding:8px 12px;width:auto" onclick="openResetModal('phone','${u.phone}')">CHANGE PHONE</button>
+            <button class="btn-danger" style="padding:8px 12px;width:auto" onclick="deleteUser('${u.phone}')">DELETE</button>
+          </div>
         </div>
       `;
     });
   });
 }
 
-// 5. EDIT PACKAGES
+// EDIT PACKAGES
 function loadPackageEditor(){
   packageEditor.innerHTML = "";
   PACKAGES.forEach((p,i)=>{
     packageEditor.innerHTML += `
       <div class="package-row">
         <input value="${p.name}" id="pname${i}" readonly style="width:60px">
-        <input type="number" value="${p.price}" id="pprice${i}" placeholder="Price">
-        <input type="number" value="${p.daily}" id="pdaily${i}" placeholder="Daily">
-        <input type="number" value="${p.days}" id="pdays${i}" placeholder="Days">
+        <input type="number" value="${p.price}" id="pprice${i}">
+        <input type="number" value="${p.daily}" id="pdaily${i}">
+        <input type="number" value="${p.days}" id="pdays${i}">
       </div>
     `;
   });
 }
-
 function savePackages(){
   PACKAGES.forEach((p,i)=>{
     p.price = parseFloat(document.getElementById('pprice'+i).value);
@@ -224,10 +269,10 @@ function savePackages(){
     p.days = parseInt(document.getElementById('pdays'+i).value);
   });
   localStorage.setItem("nexaPackages", JSON.stringify(PACKAGES));
-  alert("✅ Packages saved. Tell users to refresh dashboard");
+  alert("✅ Packages saved");
 }
 
-// 6. WITHDRAWALS
+// WITHDRAWALS
 function loadWithdrawals(){
   withdrawList.innerHTML = "Loading...";
   db.collection("withdrawals").where("status","==","pending").get().then(snapshot=>{
@@ -240,8 +285,7 @@ function loadWithdrawals(){
           <b>Special ID:</b> ${w.phone}<br>
           <b>Amount:</b> Ksh ${w.amount}<br>
           <b>M-Pesa:</b> ${w.mpesa}<br>
-          <b>Account Balance:</b> Ksh ${w.currentBalance.toFixed(2)}<br>
-          <b>Requested:</b> ${w.requestedAt.toDate().toLocaleString()}<br><br>
+          <b>Balance:</b> Ksh ${w.currentBalance.toFixed(2)}<br><br>
           <button class="btn-success" style="width:48%" onclick="approveWithdraw('${doc.id}', '${w.phone}', ${w.amount})">APPROVE</button>
           <button class="btn-danger" style="width:48%" onclick="rejectWithdraw('${doc.id}')">REJECT</button>
         </div>
@@ -249,13 +293,11 @@ function loadWithdrawals(){
     });
   });
 }
-
 function approveWithdraw(id, phone, amount){
   db.collection("withdrawals").doc(id).update({status:"approved", approvedAt: new Date()});
-  alert("✅ Approved. Send Ksh " + amount + " to " + phone + " manually via M-Pesa");
+  alert("✅ Approved. Send Ksh " + amount + " to " + phone);
   loadWithdrawals();
 }
-
 function rejectWithdraw(id){
   db.collection("withdrawals").doc(id).update({status:"rejected"});
   alert("❌ Rejected");
