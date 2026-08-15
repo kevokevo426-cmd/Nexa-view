@@ -10,43 +10,25 @@ body{background:#000;color:white;font-family:Poppins;margin:0;padding:0 0 80px 0
 .top-bar{text-align:center;padding:20px 15px;background:#000}
 .top-bar p{margin:0;font-size:13px;color:#aaa}
 .top-bar h1{margin:8px 0;font-size:28px;color:#22c55e;font-weight:700}
-
 .box{margin:15px;padding:14px;border-radius:14px;background:#111;border:1px solid #222}
-
-/* WALLET CARD */
 .wallet-card{background:#181818;border-radius:14px;padding:14px;margin:15px;border:1px solid #333}
 .stat-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #222;font-size:13px}
 .stat-row:last-child{border:none}
 .stat-row b{color:#22c55e;font-size:13px}
 .stat-row.green{color:#22c55e}
 .stat-row.yellow{color:#fbbf24}
-
 h3{display:flex;align-items:center;gap:8px;color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
-
-/* PACKAGE CARDS */
-.package-card{
-  background:linear-gradient(135deg,#1a1a1a,#222);
-  border:1px solid #333;
-  border-radius:12px;
-  padding:14px;
-  margin-bottom:10px;
-  cursor:pointer;
-  transition:0.2s;
-}
+.package-card{background:linear-gradient(135deg,#1a1a1a,#222);border:1px solid #333;border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;transition:0.2s}
 .package-card:active{transform:scale(0.98);border-color:#fbbf24}
 .package-card:hover{border-color:#fbbf24}
-
 .btn-wrap{display:flex;gap:8px;margin-top:12px}
 .btn{flex:1;padding:11px;background:linear-gradient(180deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:12px}
 .btn:active{transform:scale(0.97)}
 .btn-green{background:linear-gradient(180deg,#22c55e,#16a34a);color:white}
 .btn-orange{background:linear-gradient(180deg,#f97316,#ea580c);color:white}
-
 input{width:100%;padding:10px;background:#1a1a1a;border:1px solid #333;color:white;border-radius:8px;margin:6px 0;font-size:13px}
 label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
 .note{font-size:9px;color:#f59e0b;margin-top:6px;font-style:italic;line-height:1.3}
-
-/* OTHER STYLES SAME AS BEFORE... */
 .team-card{background:#181818;border:1px solid #222;border-radius:12px;padding:10px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
 .team-info b{display:block;font-size:13px}
 .team-info span{font-size:10px;color:#aaa}
@@ -101,7 +83,7 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
   </div>
   <div class="box">
     <h3>📦 Buy Package</h3>
-    <p style="font-size:12px;color:#aaa;margin-bottom:15px">Unlock daily tasks and earnings</p>
+    <p style="font-size:12px;color:#aaa;margin-bottom:15px">purchase a product and earn interest daily</p>
 
     <div class="package-card" onclick="buyPackage(300, 20, 25)">
       <div style="display:flex;justify-content:space-between;align-items:center">
@@ -209,7 +191,6 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
   </div>
 </div>
 
-<!-- REST OF TABS: TASKS, WALLET, INFO SAME AS BEFORE -->
 <div id="tasksTab" style="display:none"><div class="box"><h3>✅ Daily Tasks</h3><p style="color:#aaa">Complete tasks to earn daily</p><p class="gray">No active package</p></div></div>
 
 <div id="walletTab" style="display:none">
@@ -243,7 +224,6 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
   <div class="box"><h3>📞 Support</h3><p style="font-size:12px;color:#aaa">Need help? Join our WhatsApp group</p><button class="btn btn-green" onclick="window.open('https://chat.whatsapp.com/JmXM1kYBXuiF5dmbBU25f2', '_blank')">Join WhatsApp Group</button></div>
 </div>
 
-<!-- ALL 3 MODALS: ACCOUNT, DEPOSIT, WITHDRAW SAME AS PREVIOUS VERSION -->
 <div id="accountModal" class="modal" onclick="closeAccountModal()"><div class="modal-content" onclick="event.stopPropagation()"><div class="modal-header"><h3>👤 Withdrawal Account</h3><span class="modal-back" onclick="closeAccountModal()">🔙</span></div><div style="background:#1f1f1f;border-radius:12px;padding:14px"><label>Receiving account number (M-Pesa)</label><input id="accNumber" type="tel" placeholder="0712345678"><label>Real name</label><input id="accName" type="text" placeholder="John Doe"><label>Set/Change PIN (4 digits)</label><input id="accPin" type="password" maxlength="4" placeholder="Leave blank to keep current PIN"><button class="btn btn-orange" style="width:100%;margin-top:12px" onclick="updateAccount()">Update wallet</button></div></div></div>
 
 <div id="depositModal" class="modal" onclick="closeDepositModal()"><div class="modal-content" onclick="event.stopPropagation()"><div class="modal-header"><h3>💰 Deposit Funds</h3><span class="modal-back" onclick="closeDepositModal()">🔙</span></div><div class="deposit-box"><p style="font-size:12px;color:#aaa">1. Send money to MPESA Number below</p><div class="mpesa-number">0718422377 <button class="copy-btn" onclick="copyNumber()">Copy</button></div></div><label>Amount Deposited (KSH)</label><input id="depositAmount" type="number" placeholder="Enter amount sent"><label>Paste MPESA Message / Transaction Code</label><input id="depositMsg" placeholder="e.g. RHX7Y9K2L3 Confirmed..."><button class="btn btn-green" style="width:100%;margin-top:10px" onclick="submitDeposit()">Submit Deposit</button><h4 style="margin-top:20px">📜 Deposit History</h4><div id="depositHistory"><p class="gray">Loading...</p></div></div></div>
@@ -265,8 +245,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const phone = localStorage.getItem("nexaPhone");
 if(!phone){ window.location.href = "index.html"; }
-
-function showTab(tab,el){document.querySelectorAll('.nav-item').forEach(t=>t.classList.remove('active'));el.classList.add('active');['home','tasks','wallet','info'].forEach(t=>document.getElementById(t+'Tab').style.display='none');document.getElementById(tab+'Tab').style.display = 'block';if(tab == 'wallet'){ loadReferralInfo(); loadTeamList(); loadIncomeStats(); loadAccountInfo(); }}
+function showTab(tab,el){document.querySelectorAll('.nav-item').forEach(t=>t.classList.remove('active'));if(el) el.classList.add('active');['home','tasks','wallet','info'].forEach(t=>document.getElementById(t+'Tab').style.display='none');document.getElementById(tab+'Tab').style.display = 'block';if(tab == 'wallet'){ loadReferralInfo(); loadTeamList(); loadIncomeStats(); loadAccountInfo(); }}
 function loadUser(){db.collection("users").doc(phone).get().then(doc=>{if(doc.exists){let u = doc.data();document.getElementById('balance').innerText = u.balance.toFixed(2);}})}
 loadUser();
 function loadIncomeStats(){db.collection("users").doc(phone).get().then(doc=>{let u = doc.data();document.getElementById('userID').innerText = u.userID;document.getElementById('walletBalance').innerText = u.balance.toFixed(2);document.getElementById('withdrawBalance').innerText = u.balance.toFixed(2);document.getElementById('refIncome').innerText = (u.referralBonus || 0).toFixed(2);let today = new Date().toDateString();let todayEarn = 0;let totalEarn = 0;for(let key in u.ownedPackages || {}){let p = u.ownedPackages[key];totalEarn += p.daily * p.days;if(new Date(p.start).toDateString() == today){todayEarn += p.daily;}}document.getElementById('todayIncome').innerText = todayEarn.toFixed(2);document.getElementById('totalIncome').innerText = totalEarn.toFixed(2);})}
@@ -285,6 +264,19 @@ function openWithdrawModal(){db.collection("users").doc(phone).get().then(doc=>{
 function closeWithdrawModal(){document.getElementById('withdrawModal').style.display = 'none';}
 function selectAmount(val,btn){document.querySelectorAll('.amount-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById('withdrawAmount').value = val;calcWithdraw();}
 function calcWithdraw(){let amount = parseFloat(document.getElementById('withdrawAmount').value) || 0;let tax = Math.round(amount * 0.15);let net = amount - tax;document.getElementById('taxAmount').innerText = 'KSH' + tax;document.getElementById('netAmount').innerText = 'KSH' + net;}
-function submitWithdraw(){let amount = parseFloat(document.getElementById('withdrawAmount').value);let pin = document.getElementById('withdrawPin').value;if(!amount || amount < 200){ alert('❌ Minimum withdrawal is KSH 200'); return; }if(!pin || pin.length!= 4){ alert('❌ Enter 4-digit PIN'); return; }db.collection("users").doc(phone).get().then(doc=>{let u = doc.data();if(u.balance < amount){ alert('❌ Insufficient balance'); return; }if(u.withdrawPin && u.withdrawPin!= pin){ alert('❌ Incorrect PIN'); return; }let withdrawCode = 'WD-' + Math.random().toString(16).substr(2,10).toUpperCase();let tax = Math.round(amount * 0.15);let net = amount - tax;db.collection("withdrawals").add({userPhone: phone,amount: amount,netAmount: net,tax: tax,withdrawCode: withdrawCode,status: 'pending',pin: pin,account: u.withdrawAccount,name: u.withdrawName,createdAt: new Date()}).then(()=>{db.collection("users").doc(phone).update({balance: u.balance - amount});alert('✅ Withdrawal request submitted! Code: ' + withdrawCode);closeWithdrawModal();loadIncomeStats();loadWithdrawHistory();})})}
+function submitWithdraw(){let amount = parseFloat(document.getElementById('withdrawAmount').value);let pin = document.getElementById('withdrawPin').value;if(!amount || amount < 200){ alert('❌ Minimum withdrawal is KSH 200'); return; }if(!pin || pin.length!= 4){ alert('❌ Enter 4-digit PIN'); return; }db.collection("users").doc(phone).get().then(doc=>{let u = doc.data();if(u.balance < amount){ alert('❌ Insufficient balance'); return; }if(u.withdrawPin && u.withdrawPin!= pin){ alert('❌ Incorrect PIN'); return; }let withdrawCode = 'WD-' + Math.random().toString(16).substr(2,10).toUpperCase();let tax = Math.round(amount * 0.15);let net = amount - tax;db.collection("withdrawals").add({userPhone: phone,amount: amount,netAmount: net,tax: tax,withdrawCode: withdrawCode,status: 'pending',pin: pin,account: u.withdrawAccount,name: u.withdrawName,createdAt: new Date()}).then(()=>{db.collection("users").doc(phone).update({balance: u.balance - amount});alert('✅ Withdrawal request submitted! Code: ' + withdrawCode);closeWithdrawModal();loadIncomeStats();loadWithdrawHistory();})}
 function loadWithdrawHistory(){db.collection("withdrawals").where("userPhone", "==", phone).orderBy("createdAt", "desc").get().then(snap=>{let html = '';snap.forEach(d=>{let w = d.data();let statusClass = w.status == 'pending'? 'status-pending' : w.status == 'completed'? 'status-completed' : 'status-rejected';let statusText = w.status.toUpperCase();let date = w.createdAt.toDate().toLocaleString('en-KE');html+=`<div class="history-card"><div class="history-top"><div class="history-amount">KSH${w.amount} → net KSH${w.netAmount}</div><div class="history-status ${statusClass}">${statusText}</div></div><div style="font-size:11px;color:#aaa">Code: ${w.withdrawCode}</div><div style="font-size:10px;color:#666">${date}</div></div>`;});document.getElementById('withdrawHistory').innerHTML = html || '<p class="gray">No withdrawal records yet</p>';})}
-function loadTeamList(){db.collection("users").where("referredBy", "==", localStorage.getItem("nexaMyCode")).orderBy("createdAt", "desc").get().then(snap=>{let html = '';let count = 0;snap.forEach(d=>{count++;let u = d.data();let isActive = (u.ownedPackages && Object.keys(u.ownedPackages).length > 0)? true : false;let statusBadge = isActive? '<span class="active-badge">ACTIVE</span>' : '<span class="inactive-badge">INACTIVE</span>';let date = u.createdAt? u.createdAt.toDate().toLocaleDateString() : 'N/A';html+=`<div class="team-card"><div class="team-info"><b>${u.username}</b><span>${u.phone} | Joined: ${date}</span></div><div><span class="level-badge">L1</span>${statusBadge}</div></div>`;});document.getElementById
+function loadTeamList(){db.collection("users").where("referredBy", "==", localStorage.getItem("nexaMyCode")).orderBy("createdAt", "desc").get().then(snap=>{let html = '';let count = 0;snap.forEach(d=>{count++;let u = d.data();let isActive = (u.ownedPackages && Object.keys(u.ownedPackages).length > 0)? true : false;let statusBadge = isActive? '<span class="active-badge">ACTIVE</span>' : '<span class="inactive-badge">INACTIVE</span>';let date = u.createdAt? u.createdAt.toDate().toLocaleDateString() : 'N/A';html+=`<div class="team-card"><div class="team-info"><b>${u.username}</b><span>${u.phone} | Joined: ${date}</span></div><div><span class="level-badge">L1</span>${statusBadge}</div></div>`;});document.getElementById('teamCount').innerText = count;document.getElementById('refHistory').innerHTML = html || '<p class="gray">No team members yet</p>';})}
+function buyPackage(price, days, daily){
+  db.collection("users").doc(phone).get().then(doc=>{
+    let u = doc.data();
+    if(u.balance < price){
+      alert("❌ Insufficient balance. Go to Wallet to Deposit");
+      document.querySelectorAll('.nav-item')[2].click();
+      return;
+    }
+    if(!confirm(`Buy package for Ksh ${price}?`)) return;
+    let newBalance = u.balance - price;
+    let owned = u.ownedPackages || {};
+    owned[Date.now()] = {price, days, daily, start: new Date()};
+    db.collection("users").doc(phone).update({
