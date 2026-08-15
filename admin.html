@@ -20,26 +20,31 @@ button{padding:12px 16px;background:#fbbf24;color:black;border:none;border-radiu
 
 <div class="box">
   <h3>Settings</h3>
-  <button class="orange" onclick="showTermsEditor()">Edit Terms & Conditions</button>
+  <button onclick="showTab('users',this)">Users</button>
+  <button class="orange" onclick="showTab('referrals',this)">Referral Bonuses</button>
+  <button class="orange" onclick="showTermsEditor()">Edit Terms</button>
   <button class="green" onclick="logout()">Logout</button>
 </div>
 
-<div class="box">
+<div class="box" id="usersTab">
   <h3>Users</h3>
   <div id="userList">Loading...</div>
+</div>
+
+<div class="box" id="refTab" style="display:none">
+  <h3>Pending Referral Bonuses - 10%</h3>
+  <div id="refList">Loading...</div>
 </div>
 
 <!-- TERMS EDITOR POPUP -->
 <div id="termsEditor" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:999;overflow-y:auto;padding:15px">
   <div style="background:#111;border:1px solid #fbbf24;border-radius:16px;padding:20px;max-width:700px;margin:20px auto">
     <h2 style="color:#fbbf24;text-align:center">Edit Terms & Conditions</h2>
-    <p style="font-size:12px;color:#aaa">Use <b>\n</b> for new line. This updates both Register popup and Terms page instantly.</p>
     <textarea id="termsText" style="width:100%;height:400px;background:#1a1a1a;color:white;border:1px solid #333;border-radius:10px;padding:15px;font-family:Poppins;font-size:13px;line-height:1.6"></textarea>
     <button onclick="saveTerms()" style="width:100%;margin-top:10px;padding:14px;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:10px;font-weight:700">SAVE TERMS</button>
     <button onclick="closeTermsEditor()" style="width:100%;margin-top:8px;padding:14px;background:#333;color:white;border:none;border-radius:10px;font-weight:700">CLOSE</button>
   </div>
 </div>
-
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
@@ -52,6 +57,12 @@ const db = firebase.firestore();
 if(localStorage.getItem("nexaAdmin") !== "true"){ window.location.href = "index.html"; }
 
 function logout(){ localStorage.removeItem("nexaAdmin"); window.location.href = "index.html"; }
+
+function showTab(tab,el){
+  document.getElementById('usersTab').style.display = tab=='users'?'block':'none';
+  document.getElementById('refTab').style.display = tab=='referrals'?'block':'none';
+  if(tab=='referrals') loadReferrals();
+}
 
 // LOAD USERS
 function loadUsers(){
@@ -86,6 +97,36 @@ function deleteUser(phone){
   if(confirm("Delete " + phone + "?")){ db.collection("users").doc(phone).delete().then(()=>{alert('✅ Deleted'); loadUsers();}) }
 }
 
+// REFERRAL BONUSES
+function loadReferrals(){
+  db.collection("referralBonuses").where("status", "==", "pending").get().then(snap=>{
+    let html = '';
+    snap.forEach(d=>{
+      let b = d.data();
+      html+=`<div class="user-row">
+        <div>
+          <b>Referrer:</b> ${b.referrerPhone}<br>
+          <b>Referred:</b> ${b.referredName} - ${b.referredPhone}<br>
+          <b>Package:</b> Ksh ${b.packagePrice}<br>
+          <b>Bonus 10%:</b> Ksh ${b.bonusAmount}
+        </div>
+        <button class="green" onclick="approveBonus('${d.id}','${b.referrerPhone}',${b.bonusAmount})">APPROVE</button>
+      </div>`;
+    })
+    document.getElementById('refList').innerHTML = html || "No pending bonuses";
+  })
+}
+
+function approveBonus(bonusID, refPhone, amount){
+  db.collection("users").doc(refPhone).update({
+    balance: firebase.firestore.FieldValue.increment(amount),
+    referralBonus: firebase.firestore.FieldValue.increment(amount)
+  })
+  db.collection("referralBonuses").doc(bonusID).update({status: 'approved', approvedAt: new Date()})
+  alert(`✅ Ksh ${amount} Bonus sent to ${refPhone}`);
+  loadReferrals();
+}
+
 // TERMS EDITOR
 function showTermsEditor(){
   document.getElementById('termsEditor').style.display = 'block';
@@ -93,14 +134,11 @@ function showTermsEditor(){
     if(doc.exists){
       document.getElementById('termsText').value = doc.data().content;
     }else{
-      // Default terms
       document.getElementById('termsText').value = `1. About: NEXA VIEW is an online platform where users earn rewards by completing daily tasks.\nAvailable in Kenya, Uganda, and Tanzania.\n\n2. Eligibility: You must be 18+ years old and have a valid phone number from KE, UG, or TZ.\n\n3. Earnings: Earnings are NOT guaranteed. Tasks depend on advertisers. Sunday is a rest day.\n\n4. Withdrawals: Min: Ksh 200 / UGX 6,000 / TZS 4,000. 15% fee. 9AM-5PM. 1 per day.`;
     }
   })
 }
-function closeTermsEditor(){
-  document.getElementById('termsEditor').style.display = 'none';
-}
+function closeTermsEditor(){ document.getElementById('termsEditor').style.display = 'none'; }
 function saveTerms(){
   let content = document.getElementById('termsText').value;
   db.collection("settings").doc("terms").set({content: content, updated: new Date()}).then(()=>{
