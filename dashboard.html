@@ -29,6 +29,10 @@ table{width:100%;font-size:12px;border-collapse:collapse}
 th,td{padding:8px;text-align:left;border-bottom:1px solid #222}
 th{color:#fbbf24}
 .balance{font-size:28px;font-weight:700;color:#22c55e;margin-top:5px}
+.tx-item{background:#1a1a1a;padding:12px;border-radius:10px;margin:8px 0;display:flex;justify-content:space-between;font-size:13px}
+.tx-deposit{border-left:3px solid #22c55e}
+.tx-withdraw{border-left:3px solid #ef4444}
+.tx-pending{border-left:3px solid #f59e0b}
 </style>
 </head>
 <body>
@@ -67,7 +71,7 @@ th{color:#fbbf24}
 
   <!-- DEPOSIT WITHDRAW -->
   <div style="display:flex;gap:10px;margin:15px 0">
-    <button onclick="alert('M-Pesa Deposit coming soon')" style="flex:1;padding:15px;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:12px;font-weight:bold;font-size:15px;cursor:pointer">DEPOSIT</button>
+    <button onclick="alert('M-Pesa Deposit coming soon. Contact Admin to top up')" style="flex:1;padding:15px;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:12px;font-weight:bold;font-size:15px;cursor:pointer">DEPOSIT</button>
     <button onclick="showWithdraw()" style="flex:1;padding:15px;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:12px;font-weight:bold;font-size:15px;cursor:pointer">WITHDRAW</button>
   </div>
 
@@ -94,7 +98,7 @@ th{color:#fbbf24}
 
   <!-- TRANSACTION HISTORY -->
   <h3>Transaction History</h3>
-  <div id="txHistory" style="background:#111;padding:15px;border-radius:12px;font-size:13px">No transactions yet</div>
+  <div id="txHistory" style="background:#111;padding:15px;border-radius:12px;font-size:13px">Loading...</div>
 </div>
 
 <div id="info" class="page">
@@ -171,23 +175,20 @@ db.collection("users").doc(phone).onSnapshot(doc=>{
   if(doc.exists){
     currentUser = doc.data();
     
-    // TOP BALANCE
     document.getElementById('walletBalance').innerText = `Ksh ${currentUser.balance.toFixed(2)}`;
     
-    // TODAY'S INCOME
     let todayIncome = 0;
     for(let pkg in currentUser.ownedPackages){
       let p = PACKAGES.find(x=>x.name==pkg);
       if(p) todayIncome += p.daily * currentUser.ownedPackages[pkg];
     }
     document.getElementById('todayIncome').innerText = `Ksh ${todayIncome.toFixed(2)}`;
-    
-    // REFERRAL BONUS
     document.getElementById('refBonus').innerText = `Ksh ${(currentUser.referralBonus || 0).toFixed(2)}`;
 
     loadPackages();
     loadTasks();
     loadWalletInfo();
+    loadTransactions();
   } else {
     document.getElementById('packageGrid').innerHTML = "Account not found. <a href='register.html' style='color:#fbbf24'>Register here</a>";
   }
@@ -227,7 +228,13 @@ function buyPackage(name, price){
   let newBalance = currentUser.balance - price;
   let owned = currentUser.ownedPackages || {};
   owned[name] = (owned[name] || 0) + 1;
-  db.collection("users").doc(phone).update({balance: newBalance, ownedPackages: owned}).then(()=>{ alert(`✅ ${name} Purchased Successfully!`) });
+  
+  let batch = db.batch();
+  batch.update(db.collection("users").doc(phone), {balance: newBalance, ownedPackages: owned});
+  batch.set(db.collection("transactions").doc(), {
+    phone, type:"purchase", amount: price, package:name, time: new Date()
+  });
+  batch.commit().then(()=>{ alert(`✅ ${name} Purchased Successfully!`) });
 }
 
 function loadTasks(){
@@ -253,7 +260,13 @@ function doTask(earn){
   if((currentUser.tasksDone || 0) >= 20){ alert("✅ All 20 tasks done for today"); return; }
   let newTasks = (currentUser.tasksDone || 0) + 1;
   let newBalance = currentUser.balance + parseFloat(earn);
-  db.collection("users").doc(phone).update({tasksDone: newTasks, balance: newBalance});
+  
+  let batch = db.batch();
+  batch.update(db.collection("users").doc(phone), {tasksDone: newTasks, balance: newBalance});
+  batch.set(db.collection("transactions").doc(), {
+    phone, type:"task", amount: parseFloat(earn), time: new Date()
+  });
+  batch.commit();
 }
 
 function loadWalletInfo(){
@@ -277,12 +290,67 @@ function updateWallet(){
   });
 }
 
+// NEW WITHDRAW FUNCTION - SENDS REQUEST TO ADMIN
 function showWithdraw(){
   if(!currentUser.withdrawPhone){
-    alert('❌ Please set your M-Pesa number first in the section above');
+    alert('❌ Please set your M-Pesa number first above');
     return;
   }
-  alert('Withdraw request coming soon. Amount will be sent to: ' + currentUser.withdrawPhone);
+  let amount = prompt("Enter amount to withdraw. Min Ksh 500:");
+  amount = parseFloat(amount);
+  if(!amount || amount < 500){ alert("❌ Minimum withdrawal is Ksh 500"); return; }
+  if(amount > currentUser.balance){ alert("❌ Insufficient Balance"); return; }
+  
+  if(!confirm(`Request withdrawal of Ksh ${amount} to ${currentUser.withdrawPhone}?`)) return;
+  
+  db.collection("withdrawals").add({
+    phone: phone,
+    amount: amount,
+    mpesa: currentUser.withdrawPhone,
+    currentBalance: currentUser.balance,
+    status: "pending",
+    type: "withdrawal",
+    requestedAt: new Date()
+  }).then(()=>{
+    alert("✅ Withdrawal request sent. Waiting for admin approval");
+  });
+}
+
+function loadTransactions(){
+  db.collection("transactions").where("phone","==",phone).orderBy("time","desc").limit(10).get().then(snapshot=>{
+    let html = "";
+    snapshot.forEach(doc=>{
+      let t = doc.data();
+      let cls = t.type === "deposit" || t.type === "task"? "tx-deposit" : "tx-withdraw";
+      let sign = t.type === "deposit" || t.type === "task"? "+" : "-";
+      html += `
+        <div class="tx-item ${cls}">
+          <div>
+            <b>${t.type.toUpperCase()}</b><br>
+            <small>${t.time.toDate().toLocaleString()}</small>
+          </div>
+          <div style="color:${sign==='+'?'#22c55e':'#ef4444'};font-weight:bold">${sign} Ksh ${t.amount}</div>
+        </div>
+      `;
+    });
+    
+    // Load pending withdrawals
+    db.collection("withdrawals").where("phone","==",phone).where("status","==","pending").get().then(wSnap=>{
+      wSnap.forEach(w=>{
+        let wd = w.data();
+        html += `
+          <div class="tx-item tx-pending">
+            <div>
+              <b>WITHDRAWAL PENDING</b><br>
+              <small>${wd.requestedAt.toDate().toLocaleString()}</small>
+            </div>
+            <div style="color:#f59e0b;font-weight:bold">- Ksh ${wd.amount}</div>
+          </div>
+        `;
+      });
+      document.getElementById('txHistory').innerHTML = html || "No transactions yet";
+    });
+  });
 }
 </script>
 </body>
