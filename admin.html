@@ -18,27 +18,30 @@ body{background:#000;color:white;font-family:Poppins;padding:15px;margin:0}
 .stat-card h4{color:#888;font-size:11px;margin:0}
 .stat-card p{font-size:16px;font-weight:700;margin:5px 0 0 0}
 .search-box{display:flex;align-items:center;background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:10px;margin-bottom:15px}
-.search-box input{flex:1;background:transparent;border:none;color:white;font-size:14px;outline:none}
+.search-box input{flex:1;background:transparent;border:none;color:white;font-size:14px;outline:none;font-family:Poppins}
 h2{color:#fbbf24;text-align:center;margin:0}
 h3{color:#fbbf24;margin:0 0 12px 0;font-size:15px}
-.btn{padding:8px 12px;border:none;border-radius:8px;font-weight:700;cursor:pointer;margin:2px;font-size:11px}
+.btn{padding:8px 12px;border:none;border-radius:8px;font-weight:700;cursor:pointer;margin:2px;font-size:11px;font-family:Poppins}
 .btn-blue{background:#3b82f6;color:white}
 .btn-orange{background:#f59e0b;color:#000}
 .btn-red{background:#ef4444;color:white}
 .btn-green{background:#22c55e;color:#000}
-.user-card{background:#1a1a1a;padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid #333;display:flex;justify-content:space-between;align-items:center;gap:10px}
-.user-num{background:#fbbf24;color:#000;font-weight:700;font-size:11px;border-radius:6px;padding:4px 8px;min-width:28px;text-align:center}
+.btn-purple{background:#8b5cf6;color:white}
+.user-card{background:#1a1a1a;padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid #333;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.user-num{background:#fbbf24;color:#000;font-weight:700;font-size:11px;border-radius:6px;padding:4px 8px;min-width:28px;text-align:center;margin-top:3px}
 .user-info{font-size:12px;line-height:1.8;flex:1}
-.btn-group{display:flex;flex-direction:column;gap:5px}
+.btn-group{display:flex;flex-direction:column;gap:5px;min-width:80px}
 .req-card{background:#1a1a1a;padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid #333;font-size:12px}
 #loginScreen{display:flex;position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:9999;justify-content:center;align-items:center}
 .login-box{background:#111;padding:25px;border-radius:16px;border:1px solid #333;width:90%;max-width:350px;text-align:center}
-input{padding:10px;background:#222;border:1px solid #444;color:white;border-radius:8px;width:100%;margin-bottom:10px}
+input, textarea{padding:10px;background:#222;border:1px solid #444;color:white;border-radius:8px;width:100%;margin-bottom:10px;font-family:Poppins}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:999;justify-content:center;align-items:center}
+.modal-content{background:#111;width:90%;max-width:400px;border-radius:16px;padding:20px;border:1px solid #333}
 </style>
 </head>
 <body>
 
-<!-- ADMIN LOGIN WITH PASSWORD -->
+<!-- ADMIN LOGIN -->
 <div id="loginScreen">
   <div class="login-box">
     <h2>👑 NEXA ADMIN LOGIN</h2>
@@ -66,9 +69,22 @@ input{padding:10px;background:#222;border:1px solid #444;color:white;border-radi
   <div class="box"><h3>🎁 Pending Referral Bonus</h3><div id="referralList">Loading...</div></div>
 
   <div class="box">
-    <h3>👥 All Users - WITH YOUR 7 FIELDS</h3>
+    <h3>👥 All Users</h3> <!-- DELETED "WITH YOUR 7 FIELDS" -->
     <div class="search-box"><input type="text" id="searchInput" placeholder="Search by Phone or User ID..."></div>
     <div id="userList">Loading...</div>
+  </div>
+
+  <!-- MESSAGE MODAL -->
+  <div id="messageModal" class="modal" onclick="closeMessageModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <h3>📩 Send Message</h3>
+      <p id="messageUserPhone" style="color:#fbbf24;margin-bottom:10px"></p>
+      <textarea id="userMessageInput" placeholder="Type message..." rows="4"></textarea>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-purple" style="flex:1" onclick="sendUserMessage()">Send</button>
+        <button class="btn btn-red" style="flex:1" onclick="closeMessageModal()">Cancel</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -76,8 +92,8 @@ input{padding:10px;background:#222;border:1px solid #444;color:white;border-radi
 const firebaseConfig = {apiKey:"AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",authDomain:"nexa-view.firebaseapp.com",projectId:"nexa-view"};
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-const ADMIN_PASSWORD = "admin123"; // CHANGE THIS PASSWORD
-let allUsers = []; let userCounter = 1;
+const ADMIN_PASSWORD = "admin123";
+let allUsers = []; let userCounter = 1; let selectedUserPhone = "";
 
 function checkLogin(){
   let pass=document.getElementById('adminPassword').value;
@@ -125,7 +141,6 @@ function loadUsers(){
 function renderUsers(users){
   let h=""; userCounter=1;
   users.forEach(u=>{
-    // YOUR 7 FIELDS
     let products = u.productsPurchased || 0;
     let invested = u.totalInvested || 0;
     let totalIncome = (u.totalWithdrawn || 0) + (u.totalReferralEarned || 0);
@@ -149,6 +164,7 @@ function renderUsers(users){
         🎁 Ref Income: <b style="color:#8b5cf6">Ksh ${refIncome.toFixed(2)}</b>
       </div>
       <div class="btn-group">
+        <button class="btn btn-purple" onclick="openMessageModal('${u.phone}')">📩 Msg</button> <!-- NEW MESSAGE BUTTON -->
         <button class="btn btn-blue" onclick="deposit('${u.phone}')">Deposit</button>
         <button class="btn btn-orange" onclick="resetUser('${u.phone}')">Reset</button>
         <button class="btn btn-red" onclick="deleteUser('${u.phone}')">Delete</button>
@@ -164,6 +180,23 @@ document.getElementById('searchInput').addEventListener('keyup', function(){
   let f=allUsers.filter(u=> (u.phone && u.phone.toLowerCase().includes(q)) || (u.userID && u.userID.toLowerCase().includes(q)));
   renderUsers(f);
 });
+
+function openMessageModal(phone){
+  selectedUserPhone = phone;
+  document.getElementById('messageUserPhone').innerText = "To: " + phone;
+  document.getElementById('messageModal').style.display='flex';
+}
+function closeMessageModal(){document.getElementById('messageModal').style.display='none';}
+function sendUserMessage(){
+  let msg=document.getElementById('userMessageInput').value;
+  if(!msg)return;
+  db.collection("userMessages").add({
+    phone:selectedUserPhone,
+    message:msg,
+    date:firebase.firestore.FieldValue.serverTimestamp(),
+    read:false
+  }).then(()=>{alert("✅ Message Sent");closeMessageModal();document.getElementById('userMessageInput').value="";})
+}
 
 function deposit(phone){let a=prompt("Amount to add:");if(a)db.collection("users").doc(phone).update({balance:firebase.firestore.FieldValue.increment(parseFloat(a))}).then(()=>loadUsers());}
 function resetUser(phone){if(confirm("Reset this user?"))db.collection("users").doc(phone).update({balance:0,productsPurchased:0,totalInvested:0,totalWithdrawn:0,todayIncome:0,referralCount:0,totalReferralEarned:0,todayReferralIncome:0}).then(()=>loadUsers());}
