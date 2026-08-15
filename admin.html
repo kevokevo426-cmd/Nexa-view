@@ -3,62 +3,72 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEXA USER</title>
+<title>NEXA ADMIN PANEL</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#000;color:white;font-family:Poppins;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:15px}
-.box{background:#111;border:1px solid #333;border-radius:16px;padding:25px;width:100%;max-width:380px;text-align:center}
-.box h2{color:#fbbf24;margin-bottom:20px;font-size:20px}
-input{width:100%;padding:12px;background:#222;border:1px solid #444;color:white;border-radius:10px;margin-bottom:12px;font-size:14px;font-family:Poppins;outline:none}
-.btn{width:100%;padding:12px;background:#3b82f6;color:white;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-size:14px;font-family:Poppins}
-.btn:hover{opacity:0.9}
-.card{background:#111;border:1px solid #333;border-radius:12px;padding:16px;margin-bottom:12px;width:100%;max-width:380px}
-.row{display:flex;justify-content:space-between;margin:10px 0;font-size:14px;border-bottom:1px solid #1a1a1a;padding-bottom:8px}
-.row:last-child{border:none}
-.row b{font-weight:700}
-.green{color:#22c55e}
-.blue{color:#3b82f6}
-.orange{color:#f59e0b}
-.purple{color:#8b5cf6}
-.yellow{color:#fbbf24}
-.logout{background:#ef4444;margin-top:12px}
-#error{color:#ef4444;font-size:12px;margin-top:8px}
-#dashboard{display:none;flex-direction:column;align-items:center;width:100%}
-.top-info{text-align:center;margin-bottom:12px}
-.top-info h3{color:#fbbf24;font-size:16px}
-.top-info p{color:#888;font-size:12px}
+*{box-sizing:border-box}
+body{background:#000;color:white;font-family:Poppins;padding:15px;margin:0}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.logout-btn{background:#ef4444;color:white;border:none;padding:8px 14px;border-radius:8px;font-weight:700;cursor:pointer;font-size:12px}
+.box{background:#111;border:1px solid #333;border-radius:12px;padding:14px;margin-bottom:15px}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:15px}
+.stat-card{background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:12px;text-align:center}
+.stat-card h4{color:#888;font-size:11px;margin:0}
+.stat-card p{font-size:16px;font-weight:700;margin:5px 0 0 0}
+.search-box{display:flex;align-items:center;background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:10px;margin-bottom:15px}
+.search-box input{flex:1;background:transparent;border:none;color:white;font-size:14px;outline:none}
+h2{color:#fbbf24;text-align:center;margin:0}
+h3{color:#fbbf24;margin:0 0 12px 0;font-size:15px}
+.btn{padding:8px 12px;border:none;border-radius:8px;font-weight:700;cursor:pointer;margin:2px;font-size:11px}
+.btn-blue{background:#3b82f6;color:white}
+.btn-orange{background:#f59e0b;color:#000}
+.btn-red{background:#ef4444;color:white}
+.btn-green{background:#22c55e;color:#000}
+.user-card{background:#1a1a1a;padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid #333;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.user-num{background:#fbbf24;color:#000;font-weight:700;font-size:11px;border-radius:6px;padding:4px 8px;min-width:28px;text-align:center}
+.user-info{font-size:12px;line-height:1.8;flex:1}
+.btn-group{display:flex;flex-direction:column;gap:5px}
+.req-card{background:#1a1a1a;padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid #333;font-size:12px}
+#loginScreen{display:flex;position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:9999;justify-content:center;align-items:center}
+.login-box{background:#111;padding:25px;border-radius:16px;border:1px solid #333;width:90%;max-width:350px;text-align:center}
+input{padding:10px;background:#222;border:1px solid #444;color:white;border-radius:8px;width:100%;margin-bottom:10px}
 </style>
 </head>
 <body>
 
-<!-- LOGIN SCREEN -->
-<div id="login" class="box">
-  <h2>👤 USER LOGIN</h2>
-  <input type="text" id="phone" placeholder="Enter Phone Number">
-  <button class="btn" onclick="login()">Login</button>
-  <p id="error"></p>
+<!-- ADMIN LOGIN WITH PASSWORD -->
+<div id="loginScreen">
+  <div class="login-box">
+    <h2>👑 NEXA ADMIN LOGIN</h2>
+    <input type="password" id="adminPassword" placeholder="Enter Admin Password">
+    <button class="btn btn-blue" style="width:100%;padding:12px" onclick="checkLogin()">Login</button>
+    <p id="loginError" style="color:#ef4444;font-size:12px;margin-top:10px"></p>
+  </div>
 </div>
 
-<!-- DASHBOARD -->
-<div id="dashboard">
-  <div class="card">
-    <div class="top-info">
-      <h3 id="uPhone"></h3>
-      <p>ID: <span id="uID"></span> | Ref: <span id="uRef"></span></p>
-    </div>
+<!-- ADMIN PANEL -->
+<div id="mainPanel" style="display:none">
+  <div class="header">
+    <h2>👑 NEXA ADMIN PANEL</h2>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
 
-    <div class="row"><span>💰 Balance</span><b class="green" id="uBalance">Ksh 0.00</b></div>
-    <div class="row"><span>📦 Products - Levels Purchased</span><b class="yellow" id="uProducts">0</b></div>
-    <div class="row"><span>💵 Invested - Total Bought</span><b class="blue" id="uInvested">Ksh 0.00</b></div>
-    <div class="row"><span>📈 Total Income - Withdrawals + Bonus</span><b class="green" id="uTotalIncome">Ksh 0.00</b></div>
-    <div class="row"><span>🔥 Today's Income - Profits of Day</span><b class="orange" id="uToday">Ksh 0.00</b></div>
-    <div class="row"><span>👥 Referrals - Joined + Purchased</span><b class="purple" id="uReferrals">0</b></div>
-    <div class="row"><span>🎁 Referral Income</span><b class="purple" id="uRefIncome">Ksh 0.00</b></div>
-    
-    <button class="btn logout" onclick="logout()">Logout</button>
+  <div class="stats">
+    <div class="stat-card"><h4>Total Invested</h4><p id="totalInvested" style="color:#22c55e">+Ksh 0.00</p></div>
+    <div class="stat-card"><h4>Today's Invested</h4><p id="todayInvested" style="color:#22c55e">+Ksh 0.00</p></div>
+    <div class="stat-card"><h4>Today's Withdrawals</h4><p id="todayWithdrawals" style="color:#ef4444">-Ksh 0.00</p></div>
+    <div class="stat-card"><h4>Total Withdrawals</h4><p id="totalWithdrawals" style="color:#ef4444">-Ksh 0.00</p></div>
+  </div>
+
+  <div class="box"><h3>💸 Pending Withdrawals</h3><div id="withdrawList">Loading...</div></div>
+  <div class="box"><h3>🎁 Pending Referral Bonus</h3><div id="referralList">Loading...</div></div>
+
+  <div class="box">
+    <h3>👥 All Users - WITH YOUR 7 FIELDS</h3>
+    <div class="search-box"><input type="text" id="searchInput" placeholder="Search by Phone or User ID..."></div>
+    <div id="userList">Loading...</div>
   </div>
 </div>
 
@@ -66,67 +76,107 @@ input{width:100%;padding:12px;background:#222;border:1px solid #444;color:white;
 const firebaseConfig = {apiKey:"AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",authDomain:"nexa-view.firebaseapp.com",projectId:"nexa-view"};
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+const ADMIN_PASSWORD = "admin123"; // CHANGE THIS PASSWORD
+let allUsers = []; let userCounter = 1;
 
-let currentPhone = "";
+function checkLogin(){
+  let pass=document.getElementById('adminPassword').value;
+  if(pass===ADMIN_PASSWORD){
+    localStorage.setItem('nexaAdminLoggedIn','true');
+    showPanel();
+  }else{
+    document.getElementById('loginError').innerText="❌ Wrong Password. Use: admin123";
+  }
+}
+function showPanel(){document.getElementById('loginScreen').style.display='none';document.getElementById('mainPanel').style.display='block';loadUsers();loadWithdrawals();loadReferralRequests();loadStats();}
+function logout(){localStorage.removeItem('nexaAdminLoggedIn');location.reload();}
 
-// LOGIN
-function login(){
-  let phone = document.getElementById('phone').value.trim();
-  if(!phone){ document.getElementById('error').innerText="Enter phone number"; return; }
+function loadStats(){
+  let today = new Date(); today.setHours(0,0,0,0);
+  let totalInvested = 0; let todayInvested = 0; let totalWithdrawals = 0; let todayWithdrawals = 0;
   
-  db.collection("users").doc(phone).get().then(doc=>{
-    if(doc.exists){
-      currentPhone = phone;
-      localStorage.setItem('nexaUser', phone);
-      showDashboard();
-    } else {
-      document.getElementById('error').innerText="❌ User not found";
-    }
+  db.collection("users").get().then(s=>{
+    s.forEach(d=>{let u = d.data();totalInvested += u.totalInvested || 0;
+      if(u.lastPurchaseDate && u.lastPurchaseDate.toDate() >= today){todayInvested += u.lastPurchaseAmount || 0;}
+    });
+    document.getElementById('totalInvested').innerText = `+Ksh ${totalInvested.toFixed(2)}`;
+    document.getElementById('todayInvested').innerText = `+Ksh ${todayInvested.toFixed(2)}`;
+  });
+
+  Promise.all([
+    db.collection("withdrawals").where("status","==","paid").get(),
+    db.collection("referralRequests").where("status","==","paid").get()
+  ]).then(([wSnap, rSnap])=>{
+    wSnap.forEach(d=>{let w = d.data(); totalWithdrawals += w.amount || 0; if(w.date && w.date.toDate() >= today){ todayWithdrawals += w.amount || 0; }});
+    rSnap.forEach(d=>{let r = d.data(); totalWithdrawals += r.amount || 0; if(r.date && r.date.toDate() >= today){ todayWithdrawals += r.amount || 0; }});
+    document.getElementById('totalWithdrawals').innerText = `-Ksh ${totalWithdrawals.toFixed(2)}`;
+    document.getElementById('todayWithdrawals').innerText = `-Ksh ${todayWithdrawals.toFixed(2)}`;
+  });
+}
+
+function loadUsers(){
+  db.collection("users").get().then(s=>{
+    allUsers=[];
+    s.forEach(d=>{let u=d.data();u.docId=d.id;allUsers.push(u)});
+    renderUsers(allUsers);
   })
 }
 
-// SHOW DASHBOARD + AUTO CALCULATE
-function showDashboard(){
-  document.getElementById('login').style.display='none';
-  document.getElementById('dashboard').style.display='flex';
-  
-  db.collection("users").doc(currentPhone).onSnapshot(doc=>{
-    if(!doc.exists) return;
-    let u = doc.data();
-    
-    // YOUR 7 FIELDS CALCULATION
-    let products = u.productsPurchased || 0; // levels purchased
-    let invested = u.totalInvested || 0; // total amount of products bought
-    let totalIncome = (u.totalWithdrawn || 0) + (u.totalReferralEarned || 0); // withdrawals + bonuses
-    let todayIncome = (u.todayIncome || 0) + (u.todayReferralIncome || 0); // profits of the day
-    let referrals = u.referralCount || 0; // users joined with link + purchased
-    let refIncome = u.totalReferralEarned || 0; // earned from referrals
-    let balance = u.balance || 0; // amount in account
+function renderUsers(users){
+  let h=""; userCounter=1;
+  users.forEach(u=>{
+    // YOUR 7 FIELDS
+    let products = u.productsPurchased || 0;
+    let invested = u.totalInvested || 0;
+    let totalIncome = (u.totalWithdrawn || 0) + (u.totalReferralEarned || 0);
+    let todayIncome = (u.todayIncome || 0) + (u.todayReferralIncome || 0);
+    let referrals = u.referralCount || 0;
+    let refIncome = u.totalReferralEarned || 0;
+    let balance = u.balance || 0;
 
-    // PUT IN HTML
-    document.getElementById('uPhone').innerText = u.phone || currentPhone;
-    document.getElementById('uID').innerText = u.userID || 'N/A';
-    document.getElementById('uRef').innerText = u.refCode || 'N/A';
-    document.getElementById('uBalance').innerText = `Ksh ${balance.toFixed(2)}`;
-    document.getElementById('uProducts').innerText = products;
-    document.getElementById('uInvested').innerText = `Ksh ${invested.toFixed(2)}`;
-    document.getElementById('uTotalIncome').innerText = `Ksh ${totalIncome.toFixed(2)}`;
-    document.getElementById('uToday').innerText = `Ksh ${todayIncome.toFixed(2)}`;
-    document.getElementById('uReferrals').innerText = referrals;
-    document.getElementById('uRefIncome').innerText = `Ksh ${refIncome.toFixed(2)}`;
-  })
+    h+=`
+    <div class="user-card">
+      <div class="user-num">#${userCounter}</div>
+      <div class="user-info">
+        <b style="color:#fbbf24">${u.phone}</b><br>
+        ID: ${u.userID || 'NO ID'} | Ref: ${u.refCode || 'NO CODE'}<br>
+        💰 Balance: <b style="color:#22c55e">Ksh ${balance.toFixed(2)}</b><br>
+        📦 Products: <b style="color:#fbbf24">${products}</b><br>
+        💵 Invested: <b style="color:#3b82f6">Ksh ${invested.toFixed(2)}</b><br>
+        📈 Total Income: <b style="color:#22c55e">Ksh ${totalIncome.toFixed(2)}</b><br>
+        🔥 Today: <b style="color:#f59e0b">Ksh ${todayIncome.toFixed(2)}</b><br>
+        👥 Referrals: <b style="color:#8b5cf6">${referrals}</b><br>
+        🎁 Ref Income: <b style="color:#8b5cf6">Ksh ${refIncome.toFixed(2)}</b>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-blue" onclick="deposit('${u.phone}')">Deposit</button>
+        <button class="btn btn-orange" onclick="resetUser('${u.phone}')">Reset</button>
+        <button class="btn btn-red" onclick="deleteUser('${u.phone}')">Delete</button>
+      </div>
+    </div>`;
+    userCounter++;
+  });
+  document.getElementById('userList').innerHTML=h;
 }
 
-function logout(){
-  localStorage.removeItem('nexaUser');
-  location.reload();
-}
+document.getElementById('searchInput').addEventListener('keyup', function(){
+  let q=this.value.toLowerCase();
+  let f=allUsers.filter(u=> (u.phone && u.phone.toLowerCase().includes(q)) || (u.userID && u.userID.toLowerCase().includes(q)));
+  renderUsers(f);
+});
 
-// AUTO LOGIN IF SAVED
-window.onload=function(){
-  let saved = localStorage.getItem('nexaUser');
-  if(saved){ currentPhone = saved; showDashboard(); }
-}
+function deposit(phone){let a=prompt("Amount to add:");if(a)db.collection("users").doc(phone).update({balance:firebase.firestore.FieldValue.increment(parseFloat(a))}).then(()=>loadUsers());}
+function resetUser(phone){if(confirm("Reset this user?"))db.collection("users").doc(phone).update({balance:0,productsPurchased:0,totalInvested:0,totalWithdrawn:0,todayIncome:0,referralCount:0,totalReferralEarned:0,todayReferralIncome:0}).then(()=>loadUsers());}
+function deleteUser(phone){if(confirm("Delete this user?"))db.collection("users").doc(phone).delete().then(()=>loadUsers());}
+
+function loadWithdrawals(){db.collection("withdrawals").where("status","==","pending").get().then(s=>{let h="";if(s.empty)h="<p style='color:#888'>No pending</p>";s.forEach(d=>{let x=d.data();h+=`<div class="req-card"><b>User:</b> ${x.phone}<br><b>Amount:</b> Ksh ${x.amount}<br><button class="btn btn-green" onclick="approveWithdraw('${d.id}')">Approve</button><button class="btn-red" onclick="rejectWithdraw('${d.id}')">Reject</button></div>`;});document.getElementById('withdrawList').innerHTML=h;})}
+function loadReferralRequests(){db.collection("referralRequests").where("status","==","pending").get().then(s=>{let h="";if(s.empty)h="<p style='color:#888'>No pending</p>";s.forEach(d=>{let x=d.data();h+=`<div class="req-card"><b>User:</b> ${x.phone}<br><b>Bonus:</b> Ksh ${x.amount}<br><button class="btn btn-green" onclick="approveReferral('${d.id}')">Approve</button><button class="btn-red" onclick="rejectReferral('${d.id}')">Reject</button></div>`;});document.getElementById('referralList').innerHTML=h;})}
+function approveWithdraw(id){db.collection("withdrawals").doc(id).update({status:"paid",date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{loadWithdrawals();loadStats();});}
+function rejectWithdraw(id){db.collection("withdrawals").doc(id).update({status:"rejected"}).then(()=>loadWithdrawals());}
+function approveReferral(id){db.collection("referralRequests").doc(id).get().then(d=>{let x=d.data();db.collection("users").doc(x.phone).update({balance:firebase.firestore.FieldValue.increment(x.amount)});db.collection("referralRequests").doc(id).update({status:"paid",date:firebase.firestore.FieldValue.serverTimestamp()});loadReferralRequests();loadStats();loadUsers();})}
+function rejectReferral(id){db.collection("referralRequests").doc(id).update({status:"rejected"}).then(()=>loadReferralRequests());}
+
+window.onload=function(){if(localStorage.getItem('nexaAdminLoggedIn')==='true'){showPanel();}}
 </script>
 </body>
 </html>
