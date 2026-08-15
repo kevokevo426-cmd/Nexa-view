@@ -10,25 +10,42 @@ body{background:#000;color:white;font-family:Poppins;margin:0;padding:0 0 80px 0
 .top-bar{text-align:center;padding:20px 15px;background:#000}
 .top-bar p{margin:0;font-size:13px;color:#aaa}
 .top-bar h1{margin:8px 0;font-size:28px;color:#22c55e;font-weight:700}
+
 .box{margin:15px;padding:14px;border-radius:14px;background:#111;border:1px solid #222}
+
+/* WALLET CARD */
 .wallet-card{background:#181818;border-radius:14px;padding:14px;margin:15px;border:1px solid #333}
 .stat-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #222;font-size:13px}
 .stat-row:last-child{border:none}
 .stat-row b{color:#22c55e;font-size:13px}
 .stat-row.green{color:#22c55e}
 .stat-row.yellow{color:#fbbf24}
+
 h3{display:flex;align-items:center;gap:8px;color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
-.package-card{background:linear-gradient(135deg,#1a1a1a,#222);border:1px solid #333;border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;transition:0.2s}
+
+/* PACKAGE CARDS */
+.package-card{
+  background:linear-gradient(135deg,#1a1a1a,#222);
+  border:1px solid #333;
+  border-radius:12px;
+  padding:14px;
+  margin-bottom:10px;
+  cursor:pointer;
+  transition:0.2s;
+}
 .package-card:active{transform:scale(0.98);border-color:#fbbf24}
 .package-card:hover{border-color:#fbbf24}
+
 .btn-wrap{display:flex;gap:8px;margin-top:12px}
 .btn{flex:1;padding:11px;background:linear-gradient(180deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:12px}
 .btn:active{transform:scale(0.97)}
 .btn-green{background:linear-gradient(180deg,#22c55e,#16a34a);color:white}
 .btn-orange{background:linear-gradient(180deg,#f97316,#ea580c);color:white}
+
 input{width:100%;padding:10px;background:#1a1a1a;border:1px solid #333;color:white;border-radius:8px;margin:6px 0;font-size:13px}
 label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
 .note{font-size:9px;color:#f59e0b;margin-top:6px;font-style:italic;line-height:1.3}
+
 .team-card{background:#181818;border:1px solid #222;border-radius:12px;padding:10px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
 .team-info b{display:block;font-size:13px}
 .team-info span{font-size:10px;color:#aaa}
@@ -67,10 +84,12 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
 .calc-box b{color:#fbbf24}
 .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:999;justify-content:center;align-items:center;overflow-y:auto}
 .modal-content{background:#111;width:90%;max-height:90%;overflow-y:auto;border-radius:16px;padding:18px;border:1px solid #333}
-.bottom-nav{position:fixed;bottom:0;left:0;width:100%;background:#111;border-top:1px solid #222;display:flex;justify-content:space-around;padding:8px 0;z-index:99}
-.nav-item{flex:1;text-align:center;font-size:10px;color:#888;cursor:pointer}
+
+/* BIGGER BOTTOM NAV ICONS */
+.bottom-nav{position:fixed;bottom:0;left:0;width:100%;background:#111;border-top:1px solid #222;display:flex;justify-content:space-around;padding:10px 0;z-index:99}
+.nav-item{flex:1;text-align:center;font-size:11px;color:#888;cursor:pointer}
 .nav-item.active{color:#fbbf24;font-weight:700}
-.nav-item svg{width:20px;height:20px;margin-bottom:3px}
+.nav-item svg{width:24px;height:24px;margin-bottom:4px} /* WAS 20px, NOW 24px */
 </style>
 </head>
 <body>
@@ -224,17 +243,19 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
   <div class="box"><h3>📞 Support</h3><p style="font-size:12px;color:#aaa">Need help? Join our WhatsApp group</p><button class="btn btn-green" onclick="window.open('https://chat.whatsapp.com/JmXM1kYBXuiF5dmbBU25f2', '_blank')">Join WhatsApp Group</button></div>
 </div>
 
+<!-- MODALS -->
 <div id="accountModal" class="modal" onclick="closeAccountModal()"><div class="modal-content" onclick="event.stopPropagation()"><div class="modal-header"><h3>👤 Withdrawal Account</h3><span class="modal-back" onclick="closeAccountModal()">🔙</span></div><div style="background:#1f1f1f;border-radius:12px;padding:14px"><label>Receiving account number (M-Pesa)</label><input id="accNumber" type="tel" placeholder="0712345678"><label>Real name</label><input id="accName" type="text" placeholder="John Doe"><label>Set/Change PIN (4 digits)</label><input id="accPin" type="password" maxlength="4" placeholder="Leave blank to keep current PIN"><button class="btn btn-orange" style="width:100%;margin-top:12px" onclick="updateAccount()">Update wallet</button></div></div></div>
 
 <div id="depositModal" class="modal" onclick="closeDepositModal()"><div class="modal-content" onclick="event.stopPropagation()"><div class="modal-header"><h3>💰 Deposit Funds</h3><span class="modal-back" onclick="closeDepositModal()">🔙</span></div><div class="deposit-box"><p style="font-size:12px;color:#aaa">1. Send money to MPESA Number below</p><div class="mpesa-number">0718422377 <button class="copy-btn" onclick="copyNumber()">Copy</button></div></div><label>Amount Deposited (KSH)</label><input id="depositAmount" type="number" placeholder="Enter amount sent"><label>Paste MPESA Message / Transaction Code</label><input id="depositMsg" placeholder="e.g. RHX7Y9K2L3 Confirmed..."><button class="btn btn-green" style="width:100%;margin-top:10px" onclick="submitDeposit()">Submit Deposit</button><h4 style="margin-top:20px">📜 Deposit History</h4><div id="depositHistory"><p class="gray">Loading...</p></div></div></div>
 
 <div id="withdrawModal" class="modal" onclick="closeWithdrawModal()"><div class="modal-content" onclick="event.stopPropagation()"><div class="modal-header"><div></div><span class="modal-back" onclick="closeWithdrawModal()">🔙</span></div><div class="withdraw-box"><p>Available balance</p><h2>KSH<span id="withdrawBalance">0.00</span></h2><p style="font-size:11px;color:#ccc">Allowed: 200,400,500,700,1000,1500,2500,5000 · Tax: 15%</p></div><div class="green-banner"><b>⚡ Withdrawals processed instantly</b></div><h4>Choose amount (KSH)</h4><div class="amount-btns"><div class="amount-btn" onclick="selectAmount(200,this)">200</div><div class="amount-btn" onclick="selectAmount(400,this)">400</div><div class="amount-btn" onclick="selectAmount(500,this)">500</div><div class="amount-btn" onclick="selectAmount(700,this)">700</div><div class="amount-btn" onclick="selectAmount(1000,this)">1000</div><div class="amount-btn" onclick="selectAmount(1500,this)">1500</div><div class="amount-btn" onclick="selectAmount(2500,this)">2500</div><div class="amount-btn" onclick="selectAmount(5000,this)">5000</div></div><label>Amount (KSH)</label><input id="withdrawAmount" type="number" placeholder="Enter amount" oninput="calcWithdraw()"><div class="calc-row"><div class="calc-box">Tax: <b id="taxAmount">KSH0</b></div><div class="calc-box">You receive: <b id="netAmount">KSH0</b></div></div><label>4-digit PIN</label><input id="withdrawPin" type="password" maxlength="4" placeholder="****"><button class="btn btn-green" style="width:100%;margin-top:10px" onclick="submitWithdraw()">Submit withdrawal</button><h4 style="margin-top:20px">💸 Withdrawal Records</h4><div id="withdrawHistory"><p class="gray">Loading...</p></div></div></div>
 
+<!-- BOTTOM NAV - FIXED CLICK -->
 <div class="bottom-nav">
-  <div class="nav-item active" onclick="showTab('home',this)"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>Home</div>
-  <div class="nav-item" onclick="showTab('tasks',this)"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h6a1 1 0 100-2H7z"/></svg>Tasks</div>
-  <div class="nav-item" onclick="showTab('wallet',this)"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4z"/></svg>Wallet</div>
-  <div class="nav-item" onclick="showTab('info',this)"><svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"/></svg>Info</div>
+  <div class="nav-item active" onclick="showTab('home')"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>Home</div>
+  <div class="nav-item" onclick="showTab('tasks')"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h6a1 1 0 100-2H7z"/></svg>Tasks</div>
+  <div class="nav-item" onclick="showTab('wallet')"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4z"/></svg>Wallet</div>
+  <div class="nav-item" onclick="showTab('info')"><svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"/></svg>Info</div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -245,7 +266,16 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const phone = localStorage.getItem("nexaPhone");
 if(!phone){ window.location.href = "index.html"; }
-function showTab(tab,el){document.querySelectorAll('.nav-item').forEach(t=>t.classList.remove('active'));if(el) el.classList.add('active');['home','tasks','wallet','info'].forEach(t=>document.getElementById(t+'Tab').style.display='none');document.getElementById(tab+'Tab').style.display = 'block';if(tab == 'wallet'){ loadReferralInfo(); loadTeamList(); loadIncomeStats(); loadAccountInfo(); }}
+
+// FIXED TAB FUNCTION
+function showTab(tab){
+  document.querySelectorAll('.nav-item').forEach(t=>t.classList.remove('active'));
+  document.querySelector(`.nav-item[onclick="showTab('${tab}')"]`).classList.add('active');
+  ['home','tasks','wallet','info'].forEach(t=>document.getElementById(t+'Tab').style.display='none');
+  document.getElementById(tab+'Tab').style.display = 'block';
+  if(tab == 'wallet'){ loadReferralInfo(); loadTeamList(); loadIncomeStats(); loadAccountInfo(); }
+}
+
 function loadUser(){db.collection("users").doc(phone).get().then(doc=>{if(doc.exists){let u = doc.data();document.getElementById('balance').innerText = u.balance.toFixed(2);}})}
 loadUser();
 function loadIncomeStats(){db.collection("users").doc(phone).get().then(doc=>{let u = doc.data();document.getElementById('userID').innerText = u.userID;document.getElementById('walletBalance').innerText = u.balance.toFixed(2);document.getElementById('withdrawBalance').innerText = u.balance.toFixed(2);document.getElementById('refIncome').innerText = (u.referralBonus || 0).toFixed(2);let today = new Date().toDateString();let todayEarn = 0;let totalEarn = 0;for(let key in u.ownedPackages || {}){let p = u.ownedPackages[key];totalEarn += p.daily * p.days;if(new Date(p.start).toDateString() == today){todayEarn += p.daily;}}document.getElementById('todayIncome').innerText = todayEarn.toFixed(2);document.getElementById('totalIncome').innerText = totalEarn.toFixed(2);})}
@@ -272,11 +302,11 @@ function buyPackage(price, days, daily){
     let u = doc.data();
     if(u.balance < price){
       alert("❌ Insufficient balance. Go to Wallet to Deposit");
-      document.querySelectorAll('.nav-item')[2].click();
+      showTab('wallet');
       return;
     }
     if(!confirm(`Buy package for Ksh ${price}?`)) return;
     let newBalance = u.balance - price;
     let owned = u.ownedPackages || {};
     owned[Date.now()] = {price, days, daily, start: new Date()};
-    db.collection("users").doc(phone).update({
+    db.collection("users").doc(phone).update({balance: newBalance, ownedPackages: owned}).then
