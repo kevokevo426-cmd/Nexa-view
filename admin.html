@@ -9,40 +9,43 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 *{box-sizing:border-box}
-body{background:#000;color:white;font-family:Poppins;padding:15px;margin:0}
-.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-.header-actions{display:flex;gap:8px;align-items:center}
-.logout-btn{background:#ef4444;color:white;border:none;padding:8px 14px;border-radius:8px;font-weight:700;cursor:pointer;font-size:12px}
-.notif-btn{background:#1a1a1a;border:1px solid #333;color:#fbbf24;border:none;padding:8px 10px;border-radius:8px;font-size:18px;cursor:pointer;position:relative}
-.notif-badge{position:absolute;top:-5px;right:-5px;background:#ef4444;color:white;border-radius:50%;font-size:10px;font-weight:700;padding:2px 6px;min-width:18px;text-align:center}
-.box{background:#111;border:1px solid #333;border-radius:12px;padding:14px;margin-bottom:15px}
-.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:15px}
-.stat-card{background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:12px;text-align:center}
-.stat-card h4{color:#888;font-size:11px;margin:0}
-.stat-card p{font-size:16px;font-weight:700;margin:5px 0 0 0}
-.search-box{display:flex;align-items:center;background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:10px;margin-bottom:15px}
-.search-box input{flex:1;background:transparent;border:none;color:white;font-size:14px;outline:none;font-family:Poppins}
-h2{color:#fbbf24;text-align:center;margin:0}
-h3{color:#fbbf24;margin:0 0 12px 0;font-size:15px}
-.btn{padding:8px 12px;border:none;border-radius:8px;font-weight:700;cursor:pointer;margin:2px;font-size:11px;font-family:Poppins;position:relative}
+body{background:#000;color:white;font-family:Poppins;padding:12px;margin:0;font-size:13px}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.header-actions{display:flex;gap:6px;align-items:center}
+.logout-btn{background:#ef4444;color:white;border:none;padding:6px 10px;border-radius:8px;font-weight:700;cursor:pointer;font-size:11px}
+.notif-btn{background:#1a1a1a;border:1px solid #333;color:#fbbf24;border:none;padding:6px 8px;border-radius:8px;font-size:16px;cursor:pointer;position:relative}
+.notif-badge{position:absolute;top:-4px;right:-4px;background:#ef4444;color:white;border-radius:50%;font-size:9px;font-weight:700;padding:1px 5px;min-width:16px;text-align:center}
+.box{background:#111;border:1px solid #333;border-radius:10px;padding:12px;margin-bottom:12px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.stat-card{background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:10px;text-align:center}
+.stat-card h4{color:#888;font-size:10px;margin:0}
+.stat-card p{font-size:14px;font-weight:700;margin:3px 0 0 0}
+.search-box{display:flex;align-items:center;background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:8px;margin-bottom:12px}
+.search-box input{flex:1;background:transparent;border:none;color:white;font-size:13px;outline:none;font-family:Poppins}
+h2{color:#fbbf24;text-align:center;margin:0;font-size:16px}
+h3{color:#fbbf24;margin:0 0 10px 0;font-size:14px}
+.btn{padding:6px 8px;border:none;border-radius:6px;font-weight:700;cursor:pointer;margin:1px;font-size:10px;font-family:Poppins;position:relative}
 .btn-blue{background:#3b82f6;color:white}
 .btn-orange{background:#f59e0b;color:#000}
 .btn-red{background:#ef4444;color:white}
 .btn-green{background:#22c55e;color:#000}
 .btn-purple{background:#8b5cf6;color:white}
 .btn-msg-notif{background:#ef4444!important; color:white!important}
-.user-card{background:#1a1a1a;padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid #333;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-.user-num{background:#fbbf24;color:#000;font-weight:700;font-size:11px;border-radius:6px;padding:4px 8px;min-width:28px;text-align:center;margin-top:3px}
-.user-info{font-size:12px;line-height:1.8;flex:1}
-.btn-group{display:flex;flex-direction:column;gap:5px;min-width:90px}
-.req-card{background:#1a1a1a;padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid #333;font-size:12px}
+.btn-small{padding:4px 8px;font-size:9px}
+.user-card{background:#1a1a1a;padding:10px;border-radius:8px;margin-bottom:8px;border:1px solid #333;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.user-num{background:#fbbf24;color:#000;font-weight:700;font-size:10px;border-radius:5px;padding:3px 6px;min-width:24px;text-align:center}
+.user-info{font-size:11px;line-height:1.6;flex:1}
+.btn-group{display:flex;gap:4px;flex-wrap:wrap}
+.req-card{background:#1a1a1a;padding:10px;border-radius:8px;margin-bottom:8px;border:1px solid #333;font-size:11px;display:flex;justify-content:space-between;align-items:center}
 #loginScreen{display:flex;position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:9999;justify-content:center;align-items:center}
-.login-box{background:#111;padding:25px;border-radius:16px;border:1px solid #333;width:90%;max-width:350px;text-align:center}
-input, textarea{padding:10px;background:#222;border:1px solid #444;color:white;border-radius:8px;width:100%;margin-bottom:10px;font-family:Poppins}
+.login-box{background:#111;padding:20px;border-radius:14px;border:1px solid #333;width:90%;max-width:320px;text-align:center}
+input{padding:8px;background:#222;border:1px solid #444;color:white;border-radius:6px;width:100%;margin-bottom:8px;font-family:Poppins;font-size:12px}
+textarea{padding:8px;background:#222;border:1px solid #444;color:white;border-radius:6px;width:100%;margin-bottom:8px;font-family:Poppins;font-size:12px}
 .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:999;justify-content:center;align-items:center}
-.modal-content{background:#111;width:90%;max-width:450px;border-radius:16px;padding:20px;border:1px solid #333;max-height:90vh;overflow-y:auto}
-.msg-badge{position:absolute;top:-5px;right:-5px;background:#fbbf24;color:#000;border-radius:50%;font-size:9px;font-weight:700;padding:2px 5px;min-width:16px;text-align:center}
-.message-card{background:#1a1a1a;padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid #333;border-left:4px solid #8b5cf6}
+.modal-content{background:#111;width:90%;max-width:420px;border-radius:14px;padding:16px;border:1px solid #333;max-height:90vh;overflow-y:auto}
+.msg-badge{position:absolute;top:-4px;right:-4px;background:#fbbf24;color:#000;border-radius:50%;font-size:8px;font-weight:700;padding:1px 4px;min-width:14px;text-align:center}
+.message-card{background:#1a1a1a;padding:10px;border-radius:8px;margin-bottom:8px;border:1px solid #333;border-left:3px solid #8b5cf6;font-size:11px}
+.settings-row{display:flex;gap:8px;align-items:center;margin-bottom:10px}
 </style>
 </head>
 <body>
@@ -52,8 +55,8 @@ input, textarea{padding:10px;background:#222;border:1px solid #444;color:white;b
   <div class="login-box">
     <h2>👑 NEXA ADMIN LOGIN</h2>
     <input type="password" id="adminPassword" placeholder="Enter Admin Password">
-    <button class="btn btn-blue" style="width:100%;padding:12px" onclick="checkLogin()">Login</button>
-    <p id="loginError" style="color:#ef4444;font-size:12px;margin-top:10px"></p>
+    <button class="btn btn-blue" style="width:100%;padding:10px" onclick="checkLogin()">Login</button>
+    <p id="loginError" style="color:#ef4444;font-size:11px;margin-top:8px"></p>
   </div>
 </div>
 
@@ -67,19 +70,30 @@ input, textarea{padding:10px;background:#222;border:1px solid #444;color:white;b
     </div>
   </div>
 
+  <!-- DEPOSIT SETTINGS -->
+  <div class="box">
+    <h3>💰 Deposit Settings</h3>
+    <div class="settings-row">
+      <input type="text" id="mpesaNumber" placeholder="Enter Mpesa Number" value="0718422377">
+      <button class="btn btn-green btn-small" onclick="saveMpesa()">Save</button>
+    </div>
+    <p style="color:#888;font-size:10px;margin:0">This number shows to users on deposit page</p>
+  </div>
+
+  <!-- MERGED STATS -->
   <div class="stats">
-    <div class="stat-card"><h4>Total Invested</h4><p id="totalInvested" style="color:#22c55e">+Ksh 0.00</p></div>
-    <div class="stat-card"><h4>Today's Invested</h4><p id="todayInvested" style="color:#22c55e">+Ksh 0.00</p></div>
-    <div class="stat-card"><h4>Today's Withdrawals</h4><p id="todayWithdrawals" style="color:#ef4444">-Ksh 0.00</p></div>
-    <div class="stat-card"><h4>Total Withdrawals</h4><p id="totalWithdrawals" style="color:#ef4444">-Ksh 0.00</p></div>
+    <div class="stat-card"><h4>Total Invested</h4><p id="totalInvested" style="color:#22c55e">+Ksh 0</p></div>
+    <div class="stat-card"><h4>Today Invested</h4><p id="todayInvested" style="color:#22c55e">+Ksh 0</p></div>
+    <div class="stat-card"><h4>Today Withdraw</h4><p id="todayWithdrawals" style="color:#ef4444">-Ksh 0</p></div>
+    <div class="stat-card"><h4>Total Withdraw</h4><p id="totalWithdrawals" style="color:#ef4444">-Ksh 0</p></div>
   </div>
 
   <div class="box"><h3>💸 Pending Withdrawals</h3><div id="withdrawList">Loading...</div></div>
-  <div class="box"><h3>🎁 Pending Referral Bonus</h3><div id="referralList">Loading...</div></div>
+  <div class="box"><h3>🎁 Pending Referral</h3><div id="referralList">Loading...</div></div>
 
   <div class="box">
     <h3>👥 All Users</h3>
-    <div class="search-box"><input type="text" id="searchInput" placeholder="Search by Phone or User ID..."></div>
+    <div class="search-box"><input type="text" id="searchInput" placeholder="Search Phone or ID..."></div>
     <div id="userList">Loading...</div>
   </div>
 
@@ -88,7 +102,7 @@ input, textarea{padding:10px;background:#222;border:1px solid #444;color:white;b
     <div class="modal-content" onclick="event.stopPropagation()">
       <h3>📩 All Messages</h3>
       <div id="messagesList">Loading...</div>
-      <button class="btn btn-red" style="width:100%;margin-top:10px" onclick="closeMessagesModal()">Close</button>
+      <button class="btn btn-red" style="width:100%;margin-top:8px" onclick="closeMessagesModal()">Close</button>
     </div>
   </div>
 
@@ -96,9 +110,9 @@ input, textarea{padding:10px;background:#222;border:1px solid #444;color:white;b
   <div id="messageModal" class="modal" onclick="closeMessageModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
       <h3>📩 Send Message</h3>
-      <p id="messageUserPhone" style="color:#fbbf24;margin-bottom:10px"></p>
-      <textarea id="userMessageInput" placeholder="Type message..." rows="4"></textarea>
-      <div style="display:flex;gap:8px">
+      <p id="messageUserPhone" style="color:#fbbf24;margin-bottom:8px"></p>
+      <textarea id="userMessageInput" placeholder="Type message..." rows="3"></textarea>
+      <div style="display:flex;gap:6px">
         <button class="btn btn-purple" style="flex:1" onclick="sendUserMessage()">Send</button>
         <button class="btn btn-red" style="flex:1" onclick="closeMessageModal()">Cancel</button>
       </div>
@@ -126,11 +140,22 @@ function checkLogin(){
 function showPanel(){
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('mainPanel').style.display='block';
+  loadMpesaNumber();
   loadMessages(); loadUsers(); loadWithdrawals(); loadReferralRequests(); loadStats();
 }
 function logout(){localStorage.removeItem('nexaAdminLoggedIn');location.reload();}
 
-// LOAD ALL MESSAGES + COUNT FOR BELL + PER USER
+function loadMpesaNumber(){
+  db.collection("settings").doc("deposit").get().then(d=>{
+    if(d.exists) document.getElementById('mpesaNumber').value = d.data().mpesaNumber || "0718422377";
+  })
+}
+function saveMpesa(){
+  let num = document.getElementById('mpesaNumber').value.trim();
+  if(!num) return alert("Enter number");
+  db.collection("settings").doc("deposit").set({mpesaNumber:num}).then(()=>alert("✅ Mpesa Number Updated"));
+}
+
 function loadMessages(){
   db.collection("userMessages").orderBy("date","desc").limit(50).onSnapshot(s=>{
     let h=""; totalUnread=0; unreadCounts={};
@@ -143,16 +168,13 @@ function loadMessages(){
       h+=`<div class="message-card"><b style="color:#8b5cf6">${x.phone}</b><br>${x.message}<br><small style="color:#666">${x.date?x.date.toDate().toLocaleString():""}</small></div>`;
     });
     document.getElementById('messagesList').innerHTML=h||"No messages";
-    
-    // UPDATE TOP BELL
     if(totalUnread>0){
       document.getElementById('notifBadge').style.display='block';
       document.getElementById('notifBadge').innerText=totalUnread;
     } else {
       document.getElementById('notifBadge').style.display='none';
     }
-    
-    renderUsers(allUsers); // update buttons too
+    renderUsers(allUsers);
   });
 }
 
@@ -160,15 +182,15 @@ function openMessagesModal(){document.getElementById('messagesModal').style.disp
 function closeMessagesModal(){document.getElementById('messagesModal').style.display='none';}
 
 function loadStats(){
-  let today = new Date(); today.setHours(0,0,0,0);
+  let today = new Date(); today.setHours(0,0,0);
   let totalInvested = 0; let todayInvested = 0; let totalWithdrawals = 0; let todayWithdrawals = 0;
   
   db.collection("users").get().then(s=>{
     s.forEach(d=>{let u = d.data();totalInvested += u.totalInvested || 0;
       if(u.lastPurchaseDate && u.lastPurchaseDate.toDate() >= today){todayInvested += u.lastPurchaseAmount || 0;}
     });
-    document.getElementById('totalInvested').innerText = `+Ksh ${totalInvested.toFixed(2)}`;
-    document.getElementById('todayInvested').innerText = `+Ksh ${todayInvested.toFixed(2)}`;
+    document.getElementById('totalInvested').innerText = `+Ksh ${totalInvested.toFixed(0)}`;
+    document.getElementById('todayInvested').innerText = `+Ksh ${todayInvested.toFixed(0)}`;
   });
 
   Promise.all([
@@ -177,8 +199,8 @@ function loadStats(){
   ]).then(([wSnap, rSnap])=>{
     wSnap.forEach(d=>{let w = d.data(); totalWithdrawals += w.amount || 0; if(w.date && w.date.toDate() >= today){ todayWithdrawals += w.amount || 0; }});
     rSnap.forEach(d=>{let r = d.data(); totalWithdrawals += r.amount || 0; if(r.date && r.date.toDate() >= today){ todayWithdrawals += r.amount || 0; }});
-    document.getElementById('totalWithdrawals').innerText = `-Ksh ${totalWithdrawals.toFixed(2)}`;
-    document.getElementById('todayWithdrawals').innerText = `-Ksh ${todayWithdrawals.toFixed(2)}`;
+    document.getElementById('totalWithdrawals').innerText = `-Ksh ${totalWithdrawals.toFixed(0)}`;
+    document.getElementById('todayWithdrawals').innerText = `-Ksh ${todayWithdrawals.toFixed(0)}`;
   });
 }
 
@@ -209,21 +231,14 @@ function renderUsers(users){
     <div class="user-card">
       <div class="user-num">#${userCounter}</div>
       <div class="user-info">
-        <b style="color:#fbbf24">${u.phone}</b><br>
-        ID: ${u.userID || 'NO ID'} | Ref: ${u.refCode || 'NO CODE'}<br>
-        💰 Balance: <b style="color:#22c55e">Ksh ${balance.toFixed(2)}</b><br>
-        📦 Products: <b style="color:#fbbf24">${products}</b><br>
-        💵 Invested: <b style="color:#3b82f6">Ksh ${invested.toFixed(2)}</b><br>
-        📈 Total Income: <b style="color:#22c55e">Ksh ${totalIncome.toFixed(2)}</b><br>
-        🔥 Today: <b style="color:#f59e0b">Ksh ${todayIncome.toFixed(2)}</b><br>
-        👥 Referrals: <b style="color:#8b5cf6">${referrals}</b><br>
-        🎁 Ref Income: <b style="color:#8b5cf6">Ksh ${refIncome.toFixed(2)}</b>
+        <b style="color:#fbbf24">${u.phone}</b> | ID: ${u.userID || 'N/A'}<br>
+        💰Ksh ${balance.toFixed(2)} | 📦${products} | 💵Ksh ${invested.toFixed(0)} | 👥${referrals} | 🎁Ksh ${refIncome.toFixed(0)}
       </div>
       <div class="btn-group">
-        <button class="${btnClass}" onclick="openMessageModal('${u.phone}')">📩 Msg ${msgCount > 0? msgCount : ''}${badge}</button>
-        <button class="btn btn-blue" onclick="deposit('${u.phone}')">Deposit</button>
+        <button class="${btnClass}" onclick="openMessageModal('${u.phone}')">📩${msgCount > 0? msgCount : ''}${badge}</button>
+        <button class="btn btn-blue" onclick="deposit('${u.phone}')">+Ksh</button>
         <button class="btn btn-orange" onclick="resetUser('${u.phone}')">Reset</button>
-        <button class="btn btn-red" onclick="deleteUser('${u.phone}')">Delete</button>
+        <button class="btn btn-red" onclick="deleteUser('${u.phone}')">Del</button>
       </div>
     </div>`;
     userCounter++;
@@ -241,8 +256,6 @@ function openMessageModal(phone){
   selectedUserPhone = phone;
   document.getElementById('messageUserPhone').innerText = "To: " + phone;
   document.getElementById('messageModal').style.display='flex';
-  
-  // MARK MESSAGES AS READ WHEN OPENED
   db.collection("userMessages").where("phone","==",phone).where("read","==",false).get().then(s=>{
     s.forEach(d=>{ db.collection("userMessages").doc(d.id).update({read:true}) })
   })
@@ -256,15 +269,15 @@ function sendUserMessage(){
     message:msg,
     date:firebase.firestore.FieldValue.serverTimestamp(),
     read:false
-  }).then(()=>{alert("✅ Message Sent");closeMessageModal();document.getElementById('userMessageInput').value="";})
+  }).then(()=>{alert("✅ Sent");closeMessageModal();document.getElementById('userMessageInput').value="";})
 }
 
-function deposit(phone){let a=prompt("Amount to add:");if(a)db.collection("users").doc(phone).update({balance:firebase.firestore.FieldValue.increment(parseFloat(a))}).then(()=>loadUsers());}
-function resetUser(phone){if(confirm("Reset this user?"))db.collection("users").doc(phone).update({balance:0,productsPurchased:0,totalInvested:0,totalWithdrawn:0,todayIncome:0,referralCount:0,totalReferralEarned:0,todayReferralIncome:0}).then(()=>loadUsers());}
-function deleteUser(phone){if(confirm("Delete this user?"))db.collection("users").doc(phone).delete().then(()=>loadUsers());}
+function deposit(phone){let a=prompt("Amount:");if(a)db.collection("users").doc(phone).update({balance:firebase.firestore.FieldValue.increment(parseFloat(a))}).then(()=>loadUsers());}
+function resetUser(phone){if(confirm("Reset?"))db.collection("users").doc(phone).update({balance:0,productsPurchased:0,totalInvested:0,totalWithdrawn:0,todayIncome:0,referralCount:0,totalReferralEarned:0,todayReferralIncome:0}).then(()=>loadUsers());}
+function deleteUser(phone){if(confirm("Delete?"))db.collection("users").doc(phone).delete().then(()=>loadUsers());}
 
-function loadWithdrawals(){db.collection("withdrawals").where("status","==","pending").get().then(s=>{let h="";if(s.empty)h="<p style='color:#888'>No pending</p>";s.forEach(d=>{let x=d.data();h+=`<div class="req-card"><b>User:</b> ${x.phone}<br><b>Amount:</b> Ksh ${x.amount}<br><button class="btn btn-green" onclick="approveWithdraw('${d.id}')">Approve</button><button class="btn-red" onclick="rejectWithdraw('${d.id}')">Reject</button></div>`;});document.getElementById('withdrawList').innerHTML=h;})}
-function loadReferralRequests(){db.collection("referralRequests").where("status","==","pending").get().then(s=>{let h="";if(s.empty)h="<p style='color:#888'>No pending</p>";s.forEach(d=>{let x=d.data();h+=`<div class="req-card"><b>User:</b> ${x.phone}<br><b>Bonus:</b> Ksh ${x.amount}<br><button class="btn btn-green" onclick="approveReferral('${d.id}')">Approve</button><button class="btn-red" onclick="rejectReferral('${d.id}')">Reject</button></div>`;});document.getElementById('referralList').innerHTML=h;})}
+function loadWithdrawals(){db.collection("withdrawals").where("status","==","pending").get().then(s=>{let h="";if(s.empty)h="<p style='color:#888'>No pending</p>";s.forEach(d=>{let x=d.data();h+=`<div class="req-card"><div><b>${x.phone}</b><br>Ksh ${x.amount}</div><div><button class="btn btn-green btn-small" onclick="approveWithdraw('${d.id}')">Approve</button><button class="btn-red btn-small" onclick="rejectWithdraw('${d.id}')">Reject</button></div></div>`;});document.getElementById('withdrawList').innerHTML=h;})}
+function loadReferralRequests(){db.collection("referralRequests").where("status","==","pending").get().then(s=>{let h="";if(s.empty)h="<p style='color:#888'>No pending</p>";s.forEach(d=>{let x=d.data();h+=`<div class="req-card"><div><b>${x.phone}</b><br>Ksh ${x.amount}</div><div><button class="btn btn-green btn-small" onclick="approveReferral('${d.id}')">Approve</button><button class="btn-red btn-small" onclick="rejectReferral('${d.id}')">Reject</button></div></div>`;});document.getElementById('referralList').innerHTML=h;})}
 function approveWithdraw(id){db.collection("withdrawals").doc(id).update({status:"paid",date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{loadWithdrawals();loadStats();});}
 function rejectWithdraw(id){db.collection("withdrawals").doc(id).update({status:"rejected"}).then(()=>loadWithdrawals());}
 function approveReferral(id){db.collection("referralRequests").doc(id).get().then(d=>{let x=d.data();db.collection("users").doc(x.phone).update({balance:firebase.firestore.FieldValue.increment(x.amount)});db.collection("referralRequests").doc(id).update({status:"paid",date:firebase.firestore.FieldValue.serverTimestamp()});loadReferralRequests();loadStats();loadUsers();})}
