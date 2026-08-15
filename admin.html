@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEXA USER PANEL</title>
+<title>NEXA ADMIN PANEL</title>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <style>
@@ -11,130 +11,182 @@
 *{box-sizing:border-box}
 body{background:#000;color:white;font-family:Poppins;padding:15px;margin:0}
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-.header h2{color:#fbbf24;margin:0;font-size:18px}
+.header-actions{display:flex;gap:8px;align-items:center}
 .logout-btn{background:#ef4444;color:white;border:none;padding:8px 14px;border-radius:8px;font-weight:700;cursor:pointer;font-size:12px}
-.card{background:#111;border:1px solid #333;border-radius:12px;padding:14px;margin-bottom:15px}
-.top-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#888;margin-bottom:10px}
-.top-row b{color:#fbbf24}
-.row{font-size:13px;margin:8px 0;display:flex;justify-content:space-between;align-items:center}
-.row b{font-weight:700}
-.balance{color:#22c55e;font-size:16px}
-.invested{color:#3b82f6}
-.income{color:#22c55e}
-.today{color:#f59e0b}
-.ref{color:#8b5cf6}
-.products{color:#fbbf24}
-.btn{padding:10px 12px;background:#3b82f6;color:white;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:12px;flex:1}
-.btn-red{background:#ef4444}
-.btn-orange{background:#f59e0b;color:#000}
-.btn-group{display:flex;gap:8px;margin-top:12px}
+.broadcast-btn{background:#8b5cf6;color:white;border:none;padding:8px 14px;border-radius:8px;font-weight:700;cursor:pointer;font-size:12px}
+.notif-btn{background:#1a1a1a;border:1px solid #333;color:#fbbf24;border:none;padding:8px 10px;border-radius:8px;font-size:18px;cursor:pointer;position:relative}
+.notif-badge{position:absolute;top:-5px;right:-5px;background:#ef4444;color:white;border-radius:50%;font-size:10px;font-weight:700;padding:2px 6px;min-width:18px;text-align:center}
+.box{background:#111;border:1px solid #333;border-radius:12px;padding:14px;margin-bottom:15px}
+.pending-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:15px}
+.stat-card{background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:12px;text-align:center;position:relative}
+.stat-card h4{color:#888;font-size:11px;margin:0;font-weight:400}
+.stat-card p{font-size:16px;font-weight:700;margin:5px 0 0 0}
+.stat-eye{position:absolute;top:8px;right:8px;font-size:14px;cursor:pointer;color:#666}
+.stat-eye:hover{color:#fbbf24}
+.search-box{display:flex;align-items:center;background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:10px;margin-bottom:15px}
+.search-box input{flex:1;background:transparent;border:none;color:white;font-size:14px;outline:none;font-family:Poppins}
+.search-icon{color:#fbbf24;font-size:18px;margin-right:8px}
+h2{color:#fbbf24;text-align:center;margin:0}
+h3{color:#fbbf24;margin:0 0 12px 0;font-size:15px}
+.btn{padding:8px 12px;background:#22c55e;color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;margin:2px;font-size:11px;font-family:Poppins}
+.btn-red{background:#ef4444;color:white}
+.btn-blue{background:#3b82f6;color:white}
+.btn-purple{background:#8b5cf6;color:white}
+.btn-green{background:#22c55e;color:#000}
+.req-card{background:#1a1a1a;padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid #333;font-size:12px;line-height:1.6}
+.message-card{background:#1a1a1a;padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid #333;border-left:4px solid #8b5cf6;cursor:pointer}
+.user-card{background:#1a1a1a;padding:10px;border-radius:10px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:flex-start;border:1px solid #333;gap:10px;cursor:pointer}
+.user-num{background:#fbbf24;color:#000;font-weight:700;font-size:11px;border-radius:6px;padding:4px 8px;min-width:28px;text-align:center;margin-top:3px}
+.user-info{font-size:12px;line-height:1.7;flex:1}
+.btn-group{display:flex;flex-direction:column;gap:4px}
+input[type="number"], input[type="password"], input[type="text"], textarea{padding:10px;background:#222;border:1px solid #444;color:white;border-radius:8px;width:100%;font-family:Poppins;font-size:14px}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:999;justify-content:center;align-items:center}
+.modal-content{background:#111;width:90%;max-width:450px;border-radius:16px;padding:20px;border:1px solid #333;max-height:90vh;overflow-y:auto}
+.info-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #222;font-size:13px}
 #loginScreen{display:flex;position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:9999;justify-content:center;align-items:center}
 .login-box{background:#111;padding:25px;border-radius:16px;border:1px solid #333;width:90%;max-width:350px;text-align:center}
-.login-box input{padding:10px;background:#222;border:1px solid #444;color:white;border-radius:8px;width:100%;margin-bottom:10px;font-family:Poppins}
+.password-wrapper{position:relative;margin-bottom:15px}
+.password-wrapper input{padding-right:40px}
+.eye-icon{position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:20px;z-index:10}
+@media(max-width:768px){.pending-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
 <div id="loginScreen">
   <div class="login-box">
-    <h2 style="color:#fbbf24">👤 USER LOGIN</h2>
-    <input type="text" id="loginPhone" placeholder="Enter Phone Number">
-    <button class="btn" style="width:100%" onclick="loginUser()">Login</button>
-    <p id="loginError" style="color:#ef4444;font-size:12px"></p>
+    <h2>👑 NEXA ADMIN LOGIN</h2>
+    <div class="password-wrapper">
+      <input type="password" id="adminPassword" placeholder="Enter Admin Password">
+      <span class="eye-icon" onclick="togglePassword()">👁️</span>
+    </div>
+    <button class="btn btn-blue" style="width:100%;padding:12px;font-size:14px" onclick="checkLogin()">Login</button>
+    <p id="loginError" style="color:#ef4444;font-size:12px;margin-top:10px"></p>
   </div>
 </div>
 
 <div id="mainPanel" style="display:none">
   <div class="header">
-    <h2>👤 NEXA USER PANEL</h2>
-    <button class="logout-btn" onclick="logout()">Logout</button>
+    <h2>👑 NEXA ADMIN PANEL</h2>
+    <div class="header-actions">
+      <button class="notif-btn" onclick="openMessagesModal()">🔔<span id="notifBadge" class="notif-badge" style="display:none">0</span></button>
+      <button class="broadcast-btn" onclick="openBroadcastModal()">📢 To All</button>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
   </div>
-  <div id="userCard">Loading...</div>
+
+  <div class="stats">
+    <div class="stat-card"><span class="stat-eye" onclick="toggleStats()">👁️</span><h4>Total Invested</h4><p id="totalInvested" style="color:#22c55e">+Ksh 0.00</p></div>
+    <div class="stat-card"><span class="stat-eye" onclick="toggleStats()">👁️</span><h4>Today's Invested</h4><p id="todayInvested" style="color:#22c55e">+Ksh 0.00</p></div>
+    <div class="stat-card"><span class="stat-eye" onclick="toggleStats()">👁️</span><h4>Today's Withdrawals</h4><p id="todayWithdrawals" style="color:#ef4444">-Ksh 0.00</p></div>
+    <div class="stat-card"><span class="stat-eye" onclick="toggleStats()">👁️</span><h4>Total Withdrawals</h4><p id="totalWithdrawals" style="color:#ef4444">-Ksh 0.00</p></div>
+  </div>
+
+  <div class="pending-grid">
+    <div class="box"><h3>💸 Pending Withdrawals</h3><div id="withdrawList">Loading...</div></div>
+    <div class="box"><h3>🎁 Pending Referral Bonus</h3><div id="referralList">Loading...</div></div>
+  </div>
+
+  <div class="box">
+    <h3>👥 All Users</h3>
+    <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="searchInput" placeholder="Search by Phone or User ID..."></div>
+    <div id="userList">Loading...</div>
+  </div>
+  
+  <div id="messagesModal" class="modal" onclick="closeMessagesModal()"><div class="modal-content" onclick="event.stopPropagation()"><h3>📩 All Messages</h3><div id="messagesList">Loading...</div><button class="btn btn-red" style="width:100%;margin-top:10px" onclick="closeMessagesModal()">Close</button></div></div>
+  <div id="userInfoModal" class="modal" onclick="closeUserInfoModal()"><div class="modal-content" onclick="event.stopPropagation()"><h3>👤 User Information</h3><div id="userInfoContent"></div><div style="margin-top:15px;display:flex;gap:8px"><button class="btn btn-purple" style="flex:1" onclick="sendMsgFromInfo()">Send Message</button><button class="btn btn-blue" style="flex:1" onclick="depositFromInfo()">Deposit</button><button class="btn btn-red" style="flex:1" onclick="closeUserInfoModal()">Close</button></div></div></div>
+  <div id="depositModal" class="modal" onclick="closeDepositModal()"><div class="modal-content" onclick="event.stopPropagation()"><h3>Add Balance</h3><p id="depositUserPhone" style="color:#fbbf24"></p><input id="depositAmountInput" type="number" placeholder="500"><div style="margin-top:15px;display:flex;gap:8px"><button class="btn btn-blue" style="flex:1" onclick="confirmDeposit()">Add Money</button><button class="btn btn-red" style="flex:1" onclick="closeDepositModal()">Cancel</button></div></div></div>
+  <div id="messageModal" class="modal" onclick="closeMessageModal()"><div class="modal-content" onclick="event.stopPropagation()"><h3>📩 Send Message</h3><p id="messageUserPhone" style="color:#fbbf24"></p><textarea id="userMessageInput"></textarea><div style="margin-top:15px;display:flex;gap:8px"><button class="btn btn-purple" style="flex:1" onclick="sendUserMessage()">Send</button><button class="btn btn-red" style="flex:1" onclick="closeMessageModal()">Cancel</button></div></div></div>
+  <div id="broadcastModal" class="modal" onclick="closeBroadcastModal()"><div class="modal-content" onclick="event.stopPropagation()"><h3>📢 Broadcast</h3><textarea id="broadcastMessage"></textarea><div style="margin-top:15px;display:flex;gap:8px"><button class="btn btn-blue" style="flex:1" onclick="sendBroadcast()">Send to All</button><button class="btn btn-red" style="flex:1" onclick="closeBroadcastModal()">Cancel</button></div></div></div>
 </div>
 
 <script>
 const firebaseConfig = {apiKey:"AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",authDomain:"nexa-view.firebaseapp.com",projectId:"nexa-view"};
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-let currentUserPhone = "";
+const ADMIN_PASSWORD = "admin123";
+let selectedUserPhone = "";let selectedUserData = {};let userCounter = 1;let allUsers = [];
+let statsHidden = false;
 
-// LOGIN
-function loginUser(){
-  let phone = document.getElementById('loginPhone').value.trim();
-  if(!phone){ document.getElementById('loginError').innerText="Enter phone"; return; }
-  
-  db.collection("users").doc(phone).get().then(doc=>{
-    if(doc.exists){
-      currentUserPhone = phone;
-      localStorage.setItem('nexaUserPhone', phone);
-      showPanel();
-    } else {
-      document.getElementById('loginError').innerText="User not found";
+function togglePassword(){let p=document.getElementById('adminPassword');let e=document.querySelector('.eye-icon');if(p.type==="password"){p.type="text";e.innerText="🙈";}else{p.type="password";e.innerText="👁️";}}
+function checkLogin(){let pass=document.getElementById('adminPassword').value;if(pass===ADMIN_PASSWORD){localStorage.setItem('nexaAdminLoggedIn','true');showPanel();}else{document.getElementById('loginError').innerText="❌ Wrong Password. Use: admin123";}}
+function showPanel(){document.getElementById('loginScreen').style.display='none';document.getElementById('mainPanel').style.display='block';loadUsers();loadWithdrawals();loadReferralRequests();loadMessages();loadStats();}
+function logout(){localStorage.removeItem('nexaAdminLoggedIn');location.reload();}
+
+function toggleStats(){
+  statsHidden = !statsHidden;
+  document.querySelectorAll('.stat-eye').forEach(eye => { eye.innerText = statsHidden ? '🙈' : '👁️'; });
+  document.querySelectorAll('.stat-card p').forEach(p => {
+    if(statsHidden){ p.innerText = '••••••'; } else { loadStats(); }
+  });
+}
+
+function loadStats(){
+  if(statsHidden) return;
+  let today = new Date(); today.setHours(0,0,0,0);
+  let totalInvested = 0; let todayInvested = 0; let totalWithdrawals = 0; let todayWithdrawals = 0;
+  let loaded = 0;
+
+  function checkDone(){
+    loaded++;
+    if(loaded===3){
+      document.getElementById('totalInvested').innerText = `+Ksh ${totalInvested.toFixed(2)}`;
+      document.getElementById('todayInvested').innerText = `+Ksh ${todayInvested.toFixed(2)}`;
+      document.getElementById('totalWithdrawals').innerText = `-Ksh ${totalWithdrawals.toFixed(2)}`;
+      document.getElementById('todayWithdrawals').innerText = `-Ksh ${todayWithdrawals.toFixed(2)}`;
     }
-  })
+  }
+
+  db.collection("users").get().then(s=>{
+    s.forEach(d=>{
+      let u = d.data();
+      totalInvested += u.totalInvested || 0;
+      if(u.lastPurchaseDate && u.lastPurchaseDate.toDate() >= today){
+        todayInvested += u.lastPurchaseAmount || 0;
+      }
+    });
+    checkDone();
+  });
+
+  db.collection("withdrawals").where("status","==","paid").get().then(s=>{
+    s.forEach(d=>{let w = d.data(); totalWithdrawals += w.amount || 0; if(w.date && w.date.toDate() >= today){ todayWithdrawals += w.amount || 0; }});
+    checkDone();
+  });
+  db.collection("referralRequests").where("status","==","paid").get().then(s=>{
+    s.forEach(d=>{let r = d.data(); totalWithdrawals += r.amount || 0; if(r.date && r.date.toDate() >= today){ todayWithdrawals += r.amount || 0; }});
+    checkDone();
+  });
 }
 
-function showPanel(){
-  document.getElementById('loginScreen').style.display='none';
-  document.getElementById('mainPanel').style.display='block';
-  loadUserData();
-}
+function loadMessages(){db.collection("userMessages").orderBy("date","desc").limit(50).onSnapshot(s=>{let u=0;let h="";s.forEach(d=>{let x=d.data();if(!x.read)u++;h+=`<div class="message-card"><b style="color:#8b5cf6">${x.phone}</b><br>${x.message}</div>`;});document.getElementById('messagesList').innerHTML=h||"No messages";document.getElementById('notifBadge').style.display=u>0?'block':'none';document.getElementById('notifBadge').innerText=u;})}
+function openMessagesModal(){document.getElementById('messagesModal').style.display='flex';}
+function closeMessagesModal(){document.getElementById('messagesModal').style.display='none';}
+function openUserInfoModal(user){selectedUserData=user;selectedUserPhone=user.phone;document.getElementById('userInfoContent').innerHTML=`<div class="info-row"><span>Phone</span><span>${user.phone}</span></div><div class="info-row"><span>Balance</span><span style="color:#22c55e">Ksh ${(user.balance||0).toFixed(2)}</span></div><div class="info-row"><span>Total Invested</span><span style="color:#22c55e">Ksh ${(user.totalInvested||0).toFixed(2)}</span></div>`;document.getElementById('userInfoModal').style.display='flex';}
+function closeUserInfoModal(){document.getElementById('userInfoModal').style.display='none';}
+function sendMsgFromInfo(){closeUserInfoModal();openMessageModal(selectedUserPhone);}
+function depositFromInfo(){closeUserInfoModal();openDepositModal(selectedUserPhone);}
+function openMessageModal(phone){selectedUserPhone=phone;document.getElementById('messageUserPhone').innerText="To: "+phone;document.getElementById('messageModal').style.display='flex';}
+function closeMessageModal(){document.getElementById('messageModal').style.display='none';}
+function sendUserMessage(){let msg=document.getElementById('userMessageInput').value;if(!msg)return;db.collection("userMessages").add({phone:selectedUserPhone,message:msg,date:firebase.firestore.FieldValue.serverTimestamp(),read:false}).then(()=>{alert("Sent");closeMessageModal();document.getElementById('userMessageInput').value="";})}
+function openBroadcastModal(){document.getElementById('broadcastModal').style.display='flex';}
+function closeBroadcastModal(){document.getElementById('broadcastModal').style.display='none';}
+function sendBroadcast(){let msg=document.getElementById('broadcastMessage').value;if(!msg)return;db.collection("broadcasts").add({message:msg,date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{alert("Sent to all");closeBroadcastModal();document.getElementById('broadcastMessage').value="";})}
+function loadUsers(){db.collection("users").get().then(s=>{allUsers=[];s.forEach(d=>{let u=d.data();u.docId=d.id;allUsers.push(u)});renderUsers(allUsers);})}
+function renderUsers(users){let h="";userCounter=1;users.forEach(u=>{h+=`<div class="user-card" onclick='openUserInfoModal(${JSON.stringify(u)})'><div class="user-num">#${userCounter}</div><div class="user-info"><b>${u.phone}</b><br>Balance: <b style="color:#22c55e">Ksh ${(u.balance||0).toFixed(2)}</b><br>Total Invested: <b>Ksh ${(u.totalInvested||0).toFixed(2)}</b></div><div class="btn-group" onclick="event.stopPropagation()"><button class="btn btn-purple" onclick="openMessageModal('${u.phone}')">Msg</button><button class="btn btn-blue" onclick="openDepositModal('${u.phone}')">Deposit</button></div></div>`;userCounter++;});document.getElementById('userList').innerHTML=h||"No users";}
+document.getElementById('searchInput').addEventListener('keyup', function(){let q=this.value.toLowerCase();let f=allUsers.filter(u=>{return (u.phone && u.phone.toLowerCase().includes(q)) || (u.userID && u.userID.toLowerCase().includes(q));});renderUsers(f);});
+function openDepositModal(phone){selectedUserPhone=phone;document.getElementById('depositUserPhone').innerText="User: "+phone;document.getElementById('depositModal').style.display='flex';}
+function closeDepositModal(){document.getElementById('depositModal').style.display='none';}
+function confirmDeposit(){let a=parseFloat(document.getElementById('depositAmountInput').value);if(!a)return;db.collection("users").doc(selectedUserPhone).update({balance:firebase.firestore.FieldValue.increment(a)}).then(()=>{alert("Added");closeDepositModal();document.getElementById('depositAmountInput').value="";loadUsers();})}
 
-function logout(){
-  localStorage.removeItem('nexaUserPhone');
-  location.reload();
-}
+function loadWithdrawals(){db.collection("withdrawals").where("status","==","pending").get().then(s=>{let h="";if(s.empty){h="<p style='color:#888;text-align:center'>No pending</p>";}s.forEach(d=>{let x=d.data();h+=`<div class="req-card"><b>User:</b> ${x.phone}<br><b>Amount:</b> Ksh ${x.amount}<br><button class="btn btn-green" onclick="approveWithdraw('${d.id}')">Approve</button><button class="btn-red" onclick="rejectWithdraw('${d.id}')">Reject</button></div>`;});document.getElementById('withdrawList').innerHTML=h;})}
+function loadReferralRequests(){db.collection("referralRequests").where("status","==","pending").get().then(s=>{let h="";if(s.empty){h="<p style='color:#888;text-align:center'>No pending</p>";}s.forEach(d=>{let x=d.data();h+=`<div class="req-card"><b>User:</b> ${x.phone}<br><b>Bonus:</b> Ksh ${x.amount}<br><button class="btn btn-green" onclick="approveReferral('${d.id}')">Approve</button><button class="btn-red" onclick="rejectReferral('${d.id}')">Reject</button></div>`;});document.getElementById('referralList').innerHTML=h;})}
+function approveWithdraw(id){db.collection("withdrawals").doc(id).update({status:"paid",date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{alert("✅ Approved");loadWithdrawals();loadStats();});}
+function rejectWithdraw(id){db.collection("withdrawals").doc(id).update({status:"rejected"}).then(()=>loadWithdrawals());}
+function approveReferral(id){db.collection("referralRequests").doc(id).get().then(d=>{let x=d.data();db.collection("users").doc(x.phone).update({balance:firebase.firestore.FieldValue.increment(x.amount)});db.collection("referralRequests").doc(id).update({status:"paid",date:firebase.firestore.FieldValue.serverTimestamp()});alert("✅ Bonus Approved");loadReferralRequests();loadStats();loadUsers();})}
+function rejectReferral(id){db.collection("referralRequests").doc(id).update({status:"rejected"}).then(()=>loadReferralRequests());}
 
-// AUTO LOAD + CALCULATE ALL 7 FIELDS
-function loadUserData(){
-  db.collection("users").doc(currentUserPhone).onSnapshot(doc=>{
-    if(!doc.exists) return;
-    let u = doc.data();
-    
-    // AUTO CALCULATIONS
-    let products = u.productsPurchased || 0;
-    let invested = u.totalInvested || 0;
-    let totalIncome = (u.totalWithdrawn || 0) + (u.totalReferralEarned || 0);
-    let todayIncome = (u.todayIncome || 0) + (u.todayReferralIncome || 0);
-    let referrals = u.referralCount || 0;
-    let referralIncome = u.totalReferralEarned || 0;
-    let balance = u.balance || 0;
-
-    let h = `
-    <div class="card">
-      <div class="top-row">
-        <span><b>${u.phone}</b></span>
-        <span>ID: ${u.userID || 'NO ID'}</span>
-      </div>
-      <div class="top-row">
-        <span>Ref Code: <b style="color:#8b5cf6">${u.refCode || 'NO CODE'}</b></span>
-      </div>
-      
-      <div class="row"><span>💰 Balance:</span><b class="balance">Ksh ${balance.toFixed(2)}</b></div>
-      <div class="row"><span>📦 Products:</span><b class="products">${products}</b></div>
-      <div class="row"><span>💵 Invested:</span><b class="invested">Ksh ${invested.toFixed(2)}</b></div>
-      <div class="row"><span>📈 Total Income:</span><b class="income">Ksh ${totalIncome.toFixed(2)}</b></div>
-      <div class="row"><span>🔥 Today's Income:</span><b class="today">Ksh ${todayIncome.toFixed(2)}</b></div>
-      <div class="row"><span>👥 Referrals:</span><b class="ref">${referrals}</b></div>
-      <div class="row"><span>🎁 Referral Income:</span><b class="ref">Ksh ${referralIncome.toFixed(2)}</b></div>
-
-      <div class="btn-group">
-        <button class="btn" onclick="withdraw()">Withdraw</button>
-        <button class="btn btn-orange" onclick="requestBonus()">Request Bonus</button>
-      </div>
-    </div>
-    `;
-    document.getElementById('userCard').innerHTML = h;
-  })
-}
-
-function withdraw(){ alert("Withdraw function here"); }
-function requestBonus(){ alert("Request referral bonus"); }
-
-window.onload=function(){
-  let saved = localStorage.getItem('nexaUserPhone');
-  if(saved){ currentUserPhone = saved; showPanel(); }
-}
+window.onload=function(){if(localStorage.getItem('nexaAdminLoggedIn')==='true'){showPanel();}}
 </script>
 </body>
 </html>
