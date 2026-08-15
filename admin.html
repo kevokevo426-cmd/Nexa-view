@@ -1,293 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NEXA ADMIN</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-body{background:#000;color:white;font-family:Poppins;margin:0;padding:20px}
-.container{max-width:1000px;margin:0 auto}
-h1{color:#fbbf24;text-align:center}
-.card{background:#111;padding:20px;border-radius:16px;margin:20px 0;border:1px solid #222}
-input{padding:14px;width:100%;margin:8px 0;border-radius:10px;background:#222;color:white;border:1px solid #333;font-size:15px;box-sizing:border-box}
-.btn{padding:14px;width:100%;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;font-weight:bold;border:none;border-radius:10px;font-size:15px;cursor:pointer;margin-top:8px}
-.btn-danger{background:#ef4444;color:white}
-.btn-success{background:#22c55e;color:white}
-.btn-warning{background:#f59e0b;color:black}
-.user-list{background:#1a1a1a;padding:15px;border-radius:10px;margin:10px 0}
-.user-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
-.package-row{display:flex;gap:10px;margin:10px 0}
-.withdraw-card{background:#1a1a1a;padding:15px;border-radius:10px;margin:10px 0;border-left:4px solid #fbbf24}
-.tx-log{background:#1a1a1a;padding:12px;border-radius:8px;margin:8px 0;font-size:13px;display:flex;justify-content:space-between}
-.deposit{border-left:3px solid #22c55e}
-.withdraw{border-left:3px solid #ef4444}
-#loginScreen{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;display:flex;justify-content:center;align-items:center;z-index:9999}
-.logout{position:fixed;top:20px;right:20px;background:#ef4444;color:white;border:none;padding:10px 15px;border-radius:8px;cursor:pointer;font-weight:bold}
-.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:#000000aa;display:none;justify-content:center;align-items:center;z-index:999}
-.modal-content{background:#111;padding:20px;border-radius:16px;width:90%;max-width:400px;border:1px solid #333}
+body{background:#000;color:white;font-family:Poppins;padding:20px}
+.login-box{max-width:400px;margin:100px auto;background:#111;padding:30px;border-radius:16px;border:1px solid #fbbf24}
+input,button{width:100%;padding:14px;margin:10px 0;background:#222;border:1px solid #333;color:white;border-radius:10px;font-size:15px;box-sizing:border-box}
+button{background:#fbbf24;color:black;font-weight:bold;cursor:pointer}
+.card{background:#111;padding:20px;border-radius:16px;margin:15px 0;border:1px solid #222}
+.user-row{display:flex;justify-content:space-between;align-items:center;background:#1a1a1a;padding:12px;border-radius:10px;margin:8px 0}
+.user-row button{width:auto;padding:8px 12px;margin-left:5px;font-size:12px}
+.red{background:#ef4444;color:white}
+.orange{background:#f59e0b;color:white}
+.green{background:#22c55e;color:white}
+table{width:100%;font-size:12px}
+th{color:#fbbf24;text-align:left;padding:8px;border-bottom:1px solid #333}
 </style>
 </head>
 <body>
 
-<div id="loginScreen">
-  <div class="card" style="max-width:350px">
-    <h2 style="text-align:center;color:#fbbf24">ADMIN LOGIN</h2>
-    <input id="adminPass" type="password" placeholder="Enter Admin Password">
-    <button class="btn" onclick="checkLogin()">LOGIN</button>
-    <p id="loginError" style="color:#ef4444;text-align:center"></p>
+<div id="loginBox" class="login-box">
+  <h2 style="color:#fbbf24;text-align:center">ADMIN LOGIN</h2>
+  <input type="password" id="adminPass" placeholder="Enter Admin Password">
+  <button onclick="loginAdmin()">LOGIN</button>
+</div>
+
+<div id="adminPanel" style="display:none">
+  <h1>NEXA ADMIN PANEL</h1><button onclick="logout()" class="red" style="width:auto;float:right">LOGOUT</button>
+  
+  <div class="card">
+    <h3>Add User</h3>
+    <input id="addUserPhone" placeholder="Phone: 0712345678 or 254712345678">
+    <input id="addUserName" placeholder="Real Name">
+    <input id="addUserPass" placeholder="Password">
+    <input id="addUserBalance" placeholder="Starting Balance e.g 0">
+    <button onclick="addUser()">ADD USER</button>
   </div>
-</div>
 
-<button class="logout" onclick="logout()">LOGOUT</button>
-
-<div class="modal" id="resetModal">
-  <div class="modal-content">
-    <h3 id="modalTitle">Reset User</h3>
-    <input id="modalInput" placeholder="">
-    <div style="display:flex;gap:10px">
-      <button class="btn" onclick="confirmReset()">CONFIRM</button>
-      <button class="btn-danger" onclick="closeModal()">CANCEL</button>
-    </div>
+  <div class="card">
+    <h3>💰 Add Balance to User - DEPOSIT</h3>
+    <input id="depositPhone" placeholder="Phone: 0712345678">
+    <input id="depositAmount" placeholder="Amount e.g 50000">
+    <button onclick="addBalance()">ADD BALANCE</button>
+    <div id="depositMsg"></div>
   </div>
-</div>
 
-<div class="container" id="adminPanel" style="display:none">
-<h1>👑 NEXA ADMIN PANEL</h1>
+  <div class="card">
+    <h3>Edit Packages</h3><div id="packageEditor"></div>
+  </div>
 
-<div class="card">
-<h3>➕ Add / Remove User</h3>
-<input id="newPhone" placeholder="Phone: 254712345678">
-<input id="newName" placeholder="Real Name">
-<input id="newPass" placeholder="Password">
-<input id="newBalance" type="number" placeholder="Starting Balance e.g 0">
-<button class="btn" onclick="addUser()">ADD USER</button>
-<p id="userMsg"></p>
-</div>
+  <div class="card">
+    <h3>🔥 Pending Withdrawals</h3><div id="withdrawList">Loading...</div>
+  </div>
 
-<div class="card">
-<h3>💰 Add Balance to User - DEPOSIT</h3>
-<input id="adminPhone" placeholder="Phone: 254712345678">
-<input id="adminAmount" type="number" placeholder="Amount e.g 50000">
-<button class="btn" onclick="addBalance()">ADD BALANCE</button>
-<p id="adminMsg"></p>
-</div>
-
-<div class="card">
-<h3>📦 Edit Packages</h3>
-<div id="packageEditor"></div>
-<button class="btn" onclick="savePackages()">SAVE PACKAGES</button>
-</div>
-
-<div class="card">
-<h3>💸 Pending Withdrawals - NEED YOUR APPROVAL</h3>
-<div id="withdrawList">Loading...</div>
-<button class="btn" style="background:#444;color:white" onclick="loadWithdrawals()">REFRESH</button>
-</div>
-
-<div class="card">
-<h3>👥 All Users + Transaction History</h3>
-<div id="userList">Loading...</div>
-<button class="btn" style="background:#444;color:white" onclick="loadUsers()">REFRESH USERS</button>
-</div>
-
+  <div class="card">
+    <h3>All Users</h3><div id="userList"></div>
+  </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <script>
-const ADMIN_PASSWORD = "nexa2025";
 const firebaseConfig = {apiKey:"AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",authDomain:"nexa-view.firebaseapp.com",projectId:"nexa-view"};
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+const ADMIN_PASSWORD = "nexa2025"; // CHANGE THIS
 
-let PACKAGES = [
-  {name:"L1", price:300, daily:25, days:20},
-  {name:"L2", price:700, daily:50, days:20},
-  {name:"L3", price:1300, daily:100, days:20},
-  {name:"L4", price:2500, daily:150, days:30},
-  {name:"L5", price:3500, daily:200, days:30},
-  {name:"L6", price:4800, daily:250, days:30},
-  {name:"L7", price:7500, daily:350, days:30},
-  {name:"L8", price:10000, daily:500, days:30},
-];
-let resetTarget = null; let resetType = null;
-
-function checkLogin(){
-  if(document.getElementById('adminPass').value === ADMIN_PASSWORD){
-    localStorage.setItem("nexaAdmin","true");
-    document.getElementById('loginScreen').style.display = "none";
-    document.getElementById('adminPanel').style.display = "block";
-    loadUsers(); loadWithdrawals(); loadPackageEditor();
-  } else { document.getElementById('loginError').innerText = "❌ Wrong Password"; }
-}
-function logout(){ localStorage.removeItem("nexaAdmin"); location.reload(); }
-if(localStorage.getItem("nexaAdmin") === "true"){
-  document.getElementById('loginScreen').style.display = "none";
-  document.getElementById('adminPanel').style.display = "block";
-  loadUsers(); loadWithdrawals(); loadPackageEditor();
+// AUTO CONVERT 07 to 254
+function formatPhone(p){
+  if(!p) return '';
+  p = p.replace(/\D/g,'');
+  if(p.startsWith('0')) return '254' + p.substring(1);
+  if(p.startsWith('7')) return '254' + p;
+  return p;
 }
 
-function openResetModal(type, phone){
-  resetTarget = phone; resetType = type;
-  document.getElementById('modalTitle').innerText = type === 'pass' ? 'Reset Password for ' + phone : 'Change Phone for ' + phone;
-  document.getElementById('modalInput').placeholder = type === 'pass' ? 'New Password' : 'New Phone: 2547XXXXXXXX';
-  document.getElementById('resetModal').style.display = 'flex';
-}
-function closeModal(){ document.getElementById('resetModal').style.display = 'none'; }
+let users = [];
 
-function confirmReset(){
-  let newValue = document.getElementById('modalInput').value.trim();
-  if(!newValue){ alert('Enter a value'); return; }
-  if(resetType === 'pass'){
-    db.collection("users").doc(resetTarget).update({password: newValue}).then(()=>{ alert('✅ Password reset'); closeModal(); });
-  } 
-  if(resetType === 'phone'){
-    db.collection("users").doc(resetTarget).get().then(doc=>{
-      let data = doc.data(); data.phone = newValue;
-      db.collection("users").doc(newValue).set(data).then(()=>{
-        db.collection("users").doc(resetTarget).delete().then(()=>{ alert('✅ Phone changed'); closeModal(); loadUsers(); });
-      });
+function loginAdmin(){ if(document.getElementById('adminPass').value === ADMIN_PASSWORD){ document.getElementById('loginBox').style.display='none'; document.getElementById('adminPanel').style.display='block'; loadAdminData(); } else { alert('Wrong Password') }
+function logout(){ document.getElementById('loginBox').style.display='block'; document.getElementById('adminPanel').style.display='none'; }
+
+function loadAdminData(){
+  db.collection("users").onSnapshot(snap=>{
+    users = []; let html='';
+    snap.forEach(d=>{ let u=d.data(); users.push({id:d.id,...u});
+      html+=`<div class="user-row"><div><b>${u.realName}</b><br><small>${d.id}</small><br><small>Balance: Ksh ${u.balance}</small></div>
+      <div><button class="orange" onclick="resetPass('${d.id}')">Reset Pass</button><button class="orange" onclick="resetPhone('${d.id}')">Reset Phone</button><button class="red" onclick="deleteUser('${d.id}')">Delete</button></div></div>`;
     });
-  }
+    document.getElementById('userList').innerHTML = html || "No users";
+  });
+  db.collection("withdrawals").where("status","==","pending").onSnapshot(snap=>{
+    let html=''; snap.forEach(d=>{ let w=d.data();
+      html+=`<div class="user-row"><div><b>Ksh ${w.amount}</b><br><small>User: ${w.phone}</small><br><small>To: ${w.mpesa}</small><br><small>Time: ${w.requestedAt.toDate().toLocaleString()}</small></div>
+      <div><button class="green" onclick="approveWithdraw('${d.id}', '${w.phone}', ${w.amount})">APPROVE & DEDUCT</button><button class="red" onclick="rejectWithdraw('${d.id}')">REJECT</button></div></div>`;
+    });
+    document.getElementById('withdrawList').innerHTML = html || "No pending withdrawals";
+  });
+  loadPackageEditor();
 }
 
 function addUser(){
-  let phone = newPhone.value.trim(); let name = newName.value.trim(); let pass = newPass.value.trim(); let bal = parseFloat(newBalance.value) || 0;
-  if(!phone || !name || !pass){ userMsg.innerText = "❌ Fill all fields"; return; }
+  const phone = formatPhone(document.getElementById('addUserPhone').value.trim());
+  const name = document.getElementById('addUserName').value.trim();
+  const pass = document.getElementById('addUserPass').value.trim();
+  const balance = parseFloat(document.getElementById('addUserBalance').value) || 0;
+  if(!phone ||!name ||!pass){ alert('Fill all fields'); return; }
   db.collection("users").doc(phone).set({
-    phone, realName:name, password:pass, balance:bal, 
-    ownedPackages:{}, tasksDone:0, referralBonus:0, withdrawPhone:"", createdAt: new Date()
-  }).then(()=>{ userMsg.style.color="#22c55e"; userMsg.innerText = `✅ User ${phone} created`; newPhone.value=newName.value=newPass.value=newBalance.value=""; loadUsers(); });
+    phone, realName:name, password:pass, balance, ownedPackages:{}, tasksDone:0, referralBonus:0, createdAt:new Date()
+  }).then(()=>alert('✅ User Created: '+phone));
 }
 
 function addBalance(){
-  let phone = adminPhone.value; let amount = parseFloat(adminAmount.value);
-  if(!phone || !amount){ adminMsg.innerText = "❌ Fill both fields"; return; }
+  const phone = formatPhone(document.getElementById('depositPhone').value.trim());
+  const amount = parseFloat(document.getElementById('depositAmount').value);
+  const msg = document.getElementById('depositMsg');
+  if(!phone ||!amount){ msg.innerHTML='<p style="color:red">Fill all</p>'; return; }
   db.collection("users").doc(phone).get().then(doc=>{
-    if(doc.exists){
-      let newBal = doc.data().balance + amount;
-      let batch = db.batch();
-      batch.update(db.collection("users").doc(phone), {balance:newBal});
-      batch.set(db.collection("transactions").doc(), {
-        phone, type:"deposit", amount, time: new Date(), admin:true
-      });
-      batch.commit().then(()=>{
-        adminMsg.style.color="#22c55e";
-        adminMsg.innerText = `✅ Deposited Ksh ${amount}. New Balance: ${newBal.toFixed(2)}`;
-        adminPhone.value = ""; adminAmount.value = ""; loadUsers();
-      });
-    } else { adminMsg.innerText = "❌ User not found"; }
-  });
-}
-
-function deleteUser(phone){
-  if(confirm("Delete user " + phone + "?")){
-    db.collection("users").doc(phone).delete().then(()=>{ alert("User deleted"); loadUsers(); });
-  }
-}
-
-function loadUsers(){
-  userList.innerHTML = "Loading...";
-  db.collection("users").get().then(snapshot=>{
-    userList.innerHTML = "";
-    snapshot.forEach(doc=>{
-      let u = doc.data();
-      let pkgCount = Object.values(u.ownedPackages || {}).reduce((a,b)=>a+b,0);
-      
-      // Load transactions for this user
-      db.collection("transactions").where("phone","==",u.phone).orderBy("time","desc").limit(5).get().then(txSnap=>{
-        let txHtml = "";
-        txSnap.forEach(tx=>{
-          let t = tx.data();
-          let cls = t.type === "deposit" ? "deposit" : "withdraw";
-          txHtml += `<div class="tx-log ${cls}"><span>${t.type.toUpperCase()}: Ksh ${t.amount}</span><span>${t.time.toDate().toLocaleString()}</span></div>`;
-        });
-        
-        document.getElementById('user-'+u.phone).innerHTML = `
-          <div>
-            <b>${u.phone}</b><br>
-            <small>Name: ${u.realName || 'N/A'} | Balance: Ksh ${u.balance.toFixed(2)} | Packages: ${pkgCount}</small>
-            <h4 style="margin:10px 0 5px 0;color:#fbbf24">Last 5 Transactions:</h4>
-            ${txHtml || '<small>No transactions</small>'}
-          </div>
-          <div class="user-actions">
-            <button class="btn-warning" style="padding:8px 12px;width:auto" onclick="openResetModal('pass','${u.phone}')">RESET PASS</button>
-            <button class="btn-warning" style="padding:8px 12px;width:auto" onclick="openResetModal('phone','${u.phone}')">CHANGE PHONE</button>
-            <button class="btn-danger" style="padding:8px 12px;width:auto" onclick="deleteUser('${u.phone}')">DELETE</button>
-          </div>
-        `;
-      });
-      
-      userList.innerHTML += `<div class="user-list" id="user-${u.phone}">Loading user...</div>`;
-    });
-  });
-}
-
-function loadPackageEditor(){
-  packageEditor.innerHTML = "";
-  PACKAGES.forEach((p,i)=>{
-    packageEditor.innerHTML += `
-      <div class="package-row">
-        <input value="${p.name}" id="pname${i}" readonly style="width:60px">
-        <input type="number" value="${p.price}" id="pprice${i}">
-        <input type="number" value="${p.daily}" id="pdaily${i}">
-        <input type="number" value="${p.days}" id="pdays${i}">
-      </div>
-    `;
-  });
-}
-function savePackages(){
-  PACKAGES.forEach((p,i)=>{
-    p.price = parseFloat(document.getElementById('pprice'+i).value);
-    p.daily = parseFloat(document.getElementById('pdaily'+i).value);
-    p.days = parseInt(document.getElementById('pdays'+i).value);
-  });
-  localStorage.setItem("nexaPackages", JSON.stringify(PACKAGES));
-  alert("✅ Packages saved");
-}
-
-function loadWithdrawals(){
-  withdrawList.innerHTML = "Loading...";
-  db.collection("withdrawals").where("status","==","pending").orderBy("requestedAt","desc").get().then(snapshot=>{
-    if(snapshot.empty){ withdrawList.innerHTML = "No pending requests"; return; }
-    withdrawList.innerHTML = "";
-    snapshot.forEach(doc=>{
-      let w = doc.data();
-      withdrawList.innerHTML += `
-        <div class="withdraw-card">
-          <b>Special ID:</b> ${w.phone}<br>
-          <b>Amount:</b> Ksh ${w.amount}<br>
-          <b>M-Pesa:</b> ${w.mpesa}<br>
-          <b>Account Balance:</b> Ksh ${w.currentBalance.toFixed(2)}<br>
-          <b>Requested:</b> ${w.requestedAt.toDate().toLocaleString()}<br><br>
-          <button class="btn-success" style="width:48%" onclick="approveWithdraw('${doc.id}', '${w.phone}', ${w.amount})">APPROVE & DEDUCT</button>
-          <button class="btn-danger" style="width:48%" onclick="rejectWithdraw('${doc.id}')">REJECT</button>
-        </div>
-      `;
-    });
+    if(!doc.exists){ msg.innerHTML='<p style="color:red">❌ User not found</p>'; return; }
+    const newBalance = doc.data().balance + amount;
+    let batch = db.batch();
+    batch.update(db.collection("users").doc(phone), {balance:newBalance});
+    batch.set(db.collection("transactions").doc(), {phone, type:"deposit", amount, time:new Date()});
+    batch.commit().then(()=>{ msg.innerHTML=`<p style="color:#22c55e">✅ Deposited Ksh ${amount}</p>`; });
   });
 }
 
 function approveWithdraw(id, phone, amount){
-  let userRef = db.collection("users").doc(phone);
-  let batch = db.batch();
-  batch.update(userRef, {balance: firebase.firestore.FieldValue.increment(-amount)});
-  batch.update(db.collection("withdrawals").doc(id), {status:"approved", approvedAt: new Date()});
-  batch.set(db.collection("transactions").doc(), {
-    phone, type:"withdrawal", amount, time: new Date(), status:"approved"
-  });
-  batch.commit().then(()=>{
-    alert("✅ Approved & Ksh " + amount + " deducted. Send money to " + phone + " manually");
-    loadWithdrawals(); loadUsers();
+  if(!confirm(`Deduct Ksh ${amount} from ${phone}?`)) return;
+  db.collection("users").doc(phone).get().then(doc=>{
+    let newBalance = doc.data().balance - amount;
+    let batch = db.batch();
+    batch.update(db.collection("users").doc(phone), {balance:newBalance});
+    batch.update(db.collection("withdrawals").doc(id), {status:"approved", approvedAt:new Date()});
+    batch.set(db.collection("transactions").doc(), {phone, type:"withdraw", amount, time:new Date()});
+    batch.commit().then(()=>alert('✅ Approved and Deducted'));
   });
 }
-
-function rejectWithdraw(id){
-  db.collection("withdrawals").doc(id).update({status:"rejected"});
-  alert("❌ Rejected");
-  loadWithdrawals();
-}
+function rejectWithdraw(id){ db.collection("withdrawals").doc(id).update({status:"rejected"}).then(()=>alert('❌ Rejected')); }
+function resetPass(phone){ const np=prompt("New Password"); if(np) db.collection("users").doc(phone).update({password:np}).then(()=>alert('✅ Password Reset')); }
+function resetPhone(oldPhone){ const np=formatPhone(prompt("New Phone 2547...")); if(np) alert('Feature: delete old and create new user with new phone'); }
+function deleteUser(phone){ if(confirm('Delete '+phone+'?')) db.collection("users").doc(phone).delete().then(()=>alert('Deleted')); }
+function loadPackageEditor(){ document.getElementById('packageEditor').innerHTML = "Edit packages directly in code for now"; }
 </script>
 </body>
 </html>
