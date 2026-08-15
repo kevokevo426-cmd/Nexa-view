@@ -4,6 +4,7 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NEXA ADMIN</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 body{background:#000;color:white;font-family:Poppins;padding:20px}
 .login-box{max-width:400px;margin:100px auto;background:#111;padding:30px;border-radius:16px;border:1px solid #fbbf24}
 input,button{width:100%;padding:14px;margin:10px 0;background:#222;border:1px solid #333;color:white;border-radius:10px;font-size:15px;box-sizing:border-box}
@@ -14,8 +15,6 @@ button{background:#fbbf24;color:black;font-weight:bold;cursor:pointer}
 .red{background:#ef4444;color:white}
 .orange{background:#f59e0b;color:white}
 .green{background:#22c55e;color:white}
-table{width:100%;font-size:12px}
-th{color:#fbbf24;text-align:left;padding:8px;border-bottom:1px solid #333}
 </style>
 </head>
 <body>
@@ -24,6 +23,7 @@ th{color:#fbbf24;text-align:left;padding:8px;border-bottom:1px solid #333}
   <h2 style="color:#fbbf24;text-align:center">ADMIN LOGIN</h2>
   <input type="password" id="adminPass" placeholder="Enter Admin Password">
   <button onclick="loginAdmin()">LOGIN</button>
+  <p id="loginError" style="color:red;text-align:center"></p>
 </div>
 
 <div id="adminPanel" style="display:none">
@@ -47,10 +47,6 @@ th{color:#fbbf24;text-align:left;padding:8px;border-bottom:1px solid #333}
   </div>
 
   <div class="card">
-    <h3>Edit Packages</h3><div id="packageEditor"></div>
-  </div>
-
-  <div class="card">
     <h3>🔥 Pending Withdrawals</h3><div id="withdrawList">Loading...</div>
   </div>
 
@@ -67,7 +63,6 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const ADMIN_PASSWORD = "nexa2025"; // CHANGE THIS
 
-// AUTO CONVERT 07 to 254
 function formatPhone(p){
   if(!p) return '';
   p = p.replace(/\D/g,'');
@@ -76,28 +71,34 @@ function formatPhone(p){
   return p;
 }
 
-let users = [];
-
-function loginAdmin(){ if(document.getElementById('adminPass').value === ADMIN_PASSWORD){ document.getElementById('loginBox').style.display='none'; document.getElementById('adminPanel').style.display='block'; loadAdminData(); } else { alert('Wrong Password') }
+function loginAdmin(){ 
+  const pass = document.getElementById('adminPass').value;
+  if(pass === ADMIN_PASSWORD){ 
+    document.getElementById('loginBox').style.display='none'; 
+    document.getElementById('adminPanel').style.display='block'; 
+    loadAdminData(); 
+  } else { 
+    document.getElementById('loginError').innerText = '❌ Wrong Password' 
+  }
+}
 function logout(){ document.getElementById('loginBox').style.display='block'; document.getElementById('adminPanel').style.display='none'; }
 
 function loadAdminData(){
   db.collection("users").onSnapshot(snap=>{
-    users = []; let html='';
-    snap.forEach(d=>{ let u=d.data(); users.push({id:d.id,...u});
+    let html='';
+    snap.forEach(d=>{ let u=d.data();
       html+=`<div class="user-row"><div><b>${u.realName}</b><br><small>${d.id}</small><br><small>Balance: Ksh ${u.balance}</small></div>
-      <div><button class="orange" onclick="resetPass('${d.id}')">Reset Pass</button><button class="orange" onclick="resetPhone('${d.id}')">Reset Phone</button><button class="red" onclick="deleteUser('${d.id}')">Delete</button></div></div>`;
+      <div><button class="orange" onclick="resetPass('${d.id}')">Reset Pass</button><button class="red" onclick="deleteUser('${d.id}')">Delete</button></div></div>`;
     });
     document.getElementById('userList').innerHTML = html || "No users";
   });
   db.collection("withdrawals").where("status","==","pending").onSnapshot(snap=>{
     let html=''; snap.forEach(d=>{ let w=d.data();
-      html+=`<div class="user-row"><div><b>Ksh ${w.amount}</b><br><small>User: ${w.phone}</small><br><small>To: ${w.mpesa}</small><br><small>Time: ${w.requestedAt.toDate().toLocaleString()}</small></div>
-      <div><button class="green" onclick="approveWithdraw('${d.id}', '${w.phone}', ${w.amount})">APPROVE & DEDUCT</button><button class="red" onclick="rejectWithdraw('${d.id}')">REJECT</button></div></div>`;
+      html+=`<div class="user-row"><div><b>Ksh ${w.amount}</b><br><small>User: ${w.phone}</small><br><small>To: ${w.mpesa}</small></div>
+      <div><button class="green" onclick="approveWithdraw('${d.id}', '${w.phone}', ${w.amount})">APPROVE</button><button class="red" onclick="rejectWithdraw('${d.id}')">REJECT</button></div></div>`;
     });
     document.getElementById('withdrawList').innerHTML = html || "No pending withdrawals";
   });
-  loadPackageEditor();
 }
 
 function addUser(){
@@ -139,9 +140,7 @@ function approveWithdraw(id, phone, amount){
 }
 function rejectWithdraw(id){ db.collection("withdrawals").doc(id).update({status:"rejected"}).then(()=>alert('❌ Rejected')); }
 function resetPass(phone){ const np=prompt("New Password"); if(np) db.collection("users").doc(phone).update({password:np}).then(()=>alert('✅ Password Reset')); }
-function resetPhone(oldPhone){ const np=formatPhone(prompt("New Phone 2547...")); if(np) alert('Feature: delete old and create new user with new phone'); }
 function deleteUser(phone){ if(confirm('Delete '+phone+'?')) db.collection("users").doc(phone).delete().then(()=>alert('Deleted')); }
-function loadPackageEditor(){ document.getElementById('packageEditor').innerHTML = "Edit packages directly in code for now"; }
 </script>
 </body>
 </html>
