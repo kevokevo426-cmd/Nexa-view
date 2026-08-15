@@ -96,10 +96,10 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
       </div>
     </div>
 
-    <!-- FIXED: BJ PRODUCTS NOT BY -->
+    <!-- L3 - BY PRODUCTS -->
     <div class="package-card" onclick="buyPackage(1300, 20, 100)">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <div><b style="font-size:15px;color:#ec4899">L3 - BJ Products <span style="background:#f59e0b;color:#000;font-size:8px;padding:3px 6px;border-radius:4px;font-weight:700;white-space:nowrap">BUY PRODUCTS</span></b><p style="font-size:11px;color:#aaa;margin:3px 0">20 Days · Ksh 100/Day</p></div>
+        <div><b style="font-size:15px;color:#ec4899">L3 - By products</b><p style="font-size:11px;color:#aaa;margin:3px 0">20 Days · Ksh 100/Day</p></div>
         <div style="text-align:right"><b style="color:#fbbf24;font-size:14px">Stake: Ksh 1300</b><p style="font-size:15px;color:#22c55e;font-weight:800;margin:2px 0">Income: Ksh 2000</p></div>
       </div>
     </div>
@@ -141,16 +141,39 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
   </div>
 </div>
 
-<!-- REST OF YOUR TABS AND MODALS SAME AS BEFORE -->
 <div id="tasksTab" style="display:none"><div class="box"><h3>✅ Daily Tasks</h3><p style="color:#aaa">Complete tasks to earn daily</p><p style="color:#888">No active package</p></div></div>
-<div id="walletTab" style="display:none"><div class="wallet-card"><div class="stat-row"><span>User ID</span><b class="green" id="userID">NEXAUXXXXXX</b></div><div class="stat-row"><span>Available Balance</span><b class="green">Ksh <span id="walletBalance">0.00</span></b></div><div class="stat-row"><span>Today's Income</span><b class="green">Ksh <span id="todayIncome">0.00</span></b></div><div class="stat-row"><span>Total Income So Far</span><b class="green">Ksh <span id="totalIncome">0.00</span></b></div><div class="stat-row"><span>Referral Income Total</span><b class="yellow">Ksh <span id="refIncome">0.00</span></b></div><div class="btn-wrap"><button class="btn" onclick="openDepositModal()">DEPOSIT</button><button class="btn btn-orange" onclick="openAccountModal()">ACCOUNT</button><button class="btn" onclick="openWithdrawModal()">WITHDRAW</button></div></div><div class="box"><h3>🎁 Referral & Earn 10%</h3><label>Your Referral Code</label><input id="myCode" readonly><label>Your Referral Link</label><input id="myLink" readonly><button class="btn btn-green" onclick="copyLink()">Copy Link</button></div><div class="box"><h3>📜 Referral History <span style="font-size:11px;color:#fbbf24">(<span id="teamCount">0</span> Members)</span></h3><div id="refHistory"><p style="color:#888">No team members yet</p></div></div></div>
+
+<div id="walletTab" style="display:none">
+  <div class="wallet-card">
+    <div class="stat-row"><span>User ID</span><b class="green" id="userID">NEXAUXXXXXX</b></div>
+    <div class="stat-row"><span>Available Balance</span><b class="green">Ksh <span id="walletBalance">0.00</span></b></div>
+    <div class="stat-row"><span>Today's Income</span><b class="green">Ksh <span id="todayIncome">0.00</span></b></div>
+    <div class="stat-row"><span>Total Income So Far</span><b class="green">Ksh <span id="totalIncome">0.00</span></b></div>
+    <div class="stat-row"><span>Referral Income Total</span><b class="yellow">Ksh <span id="refIncome">0.00</span></b></div>
+    <div class="btn-wrap">
+      <button class="btn" onclick="openDepositModal()">DEPOSIT</button>
+      <button class="btn btn-orange" onclick="openAccountModal()">ACCOUNT</button>
+      <button class="btn" onclick="openWithdrawModal()">WITHDRAW</button>
+    </div>
+  </div>
+  <div class="box"><h3>🎁 Referral & Earn 10%</h3><label>Your Referral Code</label><input id="myCode" readonly><label>Your Referral Link</label><input id="myLink" readonly><button class="btn btn-green" onclick="copyLink()">Copy Link</button></div>
+  <div class="box"><h3>📜 Referral History <span style="font-size:11px;color:#fbbf24">(<span id="teamCount">0</span> Members)</span></h3><div id="refHistory"><p style="color:#888">No team members yet</p></div></div>
+</div>
+
 <div id="infoTab" style="display:none"><div class="box"><h3>ℹ️ About NEXA</h3><p style="font-size:13px;line-height:1.6">NEXA VIEW is an earning platform. Complete daily tasks and earn. Available in KE, UG, TZ.</p></div></div>
 
 <div id="accountModal" class="modal" onclick="closeAccountModal()"><div class="modal-content" onclick="event.stopPropagation()"><div class="modal-header"><h3>👤 Withdrawal Account</h3><span class="modal-back" onclick="closeAccountModal()">🔙</span></div><div style="background:#1f1f1f;border-radius:12px;padding:14px"><label>Receiving account number (M-Pesa)</label><input id="accNumber" type="tel"><label>Real name</label><input id="accName" type="text"><label>Set/Change PIN (4 digits)</label><input id="accPin" type="password" maxlength="4"><button class="btn btn-orange" style="width:100%;margin-top:12px" onclick="updateAccount()">Update wallet</button></div></div></div>
+
 <div id="depositModal" class="modal" onclick="closeDepositModal()"><div class="modal-content" onclick="event.stopPropagation()"><div class="modal-header"><h3>💰 Deposit Funds</h3><span class="modal-back" onclick="closeDepositModal()">🔙</span></div><div class="deposit-box"><p style="font-size:12px;color:#aaa">1. Send money to MPESA Number below</p><div class="mpesa-number">0718422377 <button class="copy-btn" onclick="copyNumber()">Copy</button></div></div><label>Amount Deposited (KSH)</label><input id="depositAmount" type="number"><label>Paste MPESA Message / Transaction Code</label><input id="depositMsg"><button class="btn btn-green" style="width:100%;margin-top:10px" onclick="submitDeposit()">Submit Deposit</button><h4 style="margin-top:20px">📜 Deposit History</h4><div id="depositHistory"><p style="color:#888">Loading...</p></div></div></div>
+
 <div id="withdrawModal" class="modal" onclick="closeWithdrawModal()"><div class="modal-content" onclick="event.stopPropagation()"><div class="modal-header"><div></div><span class="modal-back" onclick="closeWithdrawModal()">🔙</span></div><div style="background:#5a3d1f;border-radius:16px;padding:14px;margin-bottom:15px"><p>Available balance</p><h2 style="color:#fbbf24">KSH<span id="withdrawBalance">0.00</span></h2></div><div class="green-banner"><b>⚡ Withdrawals processed instantly</b></div><h4>Choose amount (KSH)</h4><div class="amount-btns"><div class="amount-btn" onclick="selectAmount(200,this)">200</div><div class="amount-btn" onclick="selectAmount(400,this)">400</div><div class="amount-btn" onclick="selectAmount(500,this)">500</div><div class="amount-btn" onclick="selectAmount(700,this)">700</div><div class="amount-btn" onclick="selectAmount(1000,this)">1000</div><div class="amount-btn" onclick="selectAmount(1500,this)">1500</div><div class="amount-btn" onclick="selectAmount(2500,this)">2500</div><div class="amount-btn" onclick="selectAmount(5000,this)">5000</div></div><label>Amount (KSH)</label><input id="withdrawAmount" type="number" oninput="calcWithdraw()"><div class="calc-row"><div class="calc-box">Tax: <b id="taxAmount">KSH0</b></div><div class="calc-box">You receive: <b id="netAmount">KSH0</b></div></div><label>4-digit PIN</label><input id="withdrawPin" type="password" maxlength="4"><button class="btn btn-green" style="width:100%;margin-top:10px" onclick="submitWithdraw()">Submit withdrawal</button><h4 style="margin-top:20px">💸 Withdrawal Records</h4><div id="withdrawHistory"><p style="color:#888">Loading...</p></div></div></div>
 
-<div class="bottom-nav"><div class="nav-item active" onclick="showTab('home',this)"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>Home</div><div class="nav-item" onclick="showTab('tasks',this)"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path d="M4 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h6a1 1 0 100-2H7z"/></svg>Tasks</div><div class="nav-item" onclick="showTab('wallet',this)"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4z"/></svg>Wallet</div><div class="nav-item" onclick="showTab('info',this)"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"/></svg>Info</div></div>
+<div class="bottom-nav">
+  <div class="nav-item active" onclick="showTab('home',this)"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>Home</div>
+  <div class="nav-item" onclick="showTab('tasks',this)"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path d="M4 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h6a1 1 0 100-2H7z"/></svg>Tasks</div>
+  <div class="nav-item" onclick="showTab('wallet',this)"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4z"/></svg>Wallet</div>
+  <div class="nav-item" onclick="showTab('info',this)"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"/></svg>Info</div>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
