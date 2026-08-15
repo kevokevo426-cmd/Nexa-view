@@ -11,7 +11,10 @@
 *{box-sizing:border-box}
 body{background:#000;color:white;font-family:Poppins;padding:15px;margin:0}
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.header-actions{display:flex;gap:8px;align-items:center}
 .logout-btn{background:#ef4444;color:white;border:none;padding:8px 14px;border-radius:8px;font-weight:700;cursor:pointer;font-size:12px}
+.notif-btn{background:#1a1a1a;border:1px solid #333;color:#fbbf24;border:none;padding:8px 10px;border-radius:8px;font-size:18px;cursor:pointer;position:relative}
+.notif-badge{position:absolute;top:-5px;right:-5px;background:#ef4444;color:white;border-radius:50%;font-size:10px;font-weight:700;padding:2px 6px;min-width:18px;text-align:center}
 .box{background:#111;border:1px solid #333;border-radius:12px;padding:14px;margin-bottom:15px}
 .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:15px}
 .stat-card{background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:12px;text-align:center}
@@ -21,22 +24,25 @@ body{background:#000;color:white;font-family:Poppins;padding:15px;margin:0}
 .search-box input{flex:1;background:transparent;border:none;color:white;font-size:14px;outline:none;font-family:Poppins}
 h2{color:#fbbf24;text-align:center;margin:0}
 h3{color:#fbbf24;margin:0 0 12px 0;font-size:15px}
-.btn{padding:8px 12px;border:none;border-radius:8px;font-weight:700;cursor:pointer;margin:2px;font-size:11px;font-family:Poppins}
+.btn{padding:8px 12px;border:none;border-radius:8px;font-weight:700;cursor:pointer;margin:2px;font-size:11px;font-family:Poppins;position:relative}
 .btn-blue{background:#3b82f6;color:white}
 .btn-orange{background:#f59e0b;color:#000}
 .btn-red{background:#ef4444;color:white}
 .btn-green{background:#22c55e;color:#000}
 .btn-purple{background:#8b5cf6;color:white}
+.btn-msg-notif{background:#ef4444!important; color:white!important}
 .user-card{background:#1a1a1a;padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid #333;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
 .user-num{background:#fbbf24;color:#000;font-weight:700;font-size:11px;border-radius:6px;padding:4px 8px;min-width:28px;text-align:center;margin-top:3px}
 .user-info{font-size:12px;line-height:1.8;flex:1}
-.btn-group{display:flex;flex-direction:column;gap:5px;min-width:80px}
+.btn-group{display:flex;flex-direction:column;gap:5px;min-width:90px}
 .req-card{background:#1a1a1a;padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid #333;font-size:12px}
 #loginScreen{display:flex;position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:9999;justify-content:center;align-items:center}
 .login-box{background:#111;padding:25px;border-radius:16px;border:1px solid #333;width:90%;max-width:350px;text-align:center}
 input, textarea{padding:10px;background:#222;border:1px solid #444;color:white;border-radius:8px;width:100%;margin-bottom:10px;font-family:Poppins}
 .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:999;justify-content:center;align-items:center}
-.modal-content{background:#111;width:90%;max-width:400px;border-radius:16px;padding:20px;border:1px solid #333}
+.modal-content{background:#111;width:90%;max-width:450px;border-radius:16px;padding:20px;border:1px solid #333;max-height:90vh;overflow-y:auto}
+.msg-badge{position:absolute;top:-5px;right:-5px;background:#fbbf24;color:#000;border-radius:50%;font-size:9px;font-weight:700;padding:2px 5px;min-width:16px;text-align:center}
+.message-card{background:#1a1a1a;padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid #333;border-left:4px solid #8b5cf6}
 </style>
 </head>
 <body>
@@ -55,7 +61,10 @@ input, textarea{padding:10px;background:#222;border:1px solid #444;color:white;b
 <div id="mainPanel" style="display:none">
   <div class="header">
     <h2>👑 NEXA ADMIN PANEL</h2>
-    <button class="logout-btn" onclick="logout()">Logout</button>
+    <div class="header-actions">
+      <button class="notif-btn" onclick="openMessagesModal()">🔔<span id="notifBadge" class="notif-badge" style="display:none">0</span></button>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
   </div>
 
   <div class="stats">
@@ -69,12 +78,21 @@ input, textarea{padding:10px;background:#222;border:1px solid #444;color:white;b
   <div class="box"><h3>🎁 Pending Referral Bonus</h3><div id="referralList">Loading...</div></div>
 
   <div class="box">
-    <h3>👥 All Users</h3> <!-- DELETED "WITH YOUR 7 FIELDS" -->
+    <h3>👥 All Users</h3>
     <div class="search-box"><input type="text" id="searchInput" placeholder="Search by Phone or User ID..."></div>
     <div id="userList">Loading...</div>
   </div>
 
-  <!-- MESSAGE MODAL -->
+  <!-- ALL MESSAGES MODAL -->
+  <div id="messagesModal" class="modal" onclick="closeMessagesModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <h3>📩 All Messages</h3>
+      <div id="messagesList">Loading...</div>
+      <button class="btn btn-red" style="width:100%;margin-top:10px" onclick="closeMessagesModal()">Close</button>
+    </div>
+  </div>
+
+  <!-- SEND MESSAGE MODAL -->
   <div id="messageModal" class="modal" onclick="closeMessageModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
       <h3>📩 Send Message</h3>
@@ -94,6 +112,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const ADMIN_PASSWORD = "admin123";
 let allUsers = []; let userCounter = 1; let selectedUserPhone = "";
+let unreadCounts = {}; let totalUnread = 0;
 
 function checkLogin(){
   let pass=document.getElementById('adminPassword').value;
@@ -104,8 +123,41 @@ function checkLogin(){
     document.getElementById('loginError').innerText="❌ Wrong Password. Use: admin123";
   }
 }
-function showPanel(){document.getElementById('loginScreen').style.display='none';document.getElementById('mainPanel').style.display='block';loadUsers();loadWithdrawals();loadReferralRequests();loadStats();}
+function showPanel(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('mainPanel').style.display='block';
+  loadMessages(); loadUsers(); loadWithdrawals(); loadReferralRequests(); loadStats();
+}
 function logout(){localStorage.removeItem('nexaAdminLoggedIn');location.reload();}
+
+// LOAD ALL MESSAGES + COUNT FOR BELL + PER USER
+function loadMessages(){
+  db.collection("userMessages").orderBy("date","desc").limit(50).onSnapshot(s=>{
+    let h=""; totalUnread=0; unreadCounts={};
+    s.forEach(d=>{
+      let x=d.data();
+      if(!x.read){
+        totalUnread++;
+        unreadCounts[x.phone] = (unreadCounts[x.phone] || 0) + 1;
+      }
+      h+=`<div class="message-card"><b style="color:#8b5cf6">${x.phone}</b><br>${x.message}<br><small style="color:#666">${x.date?x.date.toDate().toLocaleString():""}</small></div>`;
+    });
+    document.getElementById('messagesList').innerHTML=h||"No messages";
+    
+    // UPDATE TOP BELL
+    if(totalUnread>0){
+      document.getElementById('notifBadge').style.display='block';
+      document.getElementById('notifBadge').innerText=totalUnread;
+    } else {
+      document.getElementById('notifBadge').style.display='none';
+    }
+    
+    renderUsers(allUsers); // update buttons too
+  });
+}
+
+function openMessagesModal(){document.getElementById('messagesModal').style.display='flex';}
+function closeMessagesModal(){document.getElementById('messagesModal').style.display='none';}
 
 function loadStats(){
   let today = new Date(); today.setHours(0,0,0,0);
@@ -148,6 +200,10 @@ function renderUsers(users){
     let referrals = u.referralCount || 0;
     let refIncome = u.totalReferralEarned || 0;
     let balance = u.balance || 0;
+    let msgCount = unreadCounts[u.phone] || 0;
+
+    let btnClass = msgCount > 0? "btn btn-msg-notif" : "btn btn-purple";
+    let badge = msgCount > 0? `<span class="msg-badge">${msgCount}</span>` : "";
 
     h+=`
     <div class="user-card">
@@ -164,7 +220,7 @@ function renderUsers(users){
         🎁 Ref Income: <b style="color:#8b5cf6">Ksh ${refIncome.toFixed(2)}</b>
       </div>
       <div class="btn-group">
-        <button class="btn btn-purple" onclick="openMessageModal('${u.phone}')">📩 Msg</button> <!-- NEW MESSAGE BUTTON -->
+        <button class="${btnClass}" onclick="openMessageModal('${u.phone}')">📩 Msg ${msgCount > 0? msgCount : ''}${badge}</button>
         <button class="btn btn-blue" onclick="deposit('${u.phone}')">Deposit</button>
         <button class="btn btn-orange" onclick="resetUser('${u.phone}')">Reset</button>
         <button class="btn btn-red" onclick="deleteUser('${u.phone}')">Delete</button>
@@ -185,6 +241,11 @@ function openMessageModal(phone){
   selectedUserPhone = phone;
   document.getElementById('messageUserPhone').innerText = "To: " + phone;
   document.getElementById('messageModal').style.display='flex';
+  
+  // MARK MESSAGES AS READ WHEN OPENED
+  db.collection("userMessages").where("phone","==",phone).where("read","==",false).get().then(s=>{
+    s.forEach(d=>{ db.collection("userMessages").doc(d.id).update({read:true}) })
+  })
 }
 function closeMessageModal(){document.getElementById('messageModal').style.display='none';}
 function sendUserMessage(){
