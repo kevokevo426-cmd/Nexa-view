@@ -25,8 +25,9 @@ function login() {
     let phone = document.getElementById('phone').value.trim();
     let pass = document.getElementById('pass').value.trim();
     if(phone === '' || pass === '') { alert('Please enter phone number and password'); return; }
-    localStorage.setItem('nexaPhone', phone);
-    window.location.href = 'dashboard.html';
+    
+    localStorage.setItem('nexaPhone', phone); // dashboard reads this
+    window.location.href = 'dashboard.html'; // GO TO DASHBOARD
 }
 </script>
 </body>
