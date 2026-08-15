@@ -7,13 +7,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 *{box-sizing:border-box}
 body{background:#000;color:white;font-family:Poppins;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:15px}
-.box{background:#111;padding:24px;border-radius:18px;border:1px solid #222;width:100%;max-width:380px} /* MADE NARROW */
+.box{background:#111;padding:24px;border-radius:18px;border:1px solid #222;width:100%;max-width:380px}
 h2{color:#fbbf24;text-align:center;font-size:24px;margin:0 0 20px 0;font-weight:700}
 label{font-size:12px;color:#aaa;margin-bottom:6px;display:block;font-weight:600;letter-spacing:0.5px}
 input,select{width:100%;padding:13px;background:#1a1a1a;border:1px solid #333;color:white;border-radius:10px;font-size:14px;margin-bottom:14px}
 .phone-wrap{display:flex;gap:8px}
-.phone-wrap select{width:28%;padding:13px 5px}
-.phone-wrap input{width:72%;margin-bottom:0}
+.phone-wrap select{width:32%;padding:13px 5px;font-size:13px}
+.phone-wrap input{width:68%;margin-bottom:0}
 button{width:100%;padding:15px;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:10px;font-weight:700;font-size:15px;cursor:pointer;margin-top:8px}
 .checkbox{display:flex;align-items:center;gap:8px;margin:12px 0 0 0;font-size:12px}
 .checkbox input{width:16px;height:16px;margin:0;accent-color:#fbbf24}
@@ -28,16 +28,18 @@ a{color:#fbbf24;text-decoration:none}
 <div class="box">
   <h2>Create Account</h2>
   
-  <label>USERNAME</label>
-  <input type="text" id="username" placeholder="Choose any nickname e.g King254">
-
   <label>PHONE NUMBER</label>
   <div class="phone-wrap">
-    <select id="countryCode">
-      <option>+254</option>
+    <select id="countryCode" onchange="updateCountryLabel()">
+      <option value="254" data-name="KENYA">+254 KE</option>
+      <option value="256" data-name="UGANDA">+256 UG</option>
+      <option value="255" data-name="TANZANIA">+255 TZ</option>
     </select>
     <input type="tel" id="phone" placeholder="712345678">
   </div>
+
+  <label>USERNAME</label>
+  <input type="text" id="username" placeholder="Choose any nickname e.g King254">
 
   <label>PASSWORD</label>
   <input type="password" id="pass" placeholder="Enter password">
@@ -45,21 +47,39 @@ a{color:#fbbf24;text-decoration:none}
   <label>REFERRAL CODE - OPTIONAL</label>
   <input type="text" id="refCode" placeholder="Enter code if you have one">
 
-  <label>VERIFICATION CODE - KENYA</label>
+  <label id="countryLabel">VERIFICATION CODE - KENYA</label>
   <div class="code-box">
     <input type="text" id="captchaInput" placeholder="Enter code">
-    <div class="code-display" id="captchaCode" onclick="newCaptcha()">8259</div>
+    <div class="code-display" id="captchaCode" onclick="newCaptcha()">3483</div>
   </div>
 
   <div class="checkbox">
     <input type="checkbox" id="terms">
-    <span>I agree to <a href="#" onclick="alert('By registering you agree to NEXA Terms and Conditions')">Terms</a></span>
+    <span>I agree to <a href="#" onclick="showTerms()">Terms</a></span>
   </div>
 
   <button onclick="register()">REGISTER</button>
   
   <p style="text-align:center;margin-top:16px;font-size:13px">Have account? <a href="index.html">Login</a></p>
 </div>
+
+<!-- TERMS POPUP -->
+<div id="termsPopup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:999;overflow-y:auto;padding:15px">
+  <div style="background:#111;border:1px solid #fbbf24;border-radius:16px;padding:20px;max-width:600px;margin:40px auto">
+    <h2 style="color:#fbbf24;text-align:center">NEXA VIEW - Terms</h2>
+    <div style="font-size:13px;line-height:1.7;text-align:left">
+      <p><b>1. About:</b> NEXA VIEW is an online platform where users earn rewards by completing daily tasks such as watching videos and ads. Available in Kenya, Uganda, and Tanzania.</p>
+      <p><b>2. Eligibility:</b> You must be 18+ years old and have a valid phone number from KE, UG, or TZ. 1 Account per phone number only.</p>
+      <p><b>3. Earnings & Tasks:</b> Earnings are NOT guaranteed. Task rewards depend on active advertisers. We may pause tasks. Sunday is a rest day - No tasks.</p>
+      <p><b>4. Packages:</b> Buying a package unlocks daily tasks. Package fees are non-refundable.</p>
+      <p><b>5. Withdrawals:</b> Min: Ksh 200 / UGX 6,000 / TZS 4,000. Time: 9:00AM - 5:00PM. 1 Withdrawal per day. 15% processing fee. Payouts: KE-MPESA, UG-MTN/AIRTEL, TZ-MPESA/AIRTEL within 24 hours.</p>
+      <p><b>6. Prohibited:</b> Multiple accounts, bots, or fake activity = Permanent Ban + Balance forfeited.</p>
+      <p><a href="terms.html" target="_blank" style="color:#fbbf24">Read Full Legal Terms →</a></p>
+    </div>
+    <button onclick="closeTerms()" style="width:100%;margin-top:15px;padding:14px;background:#fbbf24;color:black;border:none;border-radius:10px;font-weight:700;font-size:15px">I Agree & Close</button>
+  </div>
+</div>
+
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
@@ -68,24 +88,42 @@ const firebaseConfig = {apiKey:"AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",authDom
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// 1. AUTO FILL REFERRAL CODE FROM LINK ?ref=NEXA7A9B2
+// AUTO FILL REFERRAL CODE FROM LINK ?ref=NEXAR7A9B2
 const urlParams = new URLSearchParams(window.location.search);
 const refFromUrl = urlParams.get('ref');
 if(refFromUrl){ document.getElementById('refCode').value = refFromUrl; }
 
-// 2. CAPTCHA
+// TERMS POPUP FUNCTIONS
+function showTerms(){
+  document.getElementById('termsPopup').style.display = 'block';
+  document.body.style.overflow = 'hidden'; // Stop scrolling
+}
+function closeTerms(){
+  document.getElementById('termsPopup').style.display = 'none';
+  document.body.style.overflow = 'auto';
+  document.getElementById('terms').checked = true; // Auto tick checkbox
+}
+
+// UPDATE COUNTRY LABEL
+function updateCountryLabel(){
+  const select = document.getElementById('countryCode');
+  const country = select.options[select.selectedIndex].getAttribute('data-name');
+  document.getElementById('countryLabel').innerText = `VERIFICATION CODE - ${country}`;
+}
+
+// CAPTCHA
 function newCaptcha(){
   document.getElementById('captchaCode').innerText = Math.floor(1000 + Math.random() * 9000);
 }
 newCaptcha();
 
-function formatPhone(p){
+function formatPhone(p, code){
   p = p.replace(/\D/g,'');
-  if(p.startsWith('0')) return '254' + p.substring(1);
-  return '254' + p;
+  if(p.startsWith('0')) p = p.substring(1);
+  return code + p;
 }
 
-// 3. GENERATE UNIQUE USER ID: NEXAU + 6 chars
+// GENERATE UNIQUE USER ID: NEXAU + 6 chars
 function generateUserID(){
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let id = 'NEXAU';
@@ -93,7 +131,7 @@ function generateUserID(){
   return id;
 }
 
-// 4. GENERATE REFERRAL CODE: NEXAR + 5 chars - DIFFERENT FROM USERID
+// GENERATE REFERRAL CODE: NEXAR + 5 chars
 function generateRefCode(){
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let code = 'NEXAR';
@@ -102,28 +140,30 @@ function generateRefCode(){
 }
 
 function register(){
+  let countryCode = document.getElementById('countryCode').value;
+  let phoneInput = document.getElementById('phone').value.trim();
+  let phone = formatPhone(phoneInput, countryCode);
   let username = document.getElementById('username').value.trim();
-  let phone = formatPhone(document.getElementById('phone').value.trim());
   let pass = document.getElementById('pass').value.trim();
   let refBy = document.getElementById('refCode').value.trim();
   let captcha = document.getElementById('captchaInput').value.trim();
   let realCaptcha = document.getElementById('captchaCode').innerText;
   
-  if(!username || !phone || !pass){ alert('❌ Fill Username, Phone and Password'); return; }
+  if(!phoneInput || !username || !pass){ alert('❌ Fill Phone, Username and Password'); return; }
   if(captcha !== realCaptcha){ alert('❌ Wrong Verification Code'); newCaptcha(); return; }
   if(!document.getElementById('terms').checked){ alert('❌ Please agree to Terms'); return; }
   
-  let userID = generateUserID(); // For Wallet: NEXAU7A9B2C
-  let myRefCode = generateRefCode(); // For Sharing: NEXAR7A9B2
+  let userID = generateUserID();
+  let myRefCode = generateRefCode();
   
   db.collection("users").doc(phone).get().then(doc=>{
     if(doc.exists){ alert('❌ Phone number already registered'); return; }
     
     db.collection("users").doc(phone).set({
-      phone, username, realName: username,
-      userID: userID, // UNIQUE ID FOR WALLET/PROFILE
+      phone, username, realName: username, country: countryCode,
+      userID: userID, 
       password:pass, balance:0, ownedPackages:{}, tasksDone:0, referralBonus:0,
-      myReferralCode: myRefCode, // DIFFERENT CODE FOR REFERRALS
+      myReferralCode: myRefCode, 
       referredBy: refBy || '', 
       createdAt:new Date()
     }).then(()=>{
