@@ -10,9 +10,7 @@ body{background:#000;color:white;font-family:Poppins;display:flex;justify-conten
 .box{background:#111;padding:30px;border-radius:16px;width:90%;max-width:350px;border:1px solid #222}
 h2{text-align:center;color:#fbbf24}
 input{width:100%;padding:14px;margin:10px 0;background:#222;border:1px solid #333;border-radius:10px;color:white;font-size:15px;box-sizing:border-box}
-button{width:100%;padding:14px;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:10px;font-weight:bold;font-size:16px;cursor:pointer;margin-top:10px}
-.link{text-align:center;margin-top:15px;font-size:13px}
-.link a{color:#22c55e;text-decoration:none}
+button{width:100%;padding:14px;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:10px;font-weight:bold;font-size:16px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -21,25 +19,14 @@ button{width:100%;padding:14px;background:linear-gradient(90deg,#fbbf24,#f59e0b)
   <input type="text" id="phone" placeholder="Enter Phone Number">
   <input type="password" id="pass" placeholder="Enter Password">
   <button onclick="login()">LOGIN</button>
-  <div class="link">No account? <a href="register.html">Register</a></div>
 </div>
-
 <script>
 function login() {
     let phone = document.getElementById('phone').value.trim();
     let pass = document.getElementById('pass').value.trim();
-    
-    if(phone === '' || pass === '') {
-        alert('Please enter phone number and password');
-        return;
-    }
-    
-    // SAVE FOR DASHBOARD TO READ
+    if(phone === '' || pass === '') { alert('Please enter phone number and password'); return; }
     localStorage.setItem('nexaPhone', phone);
-    localStorage.setItem('isLoggedIn', 'true');
-    
-    // GO TO DASHBOARD
-    window.location.href = 'index.html'; 
+    window.location.href = 'dashboard.html';
 }
 </script>
 </body>
