@@ -3,29 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEXA VIEW - Login</title>
+<title>NEXA LOGIN</title>
 <style>
-    *{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
-    body{background:#000;color:#fff;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}
-    .box{background:#1a1a1a;padding:30px;border-radius:20px;border:2px solid #FFD700;width:100%;max-width:400px;text-align:center}
-    .box h1{color:#FFD700;font-size:28px;margin-bottom:10px}
-    .box p{color:#999;margin-bottom:20px}
-    input{width:100%;padding:14px;margin:10px 0;background:#2a2a2a;border:1px solid #333;border-radius:12px;color:#fff;font-size:15px;outline:none}
-    .btn{width:100%;padding:15px;background:#FFD700;color:#000;border:none;border-radius:12px;font-size:16px;font-weight:bold;cursor:pointer;margin-top:10px}
-    .btn:hover{background:#ffc800}
-    .footer{margin-top:20px;font-size:14px}
-    .footer a{color:#FFD700;text-decoration:none;font-weight:bold}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+body{background:#000;color:white;font-family:Poppins;display:flex;justify-content:center;align-items:center;height:100vh;margin:0}
+.box{background:#111;padding:30px;border-radius:16px;width:90%;max-width:350px;border:1px solid #222}
+h2{text-align:center;color:#fbbf24}
+input{width:100%;padding:14px;margin:10px 0;background:#222;border:1px solid #333;border-radius:10px;color:white;font-size:15px;box-sizing:border-box}
+button{width:100%;padding:14px;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:10px;font-weight:bold;font-size:16px;cursor:pointer;margin-top:10px}
+.link{text-align:center;margin-top:15px;font-size:13px}
+.link a{color:#22c55e;text-decoration:none}
 </style>
 </head>
 <body>
-    <div class="box">
-        <h1>NEXA VIEW</h1>
-        <p>Welcome Back</p>
-        <input type="tel" placeholder="Phone Number" id="phone">
-        <input type="password" placeholder="Password" id="pass">
-        <button class="btn" onclick="login()">LOGIN</button>
-        <div class="footer">Don't have an account? <a href="/register.html">Register</a></div>
-    </div>
+<div class="box">
+  <h2>NEXA LOGIN</h2>
+  <input type="text" id="phone" placeholder="Enter Phone Number">
+  <input type="password" id="pass" placeholder="Enter Password">
+  <button onclick="login()">LOGIN</button>
+  <div class="link">No account? <a href="register.html">Register</a></div>
+</div>
 
 <script>
 function login() {
@@ -37,11 +34,11 @@ function login() {
         return;
     }
     
-    // Save login data
-    localStorage.setItem('userPhone', phone);
+    // SAVE FOR DASHBOARD TO READ
+    localStorage.setItem('nexaPhone', phone);
     localStorage.setItem('isLoggedIn', 'true');
     
-    // Force go to dashboard
+    // GO TO DASHBOARD
     window.location.href = 'index.html'; 
 }
 </script>
