@@ -5,73 +5,85 @@
 <title>NEXA VIEW</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-*{box-sizing:border-box}
-body{background:#000;color:white;font-family:Poppins;margin:0;padding:0 0 90px 0}
-.top-bar{text-align:center;padding:20px 15px;background:#000}
-.top-bar p{margin:0;font-size:13px;color:#aaa}
-.top-bar h1{margin:8px 0;font-size:28px;color:#22c55e;font-weight:700}
-.box{margin:15px;padding:14px;border-radius:14px;background:#111;border:1px solid #222}
-.package-card{background:#1a1a1a;border:1px solid #333;border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer}
-.bottom-nav{position:fixed;bottom:0;left:0;width:100%;background:#111;border-top:1px solid #333;display:flex;justify-content:space-around;padding:12px 0 18px 0;z-index:9999}
-.nav-item{flex:1;text-align:center;font-size:11px;color:#888;cursor:pointer}
-.nav-item.active{color:#fbbf24;font-weight:700}
-.nav-item svg{width:26px;height:26px;margin-bottom:4px;display:block;margin:auto}
+body{background:#0a0a0a;color:#fff;font-family:Poppins;margin:0;padding:0 0 80px 0}
+.tab{display:none}
+.tab.active{display:block}
+.top-bar{text-align:center;padding:25px 15px}
+.top-bar p{margin:0;color:#aaa;font-size:13px}
+.top-bar h1{margin:10px 0;color:#22c55e;font-size:32px;font-weight:700}
+.container{padding:15px}
+.card{background:#1a1a1a;border-radius:16px;padding:16px;margin-bottom:15px}
+.btn{width:100%;padding:14px;background:linear-gradient(180deg,#fbbf24,#f59e0b);color:#000;border:none;border-radius:10px;font-weight:700;font-size:14px;margin:8px 0;cursor:pointer}
+.nav{position:fixed;bottom:0;left:0;width:100%;background:#111;border-top:1px solid #222;display:flex;justify-content:space-around;padding:10px 0}
+.nav-item{text-align:center;color:#888;font-size:11px;cursor:pointer}
+.nav-item.active{color:#fbbf24}
+.nav-item svg{width:24px;height:24px;display:block;margin:0 auto 4px}
+.package{background:#222;border:1px solid #333;border-radius:12px;padding:14px;margin-bottom:10px}
 </style>
 </head>
 <body>
 
-<div id="homeTab">
-  <div class="top-bar"><p>Account Balance</p><h1>Ksh <span id="balance">0.00</span></h1></div>
-  <div class="box">
-    <h3>📦 Buy Package</h3>
-    <p style="font-size:12px;color:#aaa;margin-bottom:15px">purchase a product and earn interest daily</p>
-    <div class="package-card" onclick="buyPackage(300)"><b>L1 Basic</b><div style="float:right;color:#fbbf24">Ksh 300</div></div>
-    <div class="package-card" onclick="buyPackage(700)"><b>L2 Starter</b><div style="float:right;color:#fbbf24">Ksh 700</div></div>
-    <div class="package-card" onclick="buyPackage(1300)"><b>L3 Pro</b><div style="float:right;color:#fbbf24">Ksh 1300</div></div>
-    <div class="package-card" onclick="buyPackage(2500)"><b>L4 Elite</b><div style="float:right;color:#fbbf24">Ksh 2500</div></div>
-    <div class="package-card" onclick="buyPackage(3500)"><b>L5 Premium</b><div style="float:right;color:#fbbf24">Ksh 3500</div></div>
-    <div class="package-card" onclick="buyPackage(4800)"><b>L6 Business</b><div style="float:right;color:#fbbf24">Ksh 4800</div></div>
-    <div class="package-card" onclick="buyPackage(7500)"><b>L7 Gold</b><div style="float:right;color:#fbbf24">Ksh 7500</div></div>
-    <div class="package-card" onclick="buyPackage(10000)"><b>L8 VIP</b><div style="float:right;color:#fbbf24">Ksh 10000</div></div>
+<!-- HOME TAB -->
+<div id="home" class="tab active">
+  <div class="top-bar">
+    <p>Account Balance</p>
+    <h1>Ksh <span id="balance">0.00</span></h1>
+  </div>
+  <div class="container">
+    <div class="card">
+      <h3>📦 Buy Package</h3>
+      <p style="color:#aaa;font-size:12px">purchase a product and earn interest daily</p>
+      
+      <div class="package" onclick="buyPackage(300,20,25)">L1 Basic - Ksh 300 - 20 Days - Ksh 25/Day</div>
+      <div class="package" onclick="buyPackage(700,20,50)">L2 Starter - Ksh 700 - 20 Days - Ksh 50/Day</div>
+      <div class="package" onclick="buyPackage(1300,20,100)">L3 Pro - Ksh 1300 - 20 Days - Ksh 100/Day</div>
+      <div class="package" onclick="buyPackage(2500,30,150)">L4 Elite - Ksh 2500 - 30 Days - Ksh 150/Day</div>
+      <div class="package" onclick="buyPackage(3500,30,200)">L5 Premium - Ksh 3500 - 30 Days - Ksh 200/Day</div>
+      <div class="package" onclick="buyPackage(4800,30,250)">L6 Business - Ksh 4800 - 30 Days - Ksh 250/Day</div>
+      <div class="package" onclick="buyPackage(7500,30,350)">L7 Gold - Ksh 7500 - 30 Days - Ksh 350/Day</div>
+      <div class="package" onclick="buyPackage(10000,30,500)">L8 VIP - Ksh 10000 - 30 Days - Ksh 500/Day</div>
+    </div>
   </div>
 </div>
 
-<div id="tasksTab" style="display:none"><div class="box"><h3>✅ Daily Tasks</h3></div></div>
-<div id="walletTab" style="display:none"><div class="box"><h3>💰 Wallet</h3></div></div>
-<div id="infoTab" style="display:none"><div class="box"><h3>ℹ️ Info</h3></div></div>
+<!-- TASKS TAB -->
+<div id="tasks" class="tab">
+  <div class="container"><div class="card"><h3>✅ Daily Tasks</h3><p>Complete tasks to earn</p></div></div>
+</div>
 
-<!-- FIXED ICONS -->
-<div class="bottom-nav">
-  <div class="nav-item active" onclick="showTab('home')">
-    <!-- HOME ICON -->
-    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-    Home
+<!-- WALLET TAB -->
+<div id="wallet" class="tab">
+  <div class="container">
+    <div class="card">
+      <h3>💰 Wallet</h3>
+      <p>Balance: Ksh <span id="walletBalance">0.00</span></p>
+      <button class="btn">DEPOSIT</button>
+      <button class="btn">WITHDRAW</button>
+    </div>
   </div>
-  <div class="nav-item" onclick="showTab('tasks')">
-    <!-- TASKS ICON -->
-    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.1 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>
-    Tasks
-  </div>
-  <div class="nav-item" onclick="showTab('wallet')">
-    <!-- WALLET ICON -->
-    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V6c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
-    Wallet
-  </div>
-  <div class="nav-item" onclick="showTab('info')">
-    <!-- INFO ICON -->
-    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-    Info
-  </div>
+</div>
+
+<!-- INFO TAB -->
+<div id="info" class="tab">
+  <div class="container"><div class="card"><h3>ℹ️ Info</h3><p>About NEXA VIEW</p></div></div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="nav">
+  <div class="nav-item active" onclick="openTab('home')"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Home</div>
+  <div class="nav-item" onclick="openTab('tasks')"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.1 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>Tasks</div>
+  <div class="nav-item" onclick="openTab('wallet')"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V6c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9z"/></svg>Wallet</div>
+  <div class="nav-item" onclick="openTab('info')"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>Info</div>
 </div>
 
 <script>
-function showTab(tab){
+function openTab(tabName){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(t=>t.classList.remove('active'));
-  document.querySelector(`.nav-item[onclick="showTab('${tab}')"]`).classList.add('active');
-  ['home','tasks','wallet','info'].forEach(t=>document.getElementById(t+'Tab').style.display='none');
-  document.getElementById(tab+'Tab').style.display = 'block';
+  document.getElementById(tabName).classList.add('active');
+  event.currentTarget.classList.add('active');
 }
-function buyPackage(price){ alert("Buying Ksh "+price) }
+function buyPackage(p,d,di){ alert("Buy Ksh "+p) }
 </script>
 </body>
 </html>
