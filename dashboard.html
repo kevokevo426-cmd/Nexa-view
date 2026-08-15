@@ -141,7 +141,15 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
   </div>
 </div>
 
-<div id="tasksTab" style="display:none"><div class="box"><h3>✅ Daily Tasks</h3><p style="color:#aaa">Complete tasks to earn daily</p><p style="color:#888">No active package</p></div></div>
+<div id="tasksTab" style="display:none">
+  <div class="box">
+    <h3>✅ Daily Tasks</h3>
+    <p style="color:#aaa;margin-bottom:15px">Complete tasks to earn daily</p>
+    <div id="taskList">
+      <p style="color:#888">No active package</p>
+    </div>
+  </div>
+</div>
 
 <div id="walletTab" style="display:none">
   <div class="wallet-card">
@@ -184,10 +192,108 @@ const db = firebase.firestore();
 const phone = localStorage.getItem("nexaPhone");
 if(!phone){ window.location.href = "index.html"; }
 
-function showTab(tab,el){document.querySelectorAll('.nav-item').forEach(t=>t.classList.remove('active'));el.classList.add('active');['home','tasks','wallet','info'].forEach(t=>document.getElementById(t+'Tab').style.display='none');document.getElementById(tab+'Tab').style.display = 'block';if(tab == 'wallet'){ loadReferralInfo(); loadIncomeStats(); loadAccountInfo(); }}
+// DAILY FOOD PICTURES - changes automatically
+const foodPics = [
+  "https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=400", // Rice
+  "https://images.unsplash.com/photo-1618164439484-1e3e29e3d6b5?w=400", // Beans
+  "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400", // Vegetables
+  "https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400", // Flour
+  "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400" // Cooking Oil
+];
+
+function showTab(tab,el){document.querySelectorAll('.nav-item').forEach(t=>t.classList.remove('active'));el.classList.add('active');['home','tasks','wallet','info'].forEach(t=>document.getElementById(t+'Tab').style.display='none');document.getElementById(tab+'Tab').style.display = 'block';if(tab == 'wallet'){ loadReferralInfo(); loadIncomeStats(); loadAccountInfo(); } if(tab == 'tasks'){ loadTasks(); }}
 
 function loadWelcome(){db.collection("users").doc(phone).get().then(doc=>{if(doc.exists){let u = doc.data();let username = u.userID || "User";let refCode = u.myReferralCode || "N/A";document.getElementById('welcomeText').innerHTML = `🎉 Welcome ${username} | Your Referral Code: ${refCode} | Earn 10% on referrals | NEXA VIEW 🎉`;}})}
-loadWelcome();
+
+function loadTasks(){
+  db.collection("users").doc(phone).get().then(doc=>{
+    if(doc.exists){
+      let u = doc.data();
+      let owned = u.ownedPackages || {};
+      let html = "";
+      let keys = Object.keys(owned);
+
+      if(keys.length == 0){
+        html = "<p style='color:#888'>No active package</p>";
+      } else {
+        keys.forEach(key=>{
+          let p = owned[key];
+          let today = new Date().toDateString();
+          let lastClaim = u.lastClaim || {};
+          let canClaim = lastClaim[key]!= today;
+
+          // Daily rotating picture
+          let dayIndex = new Date().getDate() % foodPics.length;
+          let pic = foodPics[dayIndex];
+
+          // Status text and colors
+          let statusText = canClaim? "Sell your Product & Earn" : "Already Sold Today";
+          let statusColor = canClaim? "#22c55e" : "#ef4444";
+          let btnColor = canClaim? "linear-gradient(180deg,#22c55e,#16a34a)" : "#444";
+          let btnText = canClaim? "SELL" : "SOLD";
+
+          html += `<div style="background:#111;padding:16px;border-radius:14px;margin-bottom:15px;border:1px solid #333">
+
+            <!-- Top Status -->
+            <div style="background:${statusColor};color:#000;padding:6px 10px;border-radius:20px;font-size:11px;font-weight:700;text-align:center;margin-bottom:10px">
+              ${statusText}
+            </div>
+
+            <!-- Title -->
+            <h3 style="margin:0 0 10px 0;color:#22c55e">L2 - Food Stuffs</h3>
+
+            <!-- Sample Picture -->
+            <img src="${pic}" style="width:100%;height:120px;object-fit:cover;border-radius:10px;margin-bottom:12px;border:1px solid #333">
+
+            <!-- Buttons Row -->
+            <div style="display:flex;gap:10px;margin-bottom:12px">
+              <button onclick="claimTask('${key}')"
+                style="flex:1;padding:12px;background:${btnColor};color:white;border:none;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer"
+                ${canClaim?'':'disabled'}>
+                ${btnText}
+              </button>
+              <div style="flex:1;background:#1a3d2a;border:1px solid #22c55e;border-radius:10px;padding:10px;text-align:center">
+                <div style="font-size:10px;color:#aaa">PROFIT</div>
+                <b style="color:#22c55e;font-size:16px">Ksh ${p.daily}</b>
+              </div>
+            </div>
+
+            <!-- Info -->
+            <p style="font-size:11px;color:#aaa;margin:0">
+              Tap <b>SELL</b> every day. <br>
+              Color changes: <span style="color:#ef4444">Red →</span> <span style="color:#22c55e">Green</span> after you sell.
+            </p>
+
+          </div>`;
+        });
+      }
+      document.getElementById('taskList').innerHTML = html;
+    }
+  })
+}
+
+function claimTask(key){
+  let today = new Date().toDateString();
+  db.collection("users").doc(phone).get().then(doc=>{
+    let u = doc.data();
+    let p = u.ownedPackages[key];
+    let newBalance = (u.balance || 0) + p.daily;
+    let newTotal = (u.totalIncome || 0) + p.daily;
+    let lastClaim = u.lastClaim || {};
+    lastClaim[key] = today;
+
+    db.collection("users").doc(phone).update({
+      balance: newBalance,
+      totalIncome: newTotal,
+      todayIncome: (u.todayIncome || 0) + p.daily,
+      lastClaim: lastClaim
+    }).then(()=>{
+      alert(`✅ Claimed Ksh ${p.daily} successfully!`);
+      loadTasks();
+      loadIncomeStats();
+    })
+  })
+}
 
 function buyPackage(price, days, daily){db.collection("users").doc(phone).get().then(doc=>{let u = doc.data();if(u.balance < price){ alert("❌ Insufficient balance. Go to Wallet to Deposit"); showTab('wallet', document.querySelectorAll('.nav-item')[2]); return; }if(!confirm(`Buy package for Ksh ${price}?`)) return;let newBalance = u.balance - price;let owned = u.ownedPackages || {};owned[Date.now()] = {price, days, daily, start: new Date()};db.collection("users").doc(phone).update({balance: newBalance, ownedPackages: owned}).then(()=>{ alert("✅ Package purchased successfully!"); })})}
 
@@ -204,9 +310,10 @@ function loadDepositHistory(){ db.collection("deposits").where("phone","==",phon
 let selectedAmount = 0;function selectAmount(amt,el){ document.querySelectorAll('.amount-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); selectedAmount = amt; document.getElementById('withdrawAmount').value = amt; calcWithdraw(); }
 function calcWithdraw(){ let amt = parseFloat(document.getElementById('withdrawAmount').value) || 0; let tax = amt * 0.1; let net = amt - tax; document.getElementById('taxAmount').innerText = "KSH" + tax.toFixed(0); document.getElementById('netAmount').innerText = "KSH" + net.toFixed(0); }
 function submitWithdraw(){ let amt = document.getElementById('withdrawAmount').value; let pin = document.getElementById('withdrawPin').value; if(!amt ||!pin){ alert("Fill all fields"); return; } db.collection("withdrawals").add({phone, amount: parseFloat(amt), pin, status: "pending", date: new Date()}).then(()=>{ alert("✅ Withdrawal submitted"); closeWithdrawModal(); }) }
-function loadWithdrawHistory(){ db.collection("withdrawals").where("phone","==",phone).orderBy("date","desc").limit(5).get().then(snapshot=>{ let html = ""; if(snapshot.empty){ html = "<p style='color:#888'>No withdrawals yet</p>"; }else{ snapshot.forEach(doc=>{ let d = doc.data(); html += `<div style="background:#1a1a1a;padding:8px;border-radius:8px;margin-bottom:6px"><b>Ksh ${d.amount}</b> - <span style="color:${d.status=='approved'?'#22c55e':'#f59e0b'}">${d.status}</span></div>`; }) } document.getElementById('withdrawHistory').innerHTML = html; }) }
 function loadAccountInfo(){ db.collection("users").doc(phone).get().then(doc=>{ if(doc.exists){ let u = doc.data(); document.getElementById('accNumber').value = u.accNumber || ""; document.getElementById('accName').value = u.accName || ""; } }) }
 function updateAccount(){ let accNumber = document.getElementById('accNumber').value; let accName = document.getElementById('accName').value; let accPin = document.getElementById('accPin').value; if(!accNumber ||!accName ||!accPin){ alert("Fill all fields"); return; } db.collection("users").doc(phone).update({accNumber, accName, accPin}).then(()=>{ alert("✅ Account updated"); closeAccountModal(); }) }
+
+loadWelcome();
 </script>
 </body>
 </html>
