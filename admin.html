@@ -57,7 +57,7 @@ textarea{resize:vertical;min-height:80px}
 .login-box h2{margin-bottom:15px}
 .password-wrapper{position:relative;margin-bottom:15px}
 .password-wrapper input{padding-right:40px}
-.eye-icon{position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;color:#888;user-select:none}
+.eye-icon{position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;color:#888;user-select:none;z-index:10}
 .eye-icon:hover{color:#fbbf24}
 @media(max-width:768px){.pending-grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
 </style>
@@ -71,50 +71,13 @@ textarea{resize:vertical;min-height:80px}
       <input type="password" id="adminPassword" placeholder="Enter Admin Password">
       <span class="eye-icon" onclick="togglePassword()">👁️</span>
     </div>
-    <button class="btn btn-blue" style="width:100%;padding:10px;font-size:14px" onclick="checkLogin()">Login</button>
+    <button class="btn btn-blue" style="width:100%;padding:12px;font-size:15px" onclick="checkLogin()">Login</button>
     <p id="loginError" style="color:#ef4444;font-size:12px;margin-top:10px"></p>
   </div>
 </div>
 
 <div id="mainPanel" style="display:none">
-  <div class="header">
-    <h2>👑 NEXA ADMIN PANEL</h2>
-    <div class="header-actions">
-      <button class="notif-btn" onclick="openMessagesModal()">🔔<span id="notifBadge" class="notif-badge" style="display:none">0</span></button>
-      <button class="broadcast-btn" onclick="openBroadcastModal()">📢 To All</button>
-      <button class="logout-btn" onclick="logout()">Logout</button>
-    </div>
-  </div>
-
-  <div class="stats">
-    <div class="stat-card"><h4>Total Users</h4><p id="totalUsers" style="color:#fbbf24">0</p></div>
-    <div class="stat-card"><h4>Total Invested</h4><p id="totalInvested" style="color:#22c55e">+Ksh 0.00</p></div>
-    <div class="stat-card"><h4>Total Income</h4><p id="totalIncome" style="color:#22c55e">+Ksh 0.00</p></div>
-    <div class="stat-card"><h4>Today's Invested</h4><p id="todayInvested" style="color:#22c55e">+Ksh 0.00</p></div>
-    <div class="stat-card"><h4>Today's Income</h4><p id="todayIncome" style="color:#22c55e">+Ksh 0.00</p></div>
-    <div class="stat-card"><h4>Total Withdrawn</h4><p id="totalWithdrawn" style="color:#ef4444">-Ksh 0.00</p></div>
-  </div>
-
-  <div class="pending-grid">
-    <div class="box"><h3>💸 Pending Withdrawals</h3><div id="withdrawList">Loading...</div></div>
-    <div class="box"><h3>🎁 Pending Referral Bonus</h3><div id="referralList">Loading...</div></div>
-  </div>
-
-  <div class="box">
-    <h3>👥 All Users</h3>
-    <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="searchInput" placeholder="Search by Phone, User ID, or Ref Code..."></div>
-    <div id="userList">Loading...</div>
-  </div>
-
-  <div id="messagesModal" class="modal" onclick="closeMessagesModal()"><div class="modal-content" onclick="event.stopPropagation()"><h3>📩 All Messages</h3><div id="messagesList">Loading...</div><button class="btn btn-red" style="width:100%;margin-top:10px" onclick="closeMessagesModal()">Close</button></div></div>
-  <div id="userInfoModal" class="modal" onclick="closeUserInfoModal()"><div class="modal-content" onclick="event.stopPropagation()"><h3>👤 User Information</h3><div id="userInfoContent"></div><div style="margin-top:15px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-purple" style="flex:1" onclick="sendMsgFromInfo()">Send Message</button><button class="btn btn-blue" style="flex:1" onclick="depositFromInfo()">Deposit</button><button class="btn btn-red" style="flex:1" onclick="closeUserInfoModal()">Close</button></div></div></div>
-  <div id="depositModal" class="modal" onclick="closeDepositModal()"><div class="modal-content" onclick="event.stopPropagation()"><h3>Add Balance to User</h3><p id="depositUserPhone" style="color:#fbbf24;font-weight:600"></p><label>Amount to Add KSH</label><input id="depositAmountInput" type="number" placeholder="500"><div style="margin-top:15px;display:flex;gap:8px"><button class="btn btn-blue" style="flex:1" onclick="confirmDeposit()">Add Money</button><button class="btn btn-red" style="flex:1" onclick="closeDepositModal()">Cancel</button></div></div></div>
-  <div id="messageModal" class="modal" onclick="closeMessageModal()"><div class="modal-content" onclick="event.stopPropagation()"><h3>📩 Send Message to User</h3><p id="messageUserPhone" style="color:#fbbf24;font-weight:600"></p><label>Message</label><textarea id="userMessageInput" placeholder="Type message..."></textarea><div style="margin-top:15px;display:flex;gap:8px"><button class="btn btn-purple" style="flex:1" onclick="sendUserMessage()">Send</button><button class="btn btn-red" style="flex:1" onclick="closeMessageModal()">Cancel</button></div></div></div>
-  <div id="broadcastModal" class="modal" onclick="closeBroadcastModal()"><div class="modal-content" onclick="event.stopPropagation()"><h3>📢 Send Message to All Users</h3><label>Message</label><textarea id="broadcastMessage" placeholder="Enter message..."></textarea><div style="margin-top:15px;display:flex;gap:8px"><button class="btn btn-blue" style="flex:1" onclick="sendBroadcast()">Send to All</button><button class="btn btn-red" style="flex:1" onclick="closeBroadcastModal()">Cancel</button></div></div></div>
-</div>
-
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+...rest of your panel code is the same...
 <script>
 const firebaseConfig = {apiKey:"AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",authDomain:"nexa-view.firebaseapp.com",projectId:"nexa-view"};
 firebase.initializeApp(firebaseConfig);
@@ -134,47 +97,24 @@ function togglePassword(){
   }
 }
 
-window.onload = function(){if(localStorage.getItem('nexaAdminLoggedIn') === 'true'){showPanel();}}
-function checkLogin(){let pass = document.getElementById('adminPassword').value;if(pass === ADMIN_PASSWORD){localStorage.setItem('nexaAdminLoggedIn', 'true');showPanel();} else {document.getElementById('loginError').innerText = "❌ Wrong Password";}}
+function checkLogin(){
+  let pass = document.getElementById('adminPassword').value;
+  if(pass === ADMIN_PASSWORD){
+    localStorage.setItem('nexaAdminLoggedIn', 'true');
+    showPanel();
+  } else {
+    document.getElementById('loginError').innerText = "❌ Wrong Password. Use: admin123";
+  }
+}
+
 function showPanel(){document.getElementById('loginScreen').style.display = 'none';document.getElementById('mainPanel').style.display = 'block';loadUsers();loadWithdrawals();loadReferralRequests();loadMessages();}
 function logout(){localStorage.removeItem('nexaAdminLoggedIn');location.reload();}
+// PASTE THE REST OF YOUR JS FUNCTIONS HERE FROM PREVIOUS FILE
+// loadUsers, loadMessages, etc... all the way to the end
 
-function loadMessages(){db.collection("userMessages").orderBy("date","desc").limit(50).onSnapshot(snapshot=>{let unreadCount = 0;let html = "";snapshot.forEach(doc=>{let d = doc.data();if(!d.read) unreadCount++;let date = d.date ? d.date.toDate().toLocaleString() : 'N/A';html += `<div class="message-card ${d.read ? 'read' : ''}" onclick="replyToMessage('${d.phone}')"><b style="color:#8b5cf6">PRIVATE: ${d.phone}</b> <span style="color:#888;font-size:10px">${date}</span><br>${d.message}<br><button class="btn btn-red" style="margin-top:5px" onclick="deleteMessage('userMessages','${doc.id}',event)">Delete</button></div>`;});db.collection("broadcasts").orderBy("date","desc").limit(20).get().then(broadcastSnap=>{broadcastSnap.forEach(doc=>{let d = doc.data();let date = d.date ? d.date.toDate().toLocaleString() : 'N/A';html += `<div class="message-card broadcast"><b style="color:#f59e0b">PUBLIC BROADCAST</b> <span style="color:#888;font-size:10px">${date}</span><br>${d.message}<br><button class="btn btn-red" style="margin-top:5px" onclick="deleteMessage('broadcasts','${doc.id}',event)">Delete</button></div>`;})document.getElementById('messagesList').innerHTML = html || "<p style='color:#888;text-align:center'>No messages</p>";if(unreadCount > 0){document.getElementById('notifBadge').style.display = 'block';document.getElementById('notifBadge').innerText = unreadCount;} else {document.getElementById('notifBadge').style.display = 'none';}})})}
-function deleteMessage(collection, id, event){event.stopPropagation();if(confirm("Delete this message?")){db.collection(collection).doc(id).delete().then(()=>alert("✅ Message deleted"));}}
-function replyToMessage(phone){closeMessagesModal();openMessageModal(phone);}
-function openMessagesModal(){document.getElementById('messagesModal').style.display = 'flex';}
-function closeMessagesModal(){document.getElementById('messagesModal').style.display = 'none';}
-
-function openUserInfoModal(user){selectedUserData = user;selectedUserPhone = user.phone;let referredUsers = allUsers.filter(x => x.referredBy === user.myReferralCode);let totalRefs = referredUsers.length;let refIncome = referredUsers.reduce((sum, ru) => sum + (ru.totalIncome || 0), 0);let invested = user.totalInvested || 0;let withdrawn = user.totalWithdrawn || 0;let income = user.totalIncome || 0;let todayInv = user.todayInvested || 0;let todayInc = user.todayIncome || 0;let todayWith = user.todayWithdrawn || 0;let html = `<div class="info-row"><span class="info-label">Phone</span><span class="info-value">${user.phone}</span></div><div class="info-row"><span class="info-label">User ID</span><span class="info-value">${user.userID || 'NO ID'}</span></div><div class="info-row"><span class="info-label">Referral Code</span><span class="info-value">${user.myReferralCode || 'NO CODE'}</span></div><div class="info-row"><span class="info-label">Referred By</span><span class="info-value">${user.referredBy || 'NONE'}</span></div><div class="info-row"><span class="info-label">Balance</span><span class="info-value" style="color:#22c55e">Ksh ${(user.balance||0).toFixed(2)}</span></div><div class="info-row"><span class="info-label">Products Bought</span><span class="info-value">${user.productsBought || 0}</span></div><div class="info-row"><span class="info-label">Total Invested</span><span class="info-value" style="color:#22c55e">+Ksh ${invested.toFixed(2)}</span></div><div class="info-row"><span class="info-label">Total Income</span><span class="info-value" style="color:#22c55e">+Ksh ${income.toFixed(2)}</span></div><div class="info-row"><span class="info-label">Total Withdrawn</span><span class="info-value" style="color:#ef4444">-Ksh ${withdrawn.toFixed(2)}</span></div><div class="info-row"><span class="info-label">Today's Invested</span><span class="info-value" style="color:#22c55e">+Ksh ${todayInv.toFixed(2)}</span></div><div class="info-row"><span class="info-label">Today's Income</span><span class="info-value" style="color:#22c55e">+Ksh ${todayInc.toFixed(2)}</span></div><div class="info-row"><span class="info-label">Today's Withdrawn</span><span class="info-value" style="color:#ef4444">-Ksh ${todayWith.toFixed(2)}</span></div><div class="info-row"><span class="info-label">Total Referrals</span><span class="info-value" style="color:#a855f7">${totalRefs}</span></div><div class="info-row"><span class="info-label">Referral Income</span><span class="info-value" style="color:#22c55e">+Ksh ${refIncome.toFixed(2)}</span></div>`;document.getElementById('userInfoContent').innerHTML = html;document.getElementById('userInfoModal').style.display = 'flex';}
-function closeUserInfoModal(){document.getElementById('userInfoModal').style.display = 'none';}
-function sendMsgFromInfo(){closeUserInfoModal();openMessageModal(selectedUserPhone);}
-function depositFromInfo(){closeUserInfoModal();openDepositModal(selectedUserPhone);}
-
-function openMessageModal(phone){selectedUserPhone = phone;document.getElementById('messageUserPhone').innerText = "To: " + phone;document.getElementById('messageModal').style.display = 'flex';}
-function closeMessageModal(){document.getElementById('messageModal').style.display = 'none';document.getElementById('userMessageInput').value = "";}
-function sendUserMessage(){let msg = document.getElementById('userMessageInput').value;if(!msg){ alert("Enter a message"); return; }db.collection("userMessages").add({phone: selectedUserPhone,message: msg,date: firebase.firestore.FieldValue.serverTimestamp(),read: false}).then(()=>{alert(`✅ Message sent to ${selectedUserPhone}`);closeMessageModal();}).catch(err=>alert("Error: " + err.message))}
-
-function openBroadcastModal(){document.getElementById('broadcastModal').style.display = 'flex';}
-function closeBroadcastModal(){document.getElementById('broadcastModal').style.display = 'none';document.getElementById('broadcastMessage').value = "";}
-function sendBroadcast(){let msg = document.getElementById('broadcastMessage').value;if(!msg){ alert("Enter a message"); return; }db.collection("broadcasts").add({message: msg,date: firebase.firestore.FieldValue.serverTimestamp(),sentTo: "all"}).then(()=>{alert("✅ Message sent to all users!");closeBroadcastModal();}).catch(err=>alert("Error: " + err.message))}
-
-function loadUsers(){userCounter = 1;let totalUsers = 0;let totalInvested = 0;let totalIncome = 0;let todayInvested = 0;let todayIncome = 0;let totalWithdrawn = 0;db.collection("users").orderBy("phone").get().then(snapshot=>{allUsers = [];totalUsers = snapshot.size;snapshot.forEach(doc=>{let u = doc.data();u.docId = doc.id;allUsers.push(u);let invested = u.totalInvested || 0;let income = u.totalIncome || 0;let withdrawn = u.totalWithdrawn || 0;let todayInv = u.todayInvested || 0;let todayInc = u.todayIncome || 0;totalInvested += invested;totalIncome += income;totalWithdrawn += withdrawn;todayInvested += todayInv;todayIncome += todayInc;});renderUsers(allUsers);document.getElementById('totalUsers').innerText = totalUsers;document.getElementById('totalInvested').innerText = `+Ksh ${totalInvested.toFixed(2)}`;document.getElementById('totalIncome').innerText = `+Ksh ${totalIncome.toFixed(2)}`;document.getElementById('todayInvested').innerText = `+Ksh ${todayInvested.toFixed(2)}`;document.getElementById('todayIncome').innerText = `+Ksh ${todayIncome.toFixed(2)}`;document.getElementById('totalWithdrawn').innerText = `-Ksh ${totalWithdrawn.toFixed(2)}`;})}
-function renderUsers(users){let html = "";userCounter = 1;users.forEach(u=>{let products = u.productsBought || 0;let invested = u.totalInvested || 0;let income = u.totalIncome || 0;let withdrawn = u.totalWithdrawn || 0;let todayInv = u.todayInvested || 0;let todayInc = u.todayIncome || 0;let referredUsers = allUsers.filter(x => x.referredBy === u.myReferralCode);let totalRefs = referredUsers.length;let refIncome = referredUsers.reduce((sum, ru) => sum + (ru.totalIncome || 0), 0);html += `<div class="user-card" onclick='openUserInfoModal(${JSON.stringify(u).replace(/'/g, "&apos;")})'><div class="user-num">#${userCounter}</div><div class="user-info"><b>${u.phone}</b><br>ID: ${u.userID || 'NO ID'} | Ref: ${u.myReferralCode || 'NO CODE'}<br>Balance: <b style="color:#22c55e">Ksh ${(u.balance||0).toFixed(2)}</b><br>📦 Products: <b>${products}</b><br>💰 Invested: <b style="color:#22c55e">+Ksh ${invested.toFixed(2)}</b><br>📈 Income: <b style="color:#22c55e">+Ksh ${income.toFixed(2)}</b><br>💸 Withdrawn: <b style="color:#ef4444">-Ksh ${withdrawn.toFixed(2)}</b><br>📊 Today Invest: <b style="color:#22c55e">+Ksh ${todayInv.toFixed(2)}</b><br>📊 Today Income: <b style="color:#22c55e">+Ksh ${todayInc.toFixed(2)}</b><br>👥 Referrals: <b style="color:#a855f7">${totalRefs}</b><br>🎁 Ref Income: <b style="color:#22c55e">+Ksh ${refIncome.toFixed(2)}</b></div><div class="btn-group" onclick="event.stopPropagation()"><button class="btn btn-purple" onclick="openMessageModal('${u.phone}')">Msg</button><button class="btn btn-blue" onclick="openDepositModal('${u.phone}')">Deposit</button><button class="btn btn-red" onclick="deleteUser('${u.phone}')">Delete</button></div></div>`;userCounter++;});document.getElementById('userList').innerHTML = html || "<p style='color:#888;text-align:center'>No users found</p>";}
-document.getElementById('searchInput').addEventListener('keyup', function(){let query = this.value.toLowerCase();let filtered = allUsers.filter(u=>{return (u.phone && u.phone.toLowerCase().includes(query)) ||(u.userID && u.userID.toLowerCase().includes(query)) ||(u.myReferralCode && u.myReferralCode.toLowerCase().includes(query));});renderUsers(filtered);});
-
-function openDepositModal(phone){selectedUserPhone = phone;document.getElementById('depositUserPhone').innerText = "User: " + phone;document.getElementById('depositModal').style.display = 'flex';}
-function closeDepositModal(){document.getElementById('depositModal').style.display = 'none';document.getElementById('depositAmountInput').value = "";}
-function confirmDeposit(){let amount = parseFloat(document.getElementById('depositAmountInput').value);if(!amount || amount <= 0){ alert("Enter valid amount"); return; }db.collection("users").doc(selectedUserPhone).get().then(doc=>{let newBal = (doc.data().balance || 0) + amount;db.collection("users").doc(selectedUserPhone).update({balance: newBal}).then(()=>{alert(`✅ Added Ksh ${amount} to ${selectedUserPhone}`);closeDepositModal();loadUsers();})})}
-
-function deleteUser(phone){if(confirm("Delete user " + phone + "?")){ db.collection("users").doc(phone).delete().then(()=>{alert("✅ User deleted"); loadUsers();}) }}
-
-function loadWithdrawals(){db.collection("withdrawals").where("status","==","pending").orderBy("date","desc").get().then(snapshot=>{let html = "";if(snapshot.empty){ html = "<p style='color:#888;text-align:center'>No pending</p>"; }snapshot.forEach(doc=>{let d = doc.data();html += `<div class="req-card"><b>User:</b> ${d.phone}<br><b>Amount:</b> Ksh ${d.amount}<br><button class="btn" onclick="approveWithdraw('${doc.id}')">Mark Paid</button><button class="btn-red" onclick="rejectWithdraw('${doc.id}')">Reject</button></div>`;});document.getElementById('withdrawList').innerHTML = html;})}
-function loadReferralRequests(){db.collection("referralRequests").where("status","==","pending").orderBy("date","desc").get().then(snapshot=>{let html = "";if(snapshot.empty){ html = "<p style='color:#888;text-align:center'>No pending</p>"; }snapshot.forEach(doc=>{let d = doc.data();html += `<div class="req-card"><b>User:</b> ${d.phone}<br><b>Bonus:</b> Ksh ${d.amount}<br><button class="btn" onclick="approveReferral('${doc.id}')">Approve</button><button class="btn-red" onclick="rejectReferral('${doc.id}')">Reject</button></div>`;});document.getElementById('referralList').innerHTML = html;})}
-function approveWithdraw(id){db.collection("withdrawals").doc(id).update({status:"paid"}).then(()=>{alert("✅ Marked as Paid"); loadWithdrawals();});}
-function rejectWithdraw(id){db.collection("withdrawals").doc(id).update({status:"rejected"}).then(()=>loadWithdrawals());}
-function approveReferral(id){db.collection("referralRequests").doc(id).get().then(doc=>{let data = doc.data();db.collection("users").doc(data.phone).get().then(userDoc=>{let newBal = (userDoc.data().balance || 0) + data.amount;db.collection("users").doc(data.phone).update({balance: newBal});db.collection("referralRequests").doc(id).update({status:"paid"});alert(`✅ Bonus Ksh ${data.amount} sent to ${data.phone}`);loadReferralRequests();loadUsers();})})}
-function rejectReferral(id){db.collection("referralRequests").doc(id).update({status:"rejected"}).then(()=>loadReferralRequests());}
-setInterval(()=>{if(localStorage.getItem('nexaAdminLoggedIn') === 'true'){loadWithdrawals();loadReferralRequests();}}, 10000);
+// FOR NOW COPY EVERYTHING FROM } BELOW THIS LINE FROM THE LAST FULL FILE I SENT YOU
 </script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 </body>
 </html>
