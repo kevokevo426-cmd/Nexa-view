@@ -31,6 +31,9 @@ h3{display:flex;align-items:center;gap:8px;color:white;margin:0 0 12px 0;font-si
 input{width:100%;padding:10px;background:#1a1a1a;border:1px solid #333;color:white;border-radius:8px;margin:6px 0;font-size:13px}
 label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
 
+/* VERY SMALL NOTE IN DIFFERENT COLOR */
+.note{font-size:9px;color:#f59e0b;margin-top:6px;font-style:italic;line-height:1.3}
+
 /* ACCOUNT FORM */
 .account-form{background:#1f1f1f;border-radius:12px;padding:14px;margin-top:10px}
 .account-note{font-size:10px;color:#aaa;margin-top:6px;line-height:1.4}
@@ -62,8 +65,14 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
 
 /* WITHDRAW FORM */
 .withdraw-box{background:#5a3d1f;border-radius:16px;padding:14px;margin-bottom:15px;position:relative}
-.withdraw-close{position:absolute;top:10px;right:15px;font-size:20px;cursor:pointer;color:#aaa;font-weight:700}
-.withdraw-close:hover{color:#fff}
+.withdraw-close{position:absolute;top:8px;right:12px;font-size:28px;cursor:pointer;color:#aaa;font-weight:700;background:#222;padding:4px 10px;border-radius:8px;line-height:1}
+.withdraw-close:hover{color:#fff;background:#333}
+
+/* BIGGER BACK BUTTON FOR ALL MODALS */
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+.modal-back{font-size:28px;cursor:pointer;color:#aaa;font-weight:700;background:#222;padding:6px 12px;border-radius:10px;line-height:1}
+.modal-back:hover{color:#fff;background:#333}
+
 .withdraw-box p{margin:5px 0;font-size:12px}
 .withdraw-box h2{margin:5px 0;color:#fbbf24;font-size:22px}
 .green-banner{background:linear-gradient(90deg,#059669,#047857);padding:10px;border-radius:12px;margin-bottom:15px;font-size:11px}
@@ -139,6 +148,7 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
     <label>Your Referral Link</label>
     <input id="myLink" readonly>
     <button class="btn btn-green" onclick="copyLink()">Copy Link</button>
+    <div class="note">* Referral amount will be added automatically to your account upon the purchase of a product</div>
   </div>
 
   <div class="box">
@@ -163,8 +173,10 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
 <!-- ACCOUNT MODAL -->
 <div id="accountModal" class="modal" onclick="closeAccountModal()">
   <div class="modal-content" onclick="event.stopPropagation()">
-    <span class="withdraw-close" onclick="closeAccountModal()">🔙</span>
-    <h3>👤 Withdrawal Account</h3>
+    <div class="modal-header">
+      <h3>👤 Withdrawal Account</h3>
+      <span class="modal-back" onclick="closeAccountModal()">🔙</span>
+    </div>
 
     <div class="account-form">
       <label>Receiving account number (M-Pesa)</label>
@@ -185,8 +197,10 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
 <!-- DEPOSIT MODAL -->
 <div id="depositModal" class="modal" onclick="closeDepositModal()">
   <div class="modal-content" onclick="event.stopPropagation()">
-    <span class="withdraw-close" onclick="closeDepositModal()">🔙</span>
-    <h3>💰 Deposit Funds</h3>
+    <div class="modal-header">
+      <h3>💰 Deposit Funds</h3>
+      <span class="modal-back" onclick="closeDepositModal()">🔙</span>
+    </div>
 
     <div class="deposit-box">
       <p style="font-size:12px;color:#aaa">1. Send money to MPESA Number below</p>
@@ -213,8 +227,12 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
 <!-- WITHDRAWAL MODAL -->
 <div id="withdrawModal" class="modal" onclick="closeWithdrawModal()">
   <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div></div>
+      <span class="modal-back" onclick="closeWithdrawModal()">🔙</span>
+    </div>
+
     <div class="withdraw-box">
-      <span class="withdraw-close" onclick="closeWithdrawModal()">🔙</span>
       <p>Available balance</p>
       <h2>KSH<span id="withdrawBalance">0.00</span></h2>
       <p style="font-size:11px;color:#ccc">Allowed amounts: KSh 200, 400, 500, 700, 1000, 1500, 2500, 5000 · Tax: 15% · One withdrawal per day</p>
@@ -274,7 +292,6 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
     Info
   </div>
 </div>
-
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
@@ -364,7 +381,7 @@ function updateAccount(){
   let number = document.getElementById('accNumber').value;
   let name = document.getElementById('accName').value;
   let pin = document.getElementById('accPin').value;
-  
+
   if(!number || number.length < 10){ alert('❌ Enter valid M-Pesa number'); return; }
   if(!name){ alert('❌ Enter real name'); return; }
 
@@ -525,17 +542,23 @@ function buyPackage(price, days, daily){
     let owned = u.ownedPackages || {};
     owned[Date.now()] = {price, days, daily, start: new Date()};
     db.collection("users").doc(phone).update({balance: newBalance, ownedPackages: owned}).then(()=>{
+      // AUTO ADD REFERRAL BONUS TO REFERRER
       if(u.referredBy && u.referralStatus!== 'triggered'){
         let bonus = Math.round(price * 0.10);
         db.collection("users").where("myReferralCode", "==", u.referredBy).get().then(snap=>{
           snap.forEach(refDoc=>{
+            // Add bonus to referrer balance instantly
+            db.collection("users").doc(refDoc.id).update({
+              balance: firebase.firestore.FieldValue.increment(bonus),
+              referralBonus: firebase.firestore.FieldValue.increment(bonus)
+            })
             db.collection("referralBonuses").add({
               referrerPhone: refDoc.id, referredPhone: phone, referredName: u.username,
-              packagePrice: price, bonusAmount: bonus, status: 'pending', createdAt: new Date()
+              packagePrice: price, bonusAmount: bonus, status: 'paid', createdAt: new Date()
             })
-            db.collection("users").doc(phone).update({referralStatus: 'triggered'})
           })
         })
+        db.collection("users").doc(phone).update({referralStatus: 'triggered'})
       }
       alert(`✅ Package Purchased!`);
       loadUser();
