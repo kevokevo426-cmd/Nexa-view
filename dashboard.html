@@ -1,87 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NEXA DASHBOARD</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-body{background:#000;color:white;font-family:Poppins;margin:0;padding-bottom:80px}
-.page{display:none;padding:20px;max-width:700px;margin:0 auto}
-.active{display:block}
-.package{background:#111;padding:15px;border-radius:16px;margin:15px 0;border:2px solid #222;transition:0.3s}
-.package h4{margin:0;color:#fbbf24;display:flex;justify-content:space-between;align-items:center}
-.package.price{font-size:20px;font-weight:bold;margin:8px 0}
-.package.earn{color:#aaa;font-size:13px;line-height:1.6}
-.package button{width:100%;padding:14px;margin-top:10px;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:10px;font-weight:bold;font-size:15px;cursor:pointer}
-.badge{background:#ef4444;color:white;font-size:11px;padding:3px 8px;border-radius:20px}
-.package.lvl1 { border-color:#22c55e; background:#052e16; box-shadow:0 0 15px #22c55e44; }
-.package.lvl2 { border-color:#ffffff; background:#1a1a1a; box-shadow:0 0 15px #ffffff44; }
-.package.lvl3 { border-color:#a855f7; background:#2e1065; box-shadow:0 0 15px #a855f744; }
-.nav{position:fixed;bottom:0;width:100%;background:#111;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #222}
-.nav button{background:none;border:none;color:#aaa;font-size:12px;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px}
-.nav button.active{color:#fbbf24}
-.nav button svg{width:22px;height:22px}
-.task{background:#111;padding:15px;border-radius:12px;margin:10px 0;border:1px solid #222}
-.task button{width:100%;padding:14px;background:#22c55e;color:black;border:none;border-radius:10px;font-weight:bold;font-size:15px;cursor:pointer}
-.task button:disabled{background:#444;color:#888}
-table{width:100%;font-size:12px;border-collapse:collapse}
-th,td{padding:8px;text-align:left;border-bottom:1px solid #222}
-th{color:#fbbf24}
-.balance{font-size:28px;font-weight:700;color:#22c55e;margin-top:5px}
-.tx-item{background:#1a1a1a;padding:12px;border-radius:10px;margin:8px 0;display:flex;justify-content:space-between;font-size:13px}
-.tx-deposit{border-left:3px solid #22c55e}
-.tx-withdraw{border-left:3px solid #ef4444}
-.tx-pending{border-left:3px solid #f59e0b}
-input{width:100%;padding:14px;background:#2a2a2a;border:1px solid #333;border-radius:12px;color:#fff;font-size:15px;margin-bottom:15px;box-sizing:border-box}
+*{box-sizing:border-box}
+body{background:#000;color:white;font-family:Poppins;margin:0;padding:15px}
+.box{background:#111;padding:16px;border-radius:14px;margin-bottom:15px;border:1px solid #222}
+h2{color:#fbbf24;margin:0 0 10px 0;font-size:20px}
+h3{color:#fbbf24;margin:0 0 12px 0;font-size:16px}
+.tabs{display:flex;gap:8px;margin-bottom:15px}
+.tab{flex:1;padding:10px;background:#1a1a1a;border:1px solid #333;border-radius:10px;text-align:center;font-weight:600;cursor:pointer;font-size:13px}
+.tab.active{background:#fbbf24;color:black}
+input{width:100%;padding:12px;background:#1a1a1a;border:1px solid #333;color:white;border-radius:8px;margin:6px 0;font-size:14px}
+button{width:100%;padding:14px;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:10px;font-weight:700;cursor:pointer;margin-top:8px}
+button:active{transform:scale(0.98)}
+.ref-row{display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #222;font-size:12px}
+.green{color:#22c55e;font-weight:700}
+.orange{color:#f59e0b;font-weight:700}
+.gray{color:#888}
+label{font-size:12px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
 </style>
 </head>
 <body>
 
-<div id="home" class="page active"><h2>Packages</h2><div id="packageGrid">Loading...</div></div>
-<div id="tasks" class="page"><h2>Daily Tasks <span id="taskProgress" style="color:#22c55e">0/20</span></h2><div id="taskList"></div></div>
-
-<div id="wallet" class="page">
-  <div style="background:#111;padding:25px 20px;text-align:center;border-bottom:1px solid #222;margin:-20px -20px 20px -20px">
-    <div style="font-size:14px;color:#aaa">Account Balance</div>
-    <div class="balance" id="walletBalance">Ksh 0.00</div>
-  </div>
-  <div style="display:flex;gap:10px;margin-bottom:20px">
-    <div style="flex:1;background:#111;padding:15px;border-radius:12px;text-align:center;border:1px solid #222"><div style="font-size:12px;color:#aaa">Today's Income</div><div style="font-size:18px;font-weight:bold;color:#22c55e" id="todayIncome">Ksh 0.00</div></div>
-    <div style="flex:1;background:#111;padding:15px;border-radius:12px;text-align:center;border:1px solid #222"><div style="font-size:12px;color:#aaa">Referral Bonus</div><div style="font-size:18px;font-weight:bold;color:#fbbf24" id="refBonus">Ksh 0.00</div></div>
-  </div>
-  <h2>💰 WALLET</h2>
-  <div style="display:flex;gap:10px;margin:15px 0">
-    <button onclick="alert('M-Pesa Deposit coming soon. Contact Admin to top up')" style="flex:1;padding:15px;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:12px;font-weight:bold;cursor:pointer">DEPOSIT</button>
-    <button onclick="showWithdraw()" style="flex:1;padding:15px;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:12px;font-weight:bold;cursor:pointer">WITHDRAW</button>
-  </div>
-  <div style="background:#111;padding:20px;border-radius:16px;margin:20px 0;border:1px solid #222">
-    <h3 style="color:#fbbf24;margin-bottom:15px">Receiving account number (M-Pesa)</h3>
-    <div style="font-size:13px;color:#999;margin:10px 0 5px 0">Receiving account number (M-Pesa)</div>
-    <input type="tel" id="withdrawPhone" placeholder="07XXXXXXXX">
-    <div style="font-size:13px;color:#999;margin:10px 0 5px 0">Real name</div>
-    <input type="text" id="realName" placeholder="John Doe">
-    <div style="font-size:13px;color:#999;margin:10px 0 5px 0">Change PIN (optional)</div>
-    <input type="password" id="withdrawPin" placeholder="Leave blank to keep current PIN">
-    <button onclick="updateWallet()" style="width:100%;padding:15px;background:linear-gradient(90deg,#f59e0b,#ea580c);color:white;border:none;border-radius:12px;font-weight:bold;font-size:16px;cursor:pointer">Update wallet</button>
-    <p style="color:#999;font-size:12px;margin-top:15px;line-height:1.5">You can update your withdrawal account anytime. Leave PIN blank to keep the current one.</p>
-  </div>
-  <h3>Transaction History</h3>
-  <div id="txHistory" style="background:#111;padding:15px;border-radius:12px;font-size:13px">Loading...</div>
+<div class="box">
+  <h2>Welcome, <span id="username">User</span></h2>
+  <p>Balance: <b style="color:#fbbf24;font-size:20px">Ksh <span id="balance">0</span></b></p>
 </div>
 
-<div id="info" class="page"><h2>📖 INFORMATION CENTER</h2>
-  <div style="background:#111;padding:15px;border-radius:12px;margin:15px 0;border:1px solid #222"><h3 style="color:#fbbf24">HOW EARNING WORKS</h3><p>1. Buy any package L1-L8</p><p>2. Complete 20 Tasks daily to earn your daily amount</p><p>3. Each task = Daily Amount ÷ 20</p><p>4. You can stack the same package multiple times</p></div>
-  <div style="background:#111;padding:15px;border-radius:12px;margin:15px 0;border:1px solid #222"><h3 style="color:#fbbf24">PACKAGE LIST</h3>
-  <table><tr><th>Package</th><th>Stake</th><th>Daily</th><th>Days</th><th>Total</th></tr><tr><td>L1</td><td>300</td><td>25</td><td>20</td><td>500</td></tr><tr><td>L2</td><td>700</td><td>50</td><td>20</td><td>1000</td></tr><tr><td>L3</td><td>1300</td><td>100</td><td>20</td><td>2000</td></tr><tr><td>L4</td><td>2500</td><td>150</td><td>30</td><td>4500</td></tr><tr><td>L5</td><td>3500</td><td>200</td><td>30</td><td>6000</td></tr><tr><td>L6</td><td>4800</td><td>250</td><td>30</td><td>7500</td></tr><tr><td>L7</td><td>7500</td><td>350</td><td>30</td><td>10500</td></tr><tr><td>L8</td><td>10000</td><td>500</td><td>30</td><td>15000</td></tr></table>
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="showTab('home',this)">Home</div>
+  <div class="tab" onclick="showTab('referral',this)">Referral</div>
+  <div class="tab" onclick="showTab('history',this)">History</div>
+</div>
+
+<!-- HOME TAB -->
+<div id="homeTab">
+  <div class="box">
+    <h3>Buy Package</h3>
+    <p style="font-size:12px;color:#aaa">Buy a package to unlock daily tasks and earnings</p>
+    <button onclick="buyPackage(500, 15, 40)">Basic - Ksh 500 | 15 Days | Ksh 40/Day</button>
+    <button onclick="buyPackage(1000, 30, 90)">Pro - Ksh 1000 | 30 Days | Ksh 90/Day</button>
+    <button onclick="buyPackage(2500, 30, 250)">VIP - Ksh 2500 | 30 Days | Ksh 250/Day</button>
   </div>
 </div>
 
-<div class="nav">
-  <button onclick="showPage('home')" class="active"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>Home</button>
-  <button onclick="showPage('tasks')"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5z" clip-rule="evenodd"/></svg>Tasks</button>
-  <button onclick="showPage('wallet')"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4z"/></svg>Wallet</button>
-  <button onclick="showPage('info')"><svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>Info</button>
+<!-- REFERRAL TAB -->
+<div id="referralTab" style="display:none">
+  <div class="box">
+    <h3>Invite & Earn 10%</h3>
+    <label>Your Referral Code</label>
+    <input id="myCode" readonly>
+    <label>Your Referral Link</label>
+    <input id="myLink" readonly>
+    <button onclick="copyLink()">Copy Link</button>
+    <p style="font-size:12px;color:#aaa;margin-top:10px">You earn 10% of any package your referral buys. Example: They buy Ksh 1000, you get Ksh 100. Bonus is pending until admin approves.</p>
+  </div>
+</div>
+
+<!-- HISTORY TAB -->
+<div id="historyTab" style="display:none">
+  <div class="box">
+    <h3>Referral Earnings History</h3>
+    <div id="refHistory">Loading...</div>
+  </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -90,49 +75,113 @@ input{width:100%;padding:14px;background:#2a2a2a;border:1px solid #333;border-ra
 const firebaseConfig = {apiKey:"AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",authDomain:"nexa-view.firebaseapp.com",projectId:"nexa-view"};
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+const phone = localStorage.getItem("nexaPhone");
+if(!phone){ window.location.href = "index.html"; }
 
-const PACKAGES = [
-  {name:"L1", price:300, daily:25, days:20}, {name:"L2", price:700, daily:50, days:20},
-  {name:"L3", price:1300, daily:100, days:20}, {name:"L4", price:2500, daily:150, days:30},
-  {name:"L5", price:3500, daily:200, days:30}, {name:"L6", price:4800, daily:250, days:30},
-  {name:"L7", price:7500, daily:350, days:30}, {name:"L8", price:10000, daily:500, days:30},
-];
-
-// AUTO CONVERT 07 to 254
-function formatPhone(p){
-  if(!p) return '';
-  p = p.replace(/\D/g,'');
-  if(p.startsWith('0')) return '254' + p.substring(1);
-  if(p.startsWith('7')) return '254' + p;
-  return p;
+// TABS FUNCTION
+function showTab(tab,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('homeTab').style.display = 'none';
+  document.getElementById('referralTab').style.display = 'none';
+  document.getElementById('historyTab').style.display = 'none';
+  document.getElementById(tab+'Tab').style.display = 'block';
+  
+  if(tab == 'referral') loadReferralInfo();
+  if(tab == 'history') loadRefHistory();
 }
 
-let currentUser = null;
-let phone = formatPhone(localStorage.getItem("nexaPhone"));
+// LOAD USER DATA
+function loadUser(){
+  db.collection("users").doc(phone).get().then(doc=>{
+    if(doc.exists){
+      let u = doc.data();
+      document.getElementById('username').innerText = u.username;
+      document.getElementById('balance').innerText = u.balance;
+    }
+  })
+}
+loadUser();
 
-if(!phone){ alert("Please login first"); window.location.href = "index.html"; }
+// REFERRAL INFO
+function loadReferralInfo(){
+  db.collection("users").doc(phone).get().then(doc=>{
+    let u = doc.data();
+    document.getElementById('myCode').value = u.myReferralCode;
+    document.getElementById('myLink').value = `https://nexa-view.vercel.app/register.html?ref=${u.myReferralCode}`;
+  })
+}
+function copyLink(){
+  navigator.clipboard.writeText(document.getElementById('myLink').value);
+  alert('✅ Link Copied to Clipboard');
+}
 
-db.collection("users").doc(phone).onSnapshot(doc=>{
-  if(doc.exists){
-    currentUser = doc.data();
-    document.getElementById('walletBalance').innerText = `Ksh ${currentUser.balance.toFixed(2)}`;
-    let todayIncome = 0;
-    for(let pkg in currentUser.ownedPackages){ let p = PACKAGES.find(x=>x.name==pkg); if(p) todayIncome += p.daily * currentUser.ownedPackages[pkg]; }
-    document.getElementById('todayIncome').innerText = `Ksh ${todayIncome.toFixed(2)}`;
-    document.getElementById('refBonus').innerText = `Ksh ${(currentUser.referralBonus || 0).toFixed(2)}`;
-    loadPackages(); loadTasks(); loadWalletInfo(); loadTransactions();
-  } else { document.getElementById('packageGrid').innerHTML = "Account not found. <a href='register.html' style='color:#fbbf24'>Register here</a>"; }
-});
+// REFERRAL HISTORY
+function loadRefHistory(){
+  db.collection("referralBonuses").where("referrerPhone", "==", phone).orderBy("createdAt", "desc").get().then(snap=>{
+    let html = '';
+    snap.forEach(d=>{
+      let b = d.data();
+      let status = b.status == 'pending' ? '<span class="orange">PENDING</span>' : '<span class="green">PAID</span>';
+      let date = b.createdAt.toDate().toLocaleDateString();
+      html+=`<div class="ref-row">
+        <div>
+          <b>${b.referredName}</b><br>
+          <small>${b.referredPhone}</small><br>
+          <small>Package: Ksh ${b.packagePrice}</small><br>
+          <small>${date}</small>
+        </div>
+        <div style="text-align:right">
+          <b>Ksh ${b.bonusAmount}</b><br>
+          ${status}
+        </div>
+      </div>`;
+    })
+    document.getElementById('refHistory').innerHTML = html || '<p class="gray" style="text-align:center">No referrals yet</p>';
+  }).catch(err=>{
+    document.getElementById('refHistory').innerHTML = '<p class="gray">No referrals yet</p>';
+  })
+}
 
-function showPage(id){ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active')); event.target.closest('button').classList.add('active'); }
-function loadPackages(){ let grid = document.getElementById('packageGrid'); grid.innerHTML = ""; PACKAGES.forEach(p=>{ let count = currentUser.ownedPackages[p.name] || 0; let totalEarn = p.daily * count; let perTask = (p.daily/20).toFixed(2); let levelClass = count==1?'lvl1':count==2?'lvl2':count>=3?'lvl3':''; grid.innerHTML += `<div class="package ${levelClass}"><h4>${p.name} ${count>0?`<span class="badge">x${count}</span>`:''}</h4><div class="price">Ksh ${p.price}</div><div class="earn">Daily: Ksh ${p.daily} | ${p.days} Days</div><div class="earn">${perTask} per task</div>${count>0?`<div class="earn" style="color:#22c55e">Total: Ksh ${totalEarn}/day</div>`:''}<button onclick="buyPackage('${p.name}', ${p.price})">BUY NOW</button></div>`; }); }
-function buyPackage(name, price){ if(currentUser.balance < price){ alert("❌ Insufficient Balance"); return; } if(!confirm(`Buy ${name} for Ksh ${price}?`)) return; let newBalance = currentUser.balance - price; let owned = currentUser.ownedPackages || {}; owned[name] = (owned[name] || 0) + 1; let batch = db.batch(); batch.update(db.collection("users").doc(phone), {balance: newBalance, ownedPackages: owned}); batch.set(db.collection("transactions").doc(), { phone, type:"purchase", amount: price, package:name, time: new Date() }); batch.commit().then(()=>{ alert(`✅ ${name} Purchased Successfully!`) }); }
-function loadTasks(){ let totalDaily = 0; for(let pkg in currentUser.ownedPackages){ let p = PACKAGES.find(x=>x.name==pkg); if(p) totalDaily += p.daily * currentUser.ownedPackages[pkg]; } let perTask = totalDaily > 0? (totalDaily/20).toFixed(2) : 0; document.getElementById('taskProgress').innerText = `${currentUser.tasksDone || 0}/20`; document.getElementById('taskList').innerHTML = `<div class="task"><h4>Complete 20 Tasks Today</h4><p>Earn Ksh ${perTask} per task | Total: Ksh ${totalDaily}/day</p><button onclick="doTask(${perTask})" ${totalDaily==0?'disabled':''}>${totalDaily==0?'BUY PACKAGE FIRST':'COMPLETE 1 TASK'}</button></div>`; }
-function doTask(earn){ if((currentUser.tasksDone || 0) >= 20){ alert("✅ All 20 tasks done for today"); return; } let newTasks = (currentUser.tasksDone || 0) + 1; let newBalance = currentUser.balance + parseFloat(earn); let batch = db.batch(); batch.update(db.collection("users").doc(phone), {tasksDone: newTasks, balance: newBalance}); batch.set(db.collection("transactions").doc(), { phone, type:"task", amount: parseFloat(earn), time: new Date() }); batch.commit(); }
-function loadWalletInfo(){ if(currentUser.withdrawPhone) document.getElementById('withdrawPhone').value = currentUser.withdrawPhone; if(currentUser.realName) document.getElementById('realName').value = currentUser.realName; }
-function updateWallet(){ let wPhone = formatPhone(document.getElementById('withdrawPhone').value.trim()); let rName = document.getElementById('realName').value.trim(); let wPin = document.getElementById('withdrawPin').value.trim(); if(!wPhone ||!rName){ alert('Please fill phone and real name'); return; } let updateData = {withdrawPhone: wPhone, realName: rName}; if(wPin!== '') updateData.withdrawPin = wPin; db.collection("users").doc(phone).update(updateData).then(()=>{ alert("✅ Wallet info updated successfully!"); document.getElementById('withdrawPin').value = ''; }); }
-function showWithdraw(){ if(!currentUser.withdrawPhone){ alert('❌ Please set your M-Pesa number first above'); return; } let amount = prompt("Enter amount to withdraw. Min Ksh 500:"); amount = parseFloat(amount); if(!amount || amount < 500){ alert("❌ Minimum withdrawal is Ksh 500"); return; } if(amount > currentUser.balance){ alert("❌ Insufficient Balance"); return; } if(!confirm(`Request withdrawal of Ksh ${amount} to ${currentUser.withdrawPhone}?`)) return; db.collection("withdrawals").add({ phone: phone, amount: amount, mpesa: currentUser.withdrawPhone, currentBalance: currentUser.balance, status: "pending", type: "withdrawal", requestedAt: new Date() }).then(()=>{ alert("✅ Withdrawal request sent. Waiting for admin approval"); }); }
-function loadTransactions(){ db.collection("transactions").where("phone","==",phone).orderBy("time","desc").limit(10).get().then(snapshot=>{ let html = ""; snapshot.forEach(doc=>{ let t = doc.data(); let cls = t.type === "deposit" || t.type === "task"? "tx-deposit" : "tx-withdraw"; let sign = t.type === "deposit" || t.type === "task"? "+" : "-"; html += `<div class="tx-item ${cls}"><div><b>${t.type.toUpperCase()}</b><br><small>${t.time.toDate().toLocaleString()}</small></div><div style="color:${sign==='+'?'#22c55e':'#ef4444'};font-weight:bold">${sign} Ksh ${t.amount}</div></div>`; }); db.collection("withdrawals").where("phone","==",phone).where("status","==","pending").get().then(wSnap=>{ wSnap.forEach(w=>{ let wd = w.data(); html += `<div class="tx-item tx-pending"><div><b>WITHDRAWAL PENDING</b><br><small>${wd.requestedAt.toDate().toLocaleString()}</small></div><div style="color:#f59e0b;font-weight:bold">- Ksh ${wd.amount}</div></div>`; }); document.getElementById('txHistory').innerHTML = html || "No transactions yet"; }); }); }
+// BUY PACKAGE - WITH REFERRAL BONUS TRIGGER
+function buyPackage(price, days, daily){
+  db.collection("users").doc(phone).get().then(doc=>{
+    let u = doc.data();
+    if(u.balance < price){ alert("❌ Not enough balance. Please deposit first."); return; }
+    
+    if(!confirm(`Buy ${price} package for ${days} days?`)) return;
+    
+    let newBalance = u.balance - price;
+    let owned = u.ownedPackages || {};
+    owned[Date.now()] = {price, days, daily, start: new Date()};
+    
+    db.collection("users").doc(phone).update({
+      balance: newBalance,
+      ownedPackages: owned
+    }).then(()=>{
+      // TRIGGER REFERRAL BONUS IF USER WAS REFERRED
+      if(u.referredBy && u.referralStatus !== 'triggered' && u.referralStatus !== 'approved'){
+        let bonus = Math.round(price * 0.10); // 10%
+        db.collection("users").where("myReferralCode", "==", u.referredBy).get().then(snap=>{
+          snap.forEach(refDoc=>{
+            db.collection("referralBonuses").add({
+              referrerPhone: refDoc.id,
+              referredPhone: phone,
+              referredName: u.username,
+              packagePrice: price,
+              bonusAmount: bonus,
+              status: 'pending',
+              createdAt: new Date()
+            })
+            db.collection("users").doc(phone).update({referralStatus: 'triggered'})
+          })
+        })
+      }
+      alert(`✅ Package Purchased Successfully!\nKsh ${price} deducted from balance`);
+      loadUser();
+    }).catch(err=>alert('❌ Error: ' + err.message))
+  })
+}
 </script>
 </body>
 </html>
