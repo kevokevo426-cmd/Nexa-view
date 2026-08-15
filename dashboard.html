@@ -17,17 +17,14 @@ header{background:#111;padding:20px;text-align:center;border-bottom:1px solid #2
 .package.earn{color:#aaa;font-size:13px;line-height:1.6}
 .package button{width:100%;padding:14px;margin-top:10px;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:10px;font-weight:bold;font-size:15px;cursor:pointer}
 .badge{background:#ef4444;color:white;font-size:11px;padding:3px 8px;border-radius:20px}
-
-/* STACKING COLORS */
-.package.lvl1 { border-color:#22c55e; background:#052e16; box-shadow:0 0 15px #22c55e44; } /* GREEN - 1x */
-.package.lvl2 { border-color:#ffffff; background:#1a1a1a; box-shadow:0 0 15px #ffffff44; } /* WHITE - 2x */
-.package.lvl3 { border-color:#a855f7; background:#2e1065; box-shadow:0 0 15px #a855f744; } /* PURPLE - 3x+ */
-
+.package.lvl1 { border-color:#22c55e; background:#052e16; box-shadow:0 0 15px #22c55e44; }
+.package.lvl2 { border-color:#ffffff; background:#1a1a1a; box-shadow:0 0 15px #ffffff44; }
+.package.lvl3 { border-color:#a855f7; background:#2e1065; box-shadow:0 0 15px #a855f744; }
 .nav{position:fixed;bottom:0;width:100%;background:#111;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #222}
-.nav button{background:none;border:none;color:#aaa;font-size:12px;font-weight:600}
+.nav button{background:none;border:none;color:#aaa;font-size:12px;font-weight:600;cursor:pointer}
 .nav button.active{color:#fbbf24}
 .task{background:#111;padding:15px;border-radius:12px;margin:10px 0;border:1px solid #222}
-.task button{width:100%;padding:14px;background:#22c55e;color:black;border:none;border-radius:10px;font-weight:bold;font-size:15px}
+.task button{width:100%;padding:14px;background:#22c55e;color:black;border:none;border-radius:10px;font-weight:bold;font-size:15px;cursor:pointer}
 .task button:disabled{background:#444;color:#888}
 table{width:100%;font-size:12px;border-collapse:collapse}
 th,td{padding:8px;text-align:left;border-bottom:1px solid #222}
@@ -53,7 +50,6 @@ th{color:#fbbf24}
 
 <div id="info" class="page">
   <h2>📖 INFORMATION CENTER</h2>
-
   <div style="background:#111;padding:15px;border-radius:12px;margin:15px 0;border:1px solid #222">
     <h3 style="color:#fbbf24">HOW EARNING WORKS</h3>
     <p>1. Buy any package L1-L8</p>
@@ -61,14 +57,12 @@ th{color:#fbbf24}
     <p>3. Each task = Daily Amount ÷ 20</p>
     <p>4. You can stack the same package multiple times</p>
   </div>
-
   <div style="background:#111;padding:15px;border-radius:12px;margin:15px 0;border:1px solid #222">
     <h3 style="color:#fbbf24">STACKING COLORS</h3>
     <p><span style="color:#22c55e">● GREEN</span> = You bought this package 1 time</p>
     <p><span style="color:#ffffff">● WHITE</span> = You bought this package 2 times</p>
     <p><span style="color:#a855f7">● PURPLE</span> = You bought this package 3+ times</p>
   </div>
-
   <div style="background:#111;padding:15px;border-radius:12px;margin:15px 0;border:1px solid #222">
     <h3 style="color:#fbbf24">PACKAGE LIST</h3>
     <table>
@@ -112,7 +106,6 @@ const PACKAGES = [
 let currentUser = null;
 let phone = localStorage.getItem("nexaPhone");
 
-// FIX: If no phone in storage, send back to login
 if(!phone){
   alert("Please login first");
   window.location.href = "login.html";
@@ -121,11 +114,11 @@ if(!phone){
 db.collection("users").doc(phone).onSnapshot(doc=>{
   if(doc.exists){
     currentUser = doc.data();
-    balance.innerText = `Ksh ${currentUser.balance.toFixed(2)}`;
+    document.getElementById('balance').innerText = `Ksh ${currentUser.balance.toFixed(2)}`;
     loadPackages();
     loadTasks();
   } else {
-    packageGrid.innerHTML = "Account not found. <a href='login.html' style='color:#fbbf24'>Login again</a>";
+    document.getElementById('packageGrid').innerHTML = "Account not found. <a href='login.html' style='color:#fbbf24'>Login again</a>";
   }
 });
 
@@ -137,13 +130,14 @@ function showPage(id){
 }
 
 function loadPackages(){
-  packageGrid.innerHTML = "";
+  let grid = document.getElementById('packageGrid');
+  grid.innerHTML = "";
   PACKAGES.forEach(p=>{
     let count = currentUser.ownedPackages[p.name] || 0;
     let totalEarn = p.daily * count;
     let perTask = (p.daily/20).toFixed(2);
     let levelClass = count==1?'lvl1':count==2?'lvl2':count>=3?'lvl3':'';
-    packageGrid.innerHTML += `
+    grid.innerHTML += `
       <div class="package ${levelClass}">
         <h4>${p.name} ${count>0?`<span class="badge">x${count}</span>`:''}</h4>
         <div class="price">Ksh ${p.price}</div>
@@ -159,15 +153,10 @@ function loadPackages(){
 function buyPackage(name, price){
   if(currentUser.balance < price){ alert("❌ Insufficient Balance"); return; }
   if(!confirm(`Buy ${name} for Ksh ${price}?`)) return;
-
   let newBalance = currentUser.balance - price;
   let owned = currentUser.ownedPackages || {};
   owned[name] = (owned[name] || 0) + 1;
-
-  db.collection("users").doc(phone).update({
-    balance: newBalance,
-    ownedPackages: owned
-  }).then(()=>{ alert(`✅ ${name} Purchased Successfully!`) });
+  db.collection("users").doc(phone).update({balance: newBalance, ownedPackages: owned}).then(()=>{ alert(`✅ ${name} Purchased Successfully!`) });
 }
 
 function loadTasks(){
@@ -177,8 +166,8 @@ function loadTasks(){
     if(p) totalDaily += p.daily * currentUser.ownedPackages[pkg];
   }
   let perTask = totalDaily > 0? (totalDaily/20).toFixed(2) : 0;
-  taskProgress.innerText = `${currentUser.tasksDone || 0}/20`;
-  taskList.innerHTML = `
+  document.getElementById('taskProgress').innerText = `${currentUser.tasksDone || 0}/20`;
+  document.getElementById('taskList').innerHTML = `
     <div class="task">
       <h4>Complete 20 Tasks Today</h4>
       <p>Earn Ksh ${perTask} per task | Total: Ksh ${totalDaily}/day</p>
@@ -193,10 +182,7 @@ function doTask(earn){
   if((currentUser.tasksDone || 0) >= 20){ alert("✅ All 20 tasks done for today"); return; }
   let newTasks = (currentUser.tasksDone || 0) + 1;
   let newBalance = currentUser.balance + parseFloat(earn);
-  db.collection("users").doc(phone).update({
-    tasksDone: newTasks,
-    balance: newBalance
-  });
+  db.collection("users").doc(phone).update({tasksDone: newTasks, balance: newBalance});
 }
 </script>
 </body>
