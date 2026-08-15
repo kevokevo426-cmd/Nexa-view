@@ -4,22 +4,60 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NEXA REGISTER</title>
 <style>
-body{background:#000;color:white;font-family:Poppins;display:flex;justify-content:center;align-items:center;height:100vh;margin:0}
-.box{background:#111;padding:30px;border-radius:16px;border:1px solid #fbbf24;width:90%;max-width:400px}
-input,button{width:100%;padding:14px;margin:10px 0;background:#222;border:1px solid #333;color:white;border-radius:10px;font-size:15px;box-sizing:border-box}
-button{background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;font-weight:bold;cursor:pointer}
-h2{color:#fbbf24;text-align:center}
-a{color:#fbbf24}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+body{background:#000;color:white;font-family:Poppins;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:20px}
+.box{background:#111;padding:30px;border-radius:20px;border:1px solid #222;width:100%;max-width:420px}
+h2{color:#fbbf24;text-align:center;font-size:28px;margin-bottom:25px;font-weight:700}
+label{font-size:13px;color:#aaa;margin-bottom:8px;display:block;font-weight:600}
+input{width:100%;padding:15px;background:#1a1a1a;border:1px solid #333;color:white;border-radius:12px;font-size:15px;margin-bottom:18px;box-sizing:border-box}
+.phone-wrap{display:flex;gap:10px}
+.phone-wrap select{width:30%;padding:15px;background:#1a1a1a;border:1px solid #333;color:white;border-radius:12px}
+.phone-wrap input{width:70%;margin-bottom:0}
+button{width:100%;padding:16px;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:12px;font-weight:bold;font-size:16px;cursor:pointer;margin-top:10px}
+.checkbox{display:flex;align-items:center;gap:10px;margin:15px 0;font-size:13px}
+.checkbox input{width:18px;height:18px;margin:0;accent-color:#fbbf24}
+.checkbox a{color:#fbbf24;text-decoration:none}
+a{color:#fbbf24;text-decoration:none}
+.code-box{display:flex;gap:10px}
+.code-box input{flex:1}
+.code-display{background:#1a1a1a;border:1px solid #fbbf24;color:#fbbf24;font-weight:bold;font-size:18px;letter-spacing:3px;text-align:center;padding:15px;border-radius:12px;min-width:100px;display:flex;align-items:center;justify-content:center}
 </style>
 </head>
 <body>
 <div class="box">
-  <h2>CREATE ACCOUNT</h2>
-  <input type="tel" id="phone" placeholder="Phone: 0712345678">
-  <input type="text" id="name" placeholder="Real Name">
-  <input type="password" id="pass" placeholder="Password">
+  <h2>Create Account</h2>
+  
+  <label>USERNAME</label>
+  <input type="text" id="username" placeholder="Choose any nickname e.g King254">
+
+  <label>PHONE NUMBER</label>
+  <div class="phone-wrap">
+    <select id="countryCode">
+      <option>+254 KE</option>
+    </select>
+    <input type="tel" id="phone" placeholder="712345678">
+  </div>
+
+  <label>PASSWORD</label>
+  <input type="password" id="pass" placeholder="Enter password">
+
+  <label>REFERRAL CODE - OPTIONAL</label>
+  <input type="text" id="refCode" placeholder="Enter code if you have one">
+
+  <label>VERIFICATION CODE - KENYA</label>
+  <div class="code-box">
+    <input type="text" id="captchaInput" placeholder="Enter code">
+    <div class="code-display" id="captchaCode">8519</div>
+  </div>
+
+  <div class="checkbox">
+    <input type="checkbox" id="terms">
+    <span>I agree to <a href="#" onclick="alert('NEXA Terms and Conditions')">Terms</a></span>
+  </div>
+
   <button onclick="register()">REGISTER</button>
-  <p style="text-align:center">Have account? <a href="index.html">Login</a></p>
+  
+  <p style="text-align:center;margin-top:20px">Have account? <a href="index.html">Login</a></p>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -29,26 +67,53 @@ const firebaseConfig = {apiKey:"AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",authDom
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// AUTO CONVERT 07 to 254
+// Generate random captcha
+function newCaptcha(){
+  document.getElementById('captchaCode').innerText = Math.floor(1000 + Math.random() * 9000);
+}
+newCaptcha();
+document.getElementById('captchaCode').onclick = newCaptcha;
+
 function formatPhone(p){
   p = p.replace(/\D/g,'');
   if(p.startsWith('0')) return '254' + p.substring(1);
-  if(p.startsWith('7')) return '254' + p;
-  return p;
+  return '254' + p;
+}
+
+function generateCode(){
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code = 'NEXA';
+  for(let i=0; i<5; i++){
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
 }
 
 function register(){
+  let username = document.getElementById('username').value.trim();
   let phone = formatPhone(document.getElementById('phone').value.trim());
-  let name = document.getElementById('name').value.trim();
   let pass = document.getElementById('pass').value.trim();
-  if(!phone || !name || !pass){ alert('Fill all'); return; }
+  let refBy = document.getElementById('refCode').value.trim();
+  let captcha = document.getElementById('captchaInput').value.trim();
+  let realCaptcha = document.getElementById('captchaCode').innerText;
+  
+  if(!username || !phone || !pass){ alert('❌ Fill Username, Phone and Password'); return; }
+  if(captcha !== realCaptcha){ alert('❌ Wrong Verification Code. Click code to refresh'); newCaptcha(); return; }
+  if(!document.getElementById('terms').checked){ alert('❌ Please agree to Terms to continue'); return; }
+  
+  let myCode = generateCode();
   
   db.collection("users").doc(phone).get().then(doc=>{
     if(doc.exists){ alert('❌ Phone number already registered'); return; }
+    
     db.collection("users").doc(phone).set({
-      phone, realName:name, password:pass, balance:0, ownedPackages:{}, tasksDone:0, referralBonus:0, createdAt:new Date()
+      phone, username, realName: username, // username is display name
+      password:pass, balance:0, ownedPackages:{}, tasksDone:0, referralBonus:0,
+      myReferralCode: myCode, 
+      referredBy: refBy || '', 
+      createdAt:new Date()
     }).then(()=>{
-      alert('✅ Account Created');
+      alert(`✅ Account Created Successfully!\n\nUsername: ${username}\nYour Referral Code: ${myCode}\n\nShare your code to earn bonuses`);
       localStorage.setItem("nexaPhone", phone);
       window.location.href = "dashboard.html";
     });
