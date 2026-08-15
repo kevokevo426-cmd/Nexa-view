@@ -106,9 +106,10 @@ const PACKAGES = [
 let currentUser = null;
 let phone = localStorage.getItem("nexaPhone");
 
+// UPDATED LINE: Now redirects to index.html
 if(!phone){
   alert("Please login first");
-  window.location.href = "login.html";
+  window.location.href = "index.html"; 
 }
 
 db.collection("users").doc(phone).onSnapshot(doc=>{
@@ -118,7 +119,7 @@ db.collection("users").doc(phone).onSnapshot(doc=>{
     loadPackages();
     loadTasks();
   } else {
-    document.getElementById('packageGrid').innerHTML = "Account not found. <a href='login.html' style='color:#fbbf24'>Login again</a>";
+    document.getElementById('packageGrid').innerHTML = "Account not found. <a href='index.html' style='color:#fbbf24'>Login again</a>";
   }
 });
 
