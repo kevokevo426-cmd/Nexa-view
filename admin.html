@@ -18,7 +18,7 @@ body{background:#000;color:white;font-family:Poppins;padding:15px;margin:0}
 .notif-badge{position:absolute;top:-5px;right:-5px;background:#ef4444;color:white;border-radius:50%;font-size:10px;font-weight:700;padding:2px 6px;min-width:18px;text-align:center}
 .box{background:#111;border:1px solid #333;border-radius:12px;padding:14px;margin-bottom:15px}
 .pending-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:15px}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:15px}
 .stat-card{background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:12px;text-align:center}
 .stat-card h4{color:#888;font-size:11px;margin:0;font-weight:400}
 .stat-card p{font-size:16px;font-weight:700;margin:5px 0 0 0}
@@ -27,11 +27,12 @@ body{background:#000;color:white;font-family:Poppins;padding:15px;margin:0}
 .search-icon{color:#fbbf24;font-size:18px;margin-right:8px}
 h2{color:#fbbf24;text-align:center;margin:0}
 h3{color:#fbbf24;margin:0 0 12px 0;font-size:15px}
-.btn{padding:10px 14px;background:#22c55e;color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;margin:2px;font-size:12px;font-family:Poppins}
+.btn{padding:8px 12px;background:#22c55e;color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;margin:2px;font-size:11px;font-family:Poppins}
 .btn:hover{opacity:0.8}
 .btn-red{background:#ef4444;color:white}
 .btn-blue{background:#3b82f6;color:white}
 .btn-purple{background:#8b5cf6;color:white}
+.btn-green{background:#22c55e;color:#000}
 .req-card{background:#1a1a1a;padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid #333;font-size:12px;line-height:1.6}
 .message-card{background:#1a1a1a;padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid #333;border-left:4px solid #8b5cf6;cursor:pointer}
 .user-card{background:#1a1a1a;padding:10px;border-radius:10px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:flex-start;border:1px solid #333;gap:10px;cursor:pointer}
@@ -60,7 +61,7 @@ textarea{resize:vertical;min-height:80px}
       <input type="password" id="adminPassword" placeholder="Enter Admin Password">
       <span class="eye-icon" onclick="togglePassword()">👁️</span>
     </div>
-    <button class="btn btn-blue" style="width:100%" onclick="checkLogin()">Login</button>
+    <button class="btn btn-blue" style="width:100%;padding:12px;font-size:14px" onclick="checkLogin()">Login</button>
     <p id="loginError" style="color:#ef4444;font-size:12px;margin-top:10px"></p>
   </div>
 </div>
@@ -76,12 +77,10 @@ textarea{resize:vertical;min-height:80px}
   </div>
 
   <div class="stats">
-    <div class="stat-card"><h4>Total Users</h4><p id="totalUsers" style="color:#fbbf24">0</p></div>
     <div class="stat-card"><h4>Total Invested</h4><p id="totalInvested" style="color:#22c55e">+Ksh 0.00</p></div>
-    <div class="stat-card"><h4>Total Income</h4><p id="totalIncome" style="color:#22c55e">+Ksh 0.00</p></div>
     <div class="stat-card"><h4>Today's Invested</h4><p id="todayInvested" style="color:#22c55e">+Ksh 0.00</p></div>
-    <div class="stat-card"><h4>Today's Income</h4><p id="todayIncome" style="color:#22c55e">+Ksh 0.00</p></div>
-    <div class="stat-card"><h4>Total Withdrawn</h4><p id="totalWithdrawn" style="color:#ef4444">-Ksh 0.00</p></div>
+    <div class="stat-card"><h4>Today's Withdrawals</h4><p id="todayWithdrawals" style="color:#ef4444">-Ksh 0.00</p></div>
+    <div class="stat-card"><h4>Total Withdrawals</h4><p id="totalWithdrawals" style="color:#ef4444">-Ksh 0.00</p></div>
   </div>
 
   <div class="pending-grid">
@@ -91,11 +90,10 @@ textarea{resize:vertical;min-height:80px}
 
   <div class="box">
     <h3>👥 All Users</h3>
-    <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="searchInput" placeholder="Search..."></div>
+    <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="searchInput" placeholder="Search by Phone or User ID..."></div>
     <div id="userList">Loading...</div>
   </div>
   
-  <!-- MODALS -->
   <div id="messagesModal" class="modal" onclick="closeMessagesModal()"><div class="modal-content" onclick="event.stopPropagation()"><h3>📩 All Messages</h3><div id="messagesList">Loading...</div><button class="btn btn-red" style="width:100%;margin-top:10px" onclick="closeMessagesModal()">Close</button></div></div>
   <div id="userInfoModal" class="modal" onclick="closeUserInfoModal()"><div class="modal-content" onclick="event.stopPropagation()"><h3>👤 User Information</h3><div id="userInfoContent"></div><div style="margin-top:15px;display:flex;gap:8px"><button class="btn btn-purple" style="flex:1" onclick="sendMsgFromInfo()">Send Message</button><button class="btn btn-blue" style="flex:1" onclick="depositFromInfo()">Deposit</button><button class="btn btn-red" style="flex:1" onclick="closeUserInfoModal()">Close</button></div></div></div>
   <div id="depositModal" class="modal" onclick="closeDepositModal()"><div class="modal-content" onclick="event.stopPropagation()"><h3>Add Balance</h3><p id="depositUserPhone" style="color:#fbbf24"></p><input id="depositAmountInput" type="number" placeholder="500"><div style="margin-top:15px;display:flex;gap:8px"><button class="btn btn-blue" style="flex:1" onclick="confirmDeposit()">Add Money</button><button class="btn btn-red" style="flex:1" onclick="closeDepositModal()">Cancel</button></div></div></div>
@@ -111,13 +109,40 @@ const ADMIN_PASSWORD = "admin123";
 let selectedUserPhone = "";let selectedUserData = {};let userCounter = 1;let allUsers = [];
 
 function togglePassword(){let p=document.getElementById('adminPassword');let e=document.querySelector('.eye-icon');if(p.type==="password"){p.type="text";e.innerText="🙈";}else{p.type="password";e.innerText="👁️";}}
-function checkLogin(){let pass=document.getElementById('adminPassword').value;if(pass===ADMIN_PASSWORD){localStorage.setItem('nexaAdminLoggedIn','true');showPanel();}else{document.getElementById('loginError').innerText="❌ Wrong Password";}}
-function showPanel(){document.getElementById('loginScreen').style.display='none';document.getElementById('mainPanel').style.display='block';loadUsers();loadWithdrawals();loadReferralRequests();loadMessages();}
+function checkLogin(){let pass=document.getElementById('adminPassword').value;if(pass===ADMIN_PASSWORD){localStorage.setItem('nexaAdminLoggedIn','true');showPanel();}else{document.getElementById('loginError').innerText="❌ Wrong Password. Use: admin123";}}
+function showPanel(){document.getElementById('loginScreen').style.display='none';document.getElementById('mainPanel').style.display='block';loadUsers();loadWithdrawals();loadReferralRequests();loadMessages();loadStats();}
 function logout(){localStorage.removeItem('nexaAdminLoggedIn');location.reload();}
+
+function loadStats(){
+  let today = new Date(); today.setHours(0,0,0,0);
+  let totalInvested = 0; let todayInvested = 0; let totalWithdrawals = 0; let todayWithdrawals = 0;
+
+  db.collection("users").get().then(s=>{
+    s.forEach(d=>{
+      let u = d.data();
+      totalInvested += u.totalInvested || 0;
+      if(u.lastPurchaseDate && u.lastPurchaseDate.toDate() >= today){
+        todayInvested += u.lastPurchaseAmount || 0;
+      }
+    });
+    document.getElementById('totalInvested').innerText = `+Ksh ${totalInvested.toFixed(2)}`;
+    document.getElementById('todayInvested').innerText = `+Ksh ${todayInvested.toFixed(2)}`;
+  });
+
+  db.collection("withdrawals").where("status","==","paid").get().then(s=>{
+    s.forEach(d=>{let w = d.data(); totalWithdrawals += w.amount || 0; if(w.date && w.date.toDate() >= today){ todayWithdrawals += w.amount || 0; }});
+  });
+  db.collection("referralRequests").where("status","==","paid").get().then(s=>{
+    s.forEach(d=>{let r = d.data(); totalWithdrawals += r.amount || 0; if(r.date && r.date.toDate() >= today){ todayWithdrawals += r.amount || 0; }});
+    document.getElementById('totalWithdrawals').innerText = `-Ksh ${totalWithdrawals.toFixed(2)}`;
+    document.getElementById('todayWithdrawals').innerText = `-Ksh ${todayWithdrawals.toFixed(2)}`;
+  });
+}
+
 function loadMessages(){db.collection("userMessages").orderBy("date","desc").limit(50).onSnapshot(s=>{let u=0;let h="";s.forEach(d=>{let x=d.data();if(!x.read)u++;h+=`<div class="message-card"><b style="color:#8b5cf6">${x.phone}</b><br>${x.message}</div>`;});document.getElementById('messagesList').innerHTML=h||"No messages";if(u>0){document.getElementById('notifBadge').style.display='block';document.getElementById('notifBadge').innerText=u;}})}
 function openMessagesModal(){document.getElementById('messagesModal').style.display='flex';}
 function closeMessagesModal(){document.getElementById('messagesModal').style.display='none';}
-function openUserInfoModal(user){selectedUserData=user;selectedUserPhone=user.phone;document.getElementById('userInfoContent').innerHTML=`<div class="info-row"><span>Phone</span><span>${user.phone}</span></div><div class="info-row"><span>Balance</span><span style="color:#22c55e">Ksh ${(user.balance||0).toFixed(2)}</span></div>`;document.getElementById('userInfoModal').style.display='flex';}
+function openUserInfoModal(user){selectedUserData=user;selectedUserPhone=user.phone;document.getElementById('userInfoContent').innerHTML=`<div class="info-row"><span>Phone</span><span>${user.phone}</span></div><div class="info-row"><span>Balance</span><span style="color:#22c55e">Ksh ${(user.balance||0).toFixed(2)}</span></div><div class="info-row"><span>Total Invested</span><span style="color:#22c55e">Ksh ${(user.totalInvested||0).toFixed(2)}</span></div>`;document.getElementById('userInfoModal').style.display='flex';}
 function closeUserInfoModal(){document.getElementById('userInfoModal').style.display='none';}
 function sendMsgFromInfo(){closeUserInfoModal();openMessageModal(selectedUserPhone);}
 function depositFromInfo(){closeUserInfoModal();openDepositModal(selectedUserPhone);}
@@ -127,15 +152,21 @@ function sendUserMessage(){let msg=document.getElementById('userMessageInput').v
 function openBroadcastModal(){document.getElementById('broadcastModal').style.display='flex';}
 function closeBroadcastModal(){document.getElementById('broadcastModal').style.display='none';}
 function sendBroadcast(){let msg=document.getElementById('broadcastMessage').value;db.collection("broadcasts").add({message:msg,date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{alert("Sent to all");closeBroadcastModal();})}
-function loadUsers(){db.collection("users").get().then(s=>{allUsers=[];let tu=0,ti=0,tin=0,tdi=0,tdin=0,tw=0;s.forEach(d=>{let u=d.data();allUsers.push(u);ti+=u.totalInvested||0;tin+=u.totalIncome||0;tw+=u.totalWithdrawn||0;tdi+=u.todayInvested||0;tdin+=u.todayIncome||0;});tu=s.size;renderUsers(allUsers);document.getElementById('totalUsers').innerText=tu;document.getElementById('totalInvested').innerText=`+Ksh ${ti.toFixed(2)}`;document.getElementById('totalIncome').innerText=`+Ksh ${tin.toFixed(2)}`;document.getElementById('todayInvested').innerText=`+Ksh ${tdi.toFixed(2)}`;document.getElementById('todayIncome').innerText=`+Ksh ${tdin.toFixed(2)}`;document.getElementById('totalWithdrawn').innerText=`-Ksh ${tw.toFixed(2)}`;})}
-function renderUsers(users){let h="";userCounter=1;users.forEach(u=>{h+=`<div class="user-card" onclick='openUserInfoModal(${JSON.stringify(u)})'><div class="user-num">#${userCounter}</div><div class="user-info"><b>${u.phone}</b><br>Balance: <b style="color:#22c55e">Ksh ${(u.balance||0).toFixed(2)}</b></div><div class="btn-group" onclick="event.stopPropagation()"><button class="btn btn-purple" onclick="openMessageModal('${u.phone}')">Msg</button><button class="btn btn-blue" onclick="openDepositModal('${u.phone}')">Deposit</button></div></div>`;userCounter++;});document.getElementById('userList').innerHTML=h;}
+function loadUsers(){db.collection("users").get().then(s=>{allUsers=[];s.forEach(d=>{let u=d.data();u.docId=d.id;allUsers.push(u)});renderUsers(allUsers);})}
+function renderUsers(users){let h="";userCounter=1;users.forEach(u=>{h+=`<div class="user-card" onclick='openUserInfoModal(${JSON.stringify(u)})'><div class="user-num">#${userCounter}</div><div class="user-info"><b>${u.phone}</b><br>Balance: <b style="color:#22c55e">Ksh ${(u.balance||0).toFixed(2)}</b><br>Total Invested: <b>Ksh ${(u.totalInvested||0).toFixed(2)}</b></div><div class="btn-group" onclick="event.stopPropagation()"><button class="btn btn-purple" onclick="openMessageModal('${u.phone}')">Msg</button><button class="btn btn-blue" onclick="openDepositModal('${u.phone}')">Deposit</button></div></div>`;userCounter++;});document.getElementById('userList').innerHTML=h;}
+document.getElementById('searchInput').addEventListener('keyup', function(){let q=this.value.toLowerCase();let f=allUsers.filter(u=>{return (u.phone && u.phone.toLowerCase().includes(q)) || (u.userID && u.userID.toLowerCase().includes(q));});renderUsers(f);});
 function openDepositModal(phone){selectedUserPhone=phone;document.getElementById('depositUserPhone').innerText="User: "+phone;document.getElementById('depositModal').style.display='flex';}
 function closeDepositModal(){document.getElementById('depositModal').style.display='none';}
 function confirmDeposit(){let a=parseFloat(document.getElementById('depositAmountInput').value);db.collection("users").doc(selectedUserPhone).update({balance:firebase.firestore.FieldValue.increment(a)}).then(()=>{alert("Added");closeDepositModal();loadUsers();})}
-function loadWithdrawals(){db.collection("withdrawals").where("status","==","pending").get().then(s=>{let h="";s.forEach(d=>{let x=d.data();h+=`<div class="req-card"><b>${x.phone}</b><br>Ksh ${x.amount}<br><button class="btn" onclick="approveWithdraw('${d.id}')">Paid</button></div>`;});document.getElementById('withdrawList').innerHTML=h||"No pending";})}
-function loadReferralRequests(){db.collection("referralRequests").where("status","==","pending").get().then(s=>{let h="";s.forEach(d=>{let x=d.data();h+=`<div class="req-card"><b>${x.phone}</b><br>Ksh ${x.amount}<br><button class="btn" onclick="approveReferral('${d.id}')">Approve</button></div>`;});document.getElementById('referralList').innerHTML=h||"No pending";})}
-function approveWithdraw(id){db.collection("withdrawals").doc(id).update({status:"paid"}).then(()=>loadWithdrawals());}
-function approveReferral(id){db.collection("referralRequests").doc(id).get().then(d=>{let x=d.data();db.collection("users").doc(x.phone).update({balance:firebase.firestore.FieldValue.increment(x.amount)});db.collection("referralRequests").doc(id).update({status:"paid"});alert("Approved");loadReferralRequests();loadUsers();})}
+
+// UPDATED WITH APPROVE + REJECT
+function loadWithdrawals(){db.collection("withdrawals").where("status","==","pending").get().then(s=>{let h="";if(s.empty){h="<p style='color:#888;text-align:center'>No pending</p>";}s.forEach(d=>{let x=d.data();h+=`<div class="req-card"><b>User:</b> ${x.phone}<br><b>Amount:</b> Ksh ${x.amount}<br><button class="btn btn-green" onclick="approveWithdraw('${d.id}')">Approve</button><button class="btn-red" onclick="rejectWithdraw('${d.id}')">Reject</button></div>`;});document.getElementById('withdrawList').innerHTML=h;})}
+function loadReferralRequests(){db.collection("referralRequests").where("status","==","pending").get().then(s=>{let h="";if(s.empty){h="<p style='color:#888;text-align:center'>No pending</p>";}s.forEach(d=>{let x=d.data();h+=`<div class="req-card"><b>User:</b> ${x.phone}<br><b>Bonus:</b> Ksh ${x.amount}<br><button class="btn btn-green" onclick="approveReferral('${d.id}')">Approve</button><button class="btn-red" onclick="rejectReferral('${d.id}')">Reject</button></div>`;});document.getElementById('referralList').innerHTML=h;})}
+function approveWithdraw(id){db.collection("withdrawals").doc(id).update({status:"paid",date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{alert("✅ Approved");loadWithdrawals();loadStats();});}
+function rejectWithdraw(id){db.collection("withdrawals").doc(id).update({status:"rejected"}).then(()=>loadWithdrawals());}
+function approveReferral(id){db.collection("referralRequests").doc(id).get().then(d=>{let x=d.data();db.collection("users").doc(x.phone).update({balance:firebase.firestore.FieldValue.increment(x.amount)});db.collection("referralRequests").doc(id).update({status:"paid",date:firebase.firestore.FieldValue.serverTimestamp()});alert("✅ Bonus Approved");loadReferralRequests();loadStats();loadUsers();})}
+function rejectReferral(id){db.collection("referralRequests").doc(id).update({status:"rejected"}).then(()=>loadReferralRequests());}
+
 window.onload=function(){if(localStorage.getItem('nexaAdminLoggedIn')==='true'){showPanel();}}
 </script>
 </body>
