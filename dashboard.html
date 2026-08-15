@@ -7,8 +7,6 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 body{background:#000;color:white;font-family:Poppins;margin:0;padding-bottom:80px}
-header{background:#111;padding:20px;text-align:center;border-bottom:1px solid #222;position:sticky;top:0;z-index:10}
-.balance{font-size:28px;font-weight:700;color:#22c55e;margin-top:5px}
 .page{display:none;padding:20px;max-width:700px;margin:0 auto}
 .active{display:block}
 .package{background:#111;padding:15px;border-radius:16px;margin:15px 0;border:2px solid #222;transition:0.3s}
@@ -30,16 +28,10 @@ header{background:#111;padding:20px;text-align:center;border-bottom:1px solid #2
 table{width:100%;font-size:12px;border-collapse:collapse}
 th,td{padding:8px;text-align:left;border-bottom:1px solid #222}
 th{color:#fbbf24}
-.wallet-card{background:#111;padding:20px;border-radius:16px;margin:15px 0;border:1px solid #222;text-align:center}
-.wallet-btn{width:48%;padding:14px;margin:10px 1%;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:10px;font-weight:bold;font-size:15px;cursor:pointer}
+.balance{font-size:28px;font-weight:700;color:#22c55e;margin-top:5px}
 </style>
 </head>
 <body>
-
-<header>
-  <div style="font-size:14px;color:#aaa">Account Balance</div>
-  <div class="balance" id="balance">Ksh 0.00</div>
-</header>
 
 <div id="home" class="page active">
   <h2>Packages</h2>
@@ -52,15 +44,57 @@ th{color:#fbbf24}
 </div>
 
 <div id="wallet" class="page">
-  <h2>💰 WALLET</h2>
-  <div class="wallet-card">
-    <div style="color:#aaa">Available Balance</div>
-    <div class="balance" id="walletBalance">Ksh 0.00</div>
+  <!-- TOP BALANCE BAR -->
+  <div style="background:#111;padding:25px 20px;text-align:center;border-bottom:1px solid #222;margin:-20px -20px 20px -20px">
+    <div style="font-size:14px;color:#aaa">Account Balance</div>
+    <div class="balance" id="walletBalance" style="font-size:32px">Ksh 0.00</div>
   </div>
-  <button class="wallet-btn" onclick="alert('Deposit coming soon')">DEPOSIT</button>
-  <button class="wallet-btn" onclick="alert('Withdraw coming soon')">WITHDRAW</button>
-  <h3 style="margin-top:20px">Transaction History</h3>
-  <div id="txHistory" style="background:#111;padding:15px;border-radius:12px">No transactions yet</div>
+
+  <!-- 3 STATS CARDS -->
+  <div style="display:flex;gap:10px;margin-bottom:20px">
+    <div style="flex:1;background:#111;padding:15px;border-radius:12px;text-align:center;border:1px solid #222">
+      <div style="font-size:12px;color:#aaa">Today's Income</div>
+      <div style="font-size:18px;font-weight:bold;color:#22c55e" id="todayIncome">Ksh 0.00</div>
+    </div>
+    <div style="flex:1;background:#111;padding:15px;border-radius:12px;text-align:center;border:1px solid #222">
+      <div style="font-size:12px;color:#aaa">Referral Bonus</div>
+      <div style="font-size:18px;font-weight:bold;color:#fbbf24" id="refBonus">Ksh 0.00</div>
+    </div>
+  </div>
+
+  <!-- WALLET TITLE -->
+  <h2 style="display:flex;align-items:center;gap:8px">💰 WALLET</h2>
+
+  <!-- DEPOSIT WITHDRAW -->
+  <div style="display:flex;gap:10px;margin:15px 0">
+    <button onclick="alert('M-Pesa Deposit coming soon')" style="flex:1;padding:15px;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:12px;font-weight:bold;font-size:15px;cursor:pointer">DEPOSIT</button>
+    <button onclick="showWithdraw()" style="flex:1;padding:15px;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:12px;font-weight:bold;font-size:15px;cursor:pointer">WITHDRAW</button>
+  </div>
+
+  <!-- RECEIVING ACCOUNT SECTION -->
+  <div style="background:#111;padding:20px;border-radius:16px;margin:20px 0;border:1px solid #222">
+    <h3 style="color:#fbbf24;margin-bottom:15px">Receiving account number (M-Pesa)</h3>
+    
+    <div style="font-size:13px;color:#999;margin:10px 0 5px 0">Receiving account number (M-Pesa)</div>
+    <input type="tel" id="withdrawPhone" placeholder="07XXXXXXXX" style="width:100%;padding:14px;background:#2a2a2a;border:1px solid #333;border-radius:12px;color:#fff;font-size:15px;margin-bottom:15px;box-sizing:border-box">
+
+    <div style="font-size:13px;color:#999;margin:10px 0 5px 0">Real name</div>
+    <input type="text" id="realName" placeholder="John Doe" style="width:100%;padding:14px;background:#2a2a2a;border:1px solid #333;border-radius:12px;color:#fff;font-size:15px;margin-bottom:15px;box-sizing:border-box">
+
+    <div style="font-size:13px;color:#999;margin:10px 0 5px 0">Change PIN (optional)</div>
+    <input type="password" id="withdrawPin" placeholder="Leave blank to keep current PIN" style="width:100%;padding:14px;background:#2a2a2a;border:1px solid #333;border-radius:12px;color:#fff;font-size:15px;margin-bottom:15px;box-sizing:border-box">
+
+    <button onclick="updateWallet()" style="width:100%;padding:15px;background:linear-gradient(90deg,#f59e0b,#ea580c);color:white;border:none;border-radius:12px;font-weight:bold;font-size:16px;cursor:pointer">Update wallet</button>
+    
+    <p style="color:#999;font-size:12px;margin-top:15px;line-height:1.5">
+      You can update your withdrawal account anytime. 
+      Leave PIN blank to keep the current one.
+    </p>
+  </div>
+
+  <!-- TRANSACTION HISTORY -->
+  <h3>Transaction History</h3>
+  <div id="txHistory" style="background:#111;padding:15px;border-radius:12px;font-size:13px">No transactions yet</div>
 </div>
 
 <div id="info" class="page">
@@ -71,6 +105,20 @@ th{color:#fbbf24}
     <p>2. Complete 20 Tasks daily to earn your daily amount</p>
     <p>3. Each task = Daily Amount ÷ 20</p>
     <p>4. You can stack the same package multiple times</p>
+  </div>
+  <div style="background:#111;padding:15px;border-radius:12px;margin:15px 0;border:1px solid #222">
+    <h3 style="color:#fbbf24">PACKAGE LIST</h3>
+    <table>
+      <tr><th>Package</th><th>Stake</th><th>Daily</th><th>Days</th><th>Total</th></tr>
+      <tr><td>L1</td><td>300</td><td>25</td><td>20</td><td>500</td></tr>
+      <tr><td>L2</td><td>700</td><td>50</td><td>20</td><td>1000</td></tr>
+      <tr><td>L3</td><td>1300</td><td>100</td><td>20</td><td>2000</td></tr>
+      <tr><td>L4</td><td>2500</td><td>150</td><td>30</td><td>4500</td></tr>
+      <tr><td>L5</td><td>3500</td><td>200</td><td>30</td><td>6000</td></tr>
+      <tr><td>L6</td><td>4800</td><td>250</td><td>30</td><td>7500</td></tr>
+      <tr><td>L7</td><td>7500</td><td>350</td><td>30</td><td>10500</td></tr>
+      <tr><td>L8</td><td>10000</td><td>500</td><td>30</td><td>15000</td></tr>
+    </table>
   </div>
 </div>
 
@@ -122,10 +170,24 @@ if(!phone){
 db.collection("users").doc(phone).onSnapshot(doc=>{
   if(doc.exists){
     currentUser = doc.data();
-    document.getElementById('balance').innerText = `Ksh ${currentUser.balance.toFixed(2)}`;
+    
+    // TOP BALANCE
     document.getElementById('walletBalance').innerText = `Ksh ${currentUser.balance.toFixed(2)}`;
+    
+    // TODAY'S INCOME
+    let todayIncome = 0;
+    for(let pkg in currentUser.ownedPackages){
+      let p = PACKAGES.find(x=>x.name==pkg);
+      if(p) todayIncome += p.daily * currentUser.ownedPackages[pkg];
+    }
+    document.getElementById('todayIncome').innerText = `Ksh ${todayIncome.toFixed(2)}`;
+    
+    // REFERRAL BONUS
+    document.getElementById('refBonus').innerText = `Ksh ${(currentUser.referralBonus || 0).toFixed(2)}`;
+
     loadPackages();
     loadTasks();
+    loadWalletInfo();
   } else {
     document.getElementById('packageGrid').innerHTML = "Account not found. <a href='register.html' style='color:#fbbf24'>Register here</a>";
   }
@@ -192,6 +254,35 @@ function doTask(earn){
   let newTasks = (currentUser.tasksDone || 0) + 1;
   let newBalance = currentUser.balance + parseFloat(earn);
   db.collection("users").doc(phone).update({tasksDone: newTasks, balance: newBalance});
+}
+
+function loadWalletInfo(){
+  if(currentUser.withdrawPhone) document.getElementById('withdrawPhone').value = currentUser.withdrawPhone;
+  if(currentUser.realName) document.getElementById('realName').value = currentUser.realName;
+}
+
+function updateWallet(){
+  let wPhone = document.getElementById('withdrawPhone').value.trim();
+  let rName = document.getElementById('realName').value.trim();
+  let wPin = document.getElementById('withdrawPin').value.trim();
+  
+  if(!wPhone ||!rName){ alert('Please fill phone and real name'); return; }
+  
+  let updateData = {withdrawPhone: wPhone, realName: rName};
+  if(wPin!== '') updateData.withdrawPin = wPin;
+  
+  db.collection("users").doc(phone).update(updateData).then(()=>{ 
+    alert("✅ Wallet info updated successfully!");
+    document.getElementById('withdrawPin').value = '';
+  });
+}
+
+function showWithdraw(){
+  if(!currentUser.withdrawPhone){
+    alert('❌ Please set your M-Pesa number first in the section above');
+    return;
+  }
+  alert('Withdraw request coming soon. Amount will be sent to: ' + currentUser.withdrawPhone);
 }
 </script>
 </body>
