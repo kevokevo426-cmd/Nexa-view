@@ -4,40 +4,33 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Terms - NEXA VIEW</title>
-<style>body{background:#000;color:white;font-family:Poppins;padding:20px;line-height:1.7}h1{color:#fbbf24}h2{color:#fbbf24;margin-top:30px}</style>
+<style>body{background:#000;color:white;font-family:Poppins;padding:20px;line-height:1.7;max-width:700px;margin:auto}h1{color:#fbbf24}h2{color:#fbbf24;margin-top:30px}a{color:#fbbf24}</style>
 </head>
 <body>
-<h1>NEXA VIEW - User Registration Agreement</h1>
-<p>Last Updated: August 14, 2026</p>
+<h1>NEXA VIEW - User Agreement</h1>
+<p>Last Updated: <span id="lastUpdated">Loading...</span></p>
 
-<h2>1. About NEXA VIEW</h2>
-<p>NEXA VIEW is an online platform where users earn rewards by completing daily tasks such as watching videos and advertisements.</p>
+<div id="termsContent">Loading Terms...</div>
 
-<h2>2. Eligibility</h2>
-<p>You must be 18+ years old and have a valid Kenyan phone number to register. 1 Account per phone number only.</p>
+<p style="margin-top:40px;text-align:center"><a href="register.html">← Back to Register</a></p>
 
-<h2>3. Earnings & Tasks</h2>
-<p>1. Earnings are based on completing available daily tasks. <b>Earnings are not guaranteed.</b>
-<br>2. Task rewards depend on active advertisers. We may pause tasks at any time.
-<br>3. Sunday is a rest day. No tasks available.</p>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {apiKey:"AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",authDomain:"nexa-view.firebaseapp.com",projectId:"nexa-view"};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-<h2>4. Packages</h2>
-<p>Buying a package unlocks daily tasks. Package fees are non-refundable. Package duration and daily earnings are shown before purchase.</p>
-
-<h2>5. Withdrawals</h2>
-<p>1. Minimum Withdrawal: Ksh 200
-<br>2. Time: 9:00AM - 5:00PM Daily. 1 Withdrawal per day.
-<br>3. Tax: 15% processing fee will be deducted from all withdrawals.
-<br>4. Payouts are sent to the M-PESA number in your account within 24 hours.
-<br>5. We reserve the right to delay withdrawals for security checks.</p>
-
-<h2>6. Prohibited Actions</h2>
-<p>Creating multiple accounts, using bots, or fake activity will lead to permanent ban and forfeiture of balance.</p>
-
-<h2>7. Termination</h2>
-<p>We reserve the right to suspend or terminate any account that violates these terms.</p>
-
-<h2>8. Contact</h2>
-<p>For support: WhatsApp us via the "INFO" tab in the app.</p>
+// LOAD TERMS FROM FIREBASE
+db.collection("settings").doc("terms").get().then(doc=>{
+  if(doc.exists){
+    document.getElementById('termsContent').innerHTML = doc.data().content.replace(/\n/g, '<br>');
+    let date = doc.data().updated.toDate().toLocaleDateString();
+    document.getElementById('lastUpdated').innerText = date;
+  }else{
+    document.getElementById('termsContent').innerHTML = "Terms not set. Please contact admin.";
+  }
+})
+</script>
 </body>
 </html>
