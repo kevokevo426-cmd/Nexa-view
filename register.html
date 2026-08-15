@@ -67,19 +67,10 @@ a{color:#fbbf24;text-decoration:none}
 <div id="termsPopup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:999;overflow-y:auto;padding:15px">
   <div style="background:#111;border:1px solid #fbbf24;border-radius:16px;padding:20px;max-width:600px;margin:40px auto">
     <h2 style="color:#fbbf24;text-align:center">NEXA VIEW - Terms</h2>
-    <div style="font-size:13px;line-height:1.7;text-align:left">
-      <p><b>1. About:</b> NEXA VIEW is an online platform where users earn rewards by completing daily tasks such as watching videos and ads. Available in Kenya, Uganda, and Tanzania.</p>
-      <p><b>2. Eligibility:</b> You must be 18+ years old and have a valid phone number from KE, UG, or TZ. 1 Account per phone number only.</p>
-      <p><b>3. Earnings & Tasks:</b> Earnings are NOT guaranteed. Task rewards depend on active advertisers. We may pause tasks. Sunday is a rest day - No tasks.</p>
-      <p><b>4. Packages:</b> Buying a package unlocks daily tasks. Package fees are non-refundable.</p>
-      <p><b>5. Withdrawals:</b> Min: Ksh 200 / UGX 6,000 / TZS 4,000. Time: 9:00AM - 5:00PM. 1 Withdrawal per day. 15% processing fee. Payouts: KE-MPESA, UG-MTN/AIRTEL, TZ-MPESA/AIRTEL within 24 hours.</p>
-      <p><b>6. Prohibited:</b> Multiple accounts, bots, or fake activity = Permanent Ban + Balance forfeited.</p>
-      <p><a href="terms.html" target="_blank" style="color:#fbbf24">Read Full Legal Terms →</a></p>
-    </div>
+    <div id="termsContent" style="font-size:13px;line-height:1.7;text-align:left">Loading Terms...</div>
     <button onclick="closeTerms()" style="width:100%;margin-top:15px;padding:14px;background:#fbbf24;color:black;border:none;border-radius:10px;font-weight:700;font-size:15px">I Agree & Close</button>
   </div>
 </div>
-
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
@@ -88,21 +79,21 @@ const firebaseConfig = {apiKey:"AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",authDom
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+// LOAD TERMS FROM FIREBASE
+db.collection("settings").doc("terms").get().then(doc=>{
+  if(doc.exists){
+    document.getElementById('termsContent').innerHTML = doc.data().content.replace(/\n/g, '<br>');
+  }
+})
+
 // AUTO FILL REFERRAL CODE FROM LINK ?ref=NEXAR7A9B2
 const urlParams = new URLSearchParams(window.location.search);
 const refFromUrl = urlParams.get('ref');
 if(refFromUrl){ document.getElementById('refCode').value = refFromUrl; }
 
 // TERMS POPUP FUNCTIONS
-function showTerms(){
-  document.getElementById('termsPopup').style.display = 'block';
-  document.body.style.overflow = 'hidden'; // Stop scrolling
-}
-function closeTerms(){
-  document.getElementById('termsPopup').style.display = 'none';
-  document.body.style.overflow = 'auto';
-  document.getElementById('terms').checked = true; // Auto tick checkbox
-}
+function showTerms(){ document.getElementById('termsPopup').style.display = 'block'; document.body.style.overflow = 'hidden'; }
+function closeTerms(){ document.getElementById('termsPopup').style.display = 'none'; document.body.style.overflow = 'auto'; document.getElementById('terms').checked = true; }
 
 // UPDATE COUNTRY LABEL
 function updateCountryLabel(){
@@ -112,9 +103,7 @@ function updateCountryLabel(){
 }
 
 // CAPTCHA
-function newCaptcha(){
-  document.getElementById('captchaCode').innerText = Math.floor(1000 + Math.random() * 9000);
-}
+function newCaptcha(){ document.getElementById('captchaCode').innerText = Math.floor(1000 + Math.random() * 9000); }
 newCaptcha();
 
 function formatPhone(p, code){
@@ -165,9 +154,10 @@ function register(){
       password:pass, balance:0, ownedPackages:{}, tasksDone:0, referralBonus:0,
       myReferralCode: myRefCode, 
       referredBy: refBy || '', 
+      referralStatus: refBy ? 'pending' : '',
       createdAt:new Date()
     }).then(()=>{
-      alert(`✅ Account Created!\n\nUsername: ${username}\nUser ID: ${userID}\nYour Referral Code: ${myRefCode}`);
+      alert(`✅ Account Created!\n\nUsername: ${username}\nUser ID: ${userID}\nYour Referral Code: ${myRefCode}\n\nYour Referral Link:\nhttps://nexa-view.vercel.app/register.html?ref=${myRefCode}`);
       localStorage.setItem("nexaPhone", phone);
       window.location.href = "dashboard.html";
     });
