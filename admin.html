@@ -9,15 +9,17 @@
 *{box-sizing:border-box}
 body{background:#000;color:white;font-family:Poppins;padding:15px;margin:0}
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-.header-actions{display:flex;gap:8px}
+.header-actions{display:flex;gap:8px;align-items:center}
 .logout-btn{background:#ef4444;color:white;border:none;padding:8px 14px;border-radius:8px;font-weight:700;cursor:pointer;font-size:12px}
 .broadcast-btn{background:#8b5cf6;color:white;border:none;padding:8px 14px;border-radius:8px;font-weight:700;cursor:pointer;font-size:12px}
+.notif-btn{background:#1a1a1a;border:1px solid #333;color:#fbbf24;border:none;padding:8px 10px;border-radius:8px;font-size:18px;cursor:pointer;position:relative}
+.notif-badge{position:absolute;top:-5px;right:-5px;background:#ef4444;color:white;border-radius:50%;font-size:10px;font-weight:700;padding:2px 6px;min-width:18px;text-align:center}
 .box{background:#111;border:1px solid #333;border-radius:12px;padding:14px;margin-bottom:15px}
 .pending-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:15px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:15px}
 .stat-card{background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:12px;text-align:center}
 .stat-card h4{color:#888;font-size:11px;margin:0;font-weight:400}
-.stat-card p{color:#fbbf24;font-size:18px;font-weight:700;margin:5px 0 0 0}
+.stat-card p{font-size:16px;font-weight:700;margin:5px 0 0 0}
 .search-box{display:flex;align-items:center;background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:10px;margin-bottom:15px}
 .search-box input{flex:1;background:transparent;border:none;color:white;font-size:14px;outline:none;font-family:Poppins}
 .search-icon{color:#fbbf24;font-size:18px;margin-right:8px}
@@ -30,6 +32,10 @@ h3{color:#fbbf24;margin:0 0 12px 0;font-size:15px}
 .btn-blue{background:#3b82f6;color:white}
 .btn-purple{background:#8b5cf6;color:white}
 .req-card{background:#1a1a1a;padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid #333;font-size:12px;line-height:1.6}
+.message-card{background:#1a1a1a;padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid #333;border-left:4px solid #8b5cf6;cursor:pointer;transition:0.2s}
+.message-card:hover{background:#222}
+.message-card.read{opacity:0.5;border-left-color:#333}
+.message-card.broadcast{border-left-color:#f59e0b}
 .user-card{background:#1a1a1a;padding:10px;border-radius:10px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:flex-start;border:1px solid #333;gap:10px;cursor:pointer;transition:0.2s}
 .user-card:hover{border-color:#fbbf24;background:#1f1f1f}
 .user-num{background:#fbbf24;color:#000;font-weight:700;font-size:11px;border-radius:6px;padding:4px 8px;min-width:28px;text-align:center;margin-top:3px}
@@ -39,17 +45,18 @@ h3{color:#fbbf24;margin:0 0 12px 0;font-size:15px}
 input[type="number"], input[type="password"], textarea{padding:10px;background:#222;border:1px solid #444;color:white;border-radius:8px;width:100%;font-family:Poppins;font-size:14px}
 textarea{resize:vertical;min-height:80px}
 .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:999;justify-content:center;align-items:center}
-.modal-content{background:#111;width:90%;max-width:400px;border-radius:16px;padding:20px;border:1px solid #333}
+.modal-content{background:#111;width:90%;max-width:450px;border-radius:16px;padding:20px;border:1px solid #333;max-height:90vh;overflow-y:auto}
 .modal-content h3{margin-top:0;text-align:center;color:#fbbf24}
 .info-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #222;font-size:13px}
 .info-row:last-child{border:none}
 .info-label{color:#888}
 .info-value{color:white;font-weight:600}
+.referral-item{background:#1a1a1a;padding:8px;border-radius:8px;margin-bottom:6px;border:1px solid #333;font-size:12px}
 #loginScreen{display:flex;position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:9999;justify-content:center;align-items:center}
 .login-box{background:#111;padding:25px;border-radius:16px;border:1px solid #333;width:90%;max-width:350px;text-align:center}
 .login-box h2{margin-bottom:15px}
 .login-box input{margin-bottom:15px}
-@media(max-width:768px){.pending-grid{grid-template-columns:1fr}}
+@media(max-width:768px){.pending-grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
@@ -69,6 +76,7 @@ textarea{resize:vertical;min-height:80px}
   <div class="header">
     <h2>👑 NEXA ADMIN PANEL</h2>
     <div class="header-actions">
+      <button class="notif-btn" onclick="openMessagesModal()">🔔<span id="notifBadge" class="notif-badge" style="display:none">0</span></button>
       <button class="broadcast-btn" onclick="openBroadcastModal()">📢 To All</button>
       <button class="logout-btn" onclick="logout()">Logout</button>
     </div>
@@ -76,10 +84,11 @@ textarea{resize:vertical;min-height:80px}
 
   <!-- TOP STATS -->
   <div class="stats">
-    <div class="stat-card"><h4>Total Users</h4><p id="totalUsers">0</p></div>
-    <div class="stat-card"><h4>Total Invested</h4><p id="totalInvested">Ksh 0.00</p></div>
-    <div class="stat-card"><h4>Total Income</h4><p id="totalIncome">Ksh 0.00</p></div>
-    <div class="stat-card"><h4>Today's Income</h4><p id="todayIncome">Ksh 0.00</p></div>
+    <div class="stat-card"><h4>Total Users</h4><p id="totalUsers" style="color:#fbbf24">0</p></div>
+    <div class="stat-card"><h4>Total Invested</h4><p id="totalInvested" style="color:#22c55e">+Ksh 0.00</p></div>
+    <div class="stat-card"><h4>Total Spenditure</h4><p id="totalSpenditure" style="color:#ef4444">-Ksh 0.00</p></div>
+    <div class="stat-card"><h4>Today's Invested</h4><p id="todayInvested" style="color:#22c55e">+Ksh 0.00</p></div>
+    <div class="stat-card"><h4>Today's Expenditure</h4><p id="todayExpenditure" style="color:#ef4444">-Ksh 0.00</p></div>
   </div>
 
   <!-- PENDING REQUESTS - 2 COLUMNS -->
@@ -104,16 +113,35 @@ textarea{resize:vertical;min-height:80px}
     <div id="userList">Loading...</div>
   </div>
 
+  <!-- MESSAGES MODAL - PUBLIC + PRIVATE -->
+  <div id="messagesModal" class="modal" onclick="closeMessagesModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <h3>📩 All Messages</h3>
+      <div id="messagesList">Loading...</div>
+      <button class="btn btn-red" style="width:100%;margin-top:10px" onclick="closeMessagesModal()">Close</button>
+    </div>
+  </div>
+
   <!-- USER INFO BOX MODAL -->
   <div id="userInfoModal" class="modal" onclick="closeUserInfoModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
       <h3>👤 User Information</h3>
       <div id="userInfoContent"></div>
-      <div style="margin-top:15px;display:flex;gap:8px">
-        <button class="btn btn-purple" style="flex:1" onclick="sendMsgFromInfo()">Send Message</button>
-        <button class="btn btn-blue" style="flex:1" onclick="depositFromInfo()">Deposit</button>
-        <button class="btn btn-red" style="flex:1" onclick="closeUserInfoModal()">Close</button>
+      <div style="margin-top:15px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-purple" style="flex:1;min-width:100px" onclick="sendMsgFromInfo()">Send Message</button>
+        <button class="btn btn-blue" style="flex:1;min-width:100px" onclick="depositFromInfo()">Deposit</button>
+        <button class="btn btn-yellow" style="flex:1;min-width:100px" onclick="viewReferralsFromInfo()">View Referrals</button>
+        <button class="btn btn-red" style="flex:1;min-width:100px" onclick="closeUserInfoModal()">Close</button>
       </div>
+    </div>
+  </div>
+
+  <!-- REFERRALS LIST MODAL -->
+  <div id="referralsListModal" class="modal" onclick="closeReferralsListModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <h3 id="referralsTitle">👥 Referred Users</h3>
+      <div id="referralsListContent"></div>
+      <button class="btn btn-red" style="width:100%;margin-top:10px" onclick="closeReferralsListModal()">Close</button>
     </div>
   </div>
 
@@ -199,6 +227,72 @@ function showPanel(){
   loadUsers();
   loadWithdrawals();
   loadReferralRequests();
+  loadMessages();
+}
+
+// LOAD MESSAGES - PRIVATE + PUBLIC
+function loadMessages(){
+  db.collection("userMessages").orderBy("date","desc").limit(50).onSnapshot(snapshot=>{
+    let unreadCount = 0;
+    let html = "";
+    
+    snapshot.forEach(doc=>{
+      let d = doc.data();
+      if(!d.read) unreadCount++;
+      let date = d.date ? d.date.toDate().toLocaleString() : 'N/A';
+      html += `<div class="message-card ${d.read ? 'read' : ''}" onclick="replyToMessage('${d.phone}')">
+        <b style="color:#8b5cf6">PRIVATE: ${d.phone}</b> <span style="color:#888;font-size:10px">${date}</span><br>
+        ${d.message}<br>
+        <button class="btn btn-red" style="margin-top:5px" onclick="deleteMessage('userMessages','${doc.id}',event)">Delete</button>
+      </div>`;
+    });
+
+    db.collection("broadcasts").orderBy("date","desc").limit(20).get().then(broadcastSnap=>{
+      broadcastSnap.forEach(doc=>{
+        let d = doc.data();
+        let date = d.date ? d.date.toDate().toLocaleString() : 'N/A';
+        html += `<div class="message-card broadcast" onclick="replyToBroadcast('${doc.id}')">
+          <b style="color:#f59e0b">PUBLIC BROADCAST</b> <span style="color:#888;font-size:10px">${date}</span><br>
+          ${d.message}<br>
+          <button class="btn btn-red" style="margin-top:5px" onclick="deleteMessage('broadcasts','${doc.id}',event)">Delete</button>
+        </div>`;
+      })
+      
+      document.getElementById('messagesList').innerHTML = html || "<p style='color:#888;text-align:center'>No messages</p>";
+      
+      if(unreadCount > 0){
+        document.getElementById('notifBadge').style.display = 'block';
+        document.getElementById('notifBadge').innerText = unreadCount;
+      } else {
+        document.getElementById('notifBadge').style.display = 'none';
+      }
+    })
+  })
+}
+
+function deleteMessage(collection, id, event){
+  event.stopPropagation();
+  if(confirm("Delete this message?")){
+    db.collection(collection).doc(id).delete()
+    .then(()=>alert("✅ Message deleted"));
+  }
+}
+
+function replyToMessage(phone){
+  closeMessagesModal();
+  openMessageModal(phone);
+}
+
+function replyToBroadcast(id){
+  alert("This is a public broadcast. You can delete it or send a new broadcast.");
+}
+
+function openMessagesModal(){
+  document.getElementById('messagesModal').style.display = 'flex';
+}
+
+function closeMessagesModal(){
+  document.getElementById('messagesModal').style.display = 'none';
 }
 
 function logout(){
@@ -210,7 +304,9 @@ function logout(){
 function openUserInfoModal(user){
   selectedUserData = user;
   selectedUserPhone = user.phone;
-  let totalRefs = allUsers.filter(x => x.referredBy === user.myReferralCode).length;
+  let referredUsers = allUsers.filter(x => x.referredBy === user.myReferralCode);
+  let totalRefs = referredUsers.length;
+  let refSpend = referredUsers.reduce((sum, ru) => sum + (ru.totalSpent || 0), 0);
   
   let html = `
     <div class="info-row"><span class="info-label">Phone</span><span class="info-value">${user.phone}</span></div>
@@ -219,10 +315,12 @@ function openUserInfoModal(user){
     <div class="info-row"><span class="info-label">Referred By</span><span class="info-value">${user.referredBy || 'NONE'}</span></div>
     <div class="info-row"><span class="info-label">Balance</span><span class="info-value" style="color:#22c55e">Ksh ${(user.balance||0).toFixed(2)}</span></div>
     <div class="info-row"><span class="info-label">Products Bought</span><span class="info-value">${user.productsBought || 0}</span></div>
-    <div class="info-row"><span class="info-label">Total Invested</span><span class="info-value" style="color:#3b82f6">Ksh ${(user.totalInvested||0).toFixed(2)}</span></div>
-    <div class="info-row"><span class="info-label">Total Income</span><span class="info-value" style="color:#22c55e">Ksh ${(user.totalIncome||0).toFixed(2)}</span></div>
-    <div class="info-row"><span class="info-label">Today's Income</span><span class="info-value" style="color:#f59e0b">Ksh ${(user.todayIncome||0).toFixed(2)}</span></div>
+    <div class="info-row"><span class="info-label">Total Invested</span><span class="info-value" style="color:#22c55e">+Ksh ${(user.totalInvested||0).toFixed(2)}</span></div>
+    <div class="info-row"><span class="info-label">Total Spent</span><span class="info-value" style="color:#ef4444">-Ksh ${(user.totalSpent||0).toFixed(2)}</span></div>
+    <div class="info-row"><span class="info-label">Today's Invested</span><span class="info-value" style="color:#22c55e">+Ksh ${(user.todayInvested||0).toFixed(2)}</span></div>
+    <div class="info-row"><span class="info-label">Today's Spent</span><span class="info-value" style="color:#ef4444">-Ksh ${(user.todaySpent||0).toFixed(2)}</span></div>
     <div class="info-row"><span class="info-label">Total Referrals</span><span class="info-value" style="color:#a855f7">${totalRefs}</span></div>
+    <div class="info-row"><span class="info-label">Referral Spenditure</span><span class="info-value" style="color:#ef4444">-Ksh ${refSpend.toFixed(2)}</span></div>
   `;
   
   document.getElementById('userInfoContent').innerHTML = html;
@@ -231,6 +329,35 @@ function openUserInfoModal(user){
 
 function closeUserInfoModal(){
   document.getElementById('userInfoModal').style.display = 'none';
+}
+
+function viewReferralsFromInfo(){
+  closeUserInfoModal();
+  viewReferrals(selectedUserData);
+}
+
+// VIEW REFERRALS LIST
+function viewReferrals(user){
+  let referredUsers = allUsers.filter(x => x.referredBy === user.myReferralCode);
+  document.getElementById('referralsTitle').innerText = `👥 ${user.phone} - ${referredUsers.length} Referrals`;
+  
+  let html = "";
+  if(referredUsers.length === 0){
+    html = "<p style='color:#888;text-align:center'>No referrals yet</p>";
+  } else {
+    referredUsers.forEach((ru, i)=>{
+      html += `<div class="referral-item">
+        <b>#${i+1} ${ru.phone}</b><br>
+        Balance: Ksh ${(ru.balance||0).toFixed(2)} | Invested: +Ksh ${(ru.totalInvested||0).toFixed(2)} | Spent: -Ksh ${(ru.totalSpent||0).toFixed(2)}
+      </div>`;
+    })
+  }
+  document.getElementById('referralsListContent').innerHTML = html;
+  document.getElementById('referralsListModal').style.display = 'flex';
+}
+
+function closeReferralsListModal(){
+  document.getElementById('referralsListModal').style.display = 'none';
 }
 
 function sendMsgFromInfo(){
@@ -295,8 +422,9 @@ function loadUsers(){
   userCounter = 1;
   let totalUsers = 0;
   let totalInvested = 0;
-  let totalIncome = 0;
-  let todayIncome = 0;
+  let totalSpenditure = 0;  
+  let todayInvested = 0; 
+  let todayExpenditure = 0;
 
   db.collection("users").orderBy("phone").get().then(snapshot=>{
     allUsers = [];
@@ -308,19 +436,22 @@ function loadUsers(){
       allUsers.push(u);
       
       let invested = u.totalInvested || 0;
-      let income = u.totalIncome || 0;
-      let todayInc = u.todayIncome || 0;
+      let spent = u.totalSpent || 0;  
+      let todayInv = u.todayInvested || 0; 
+      let todaySpent = u.todaySpent || 0;
 
       totalInvested += invested;
-      totalIncome += income;
-      todayIncome += todayInc;
+      totalSpenditure += spent;
+      todayInvested += todayInv;
+      todayExpenditure += todaySpent;
     });
     
     renderUsers(allUsers);
     document.getElementById('totalUsers').innerText = totalUsers;
-    document.getElementById('totalInvested').innerText = `Ksh ${totalInvested.toFixed(2)}`;
-    document.getElementById('totalIncome').innerText = `Ksh ${totalIncome.toFixed(2)}`;
-    document.getElementById('todayIncome').innerText = `Ksh ${todayIncome.toFixed(2)}`;
+    document.getElementById('totalInvested').innerText = `+Ksh ${totalInvested.toFixed(2)}`;
+    document.getElementById('totalSpenditure').innerText = `-Ksh ${totalSpenditure.toFixed(2)}`;
+    document.getElementById('todayInvested').innerText = `+Ksh ${todayInvested.toFixed(2)}`;
+    document.getElementById('todayExpenditure').innerText = `-Ksh ${todayExpenditure.toFixed(2)}`;
   })
 }
 
@@ -330,8 +461,13 @@ function renderUsers(users){
   users.forEach(u=>{
     let products = u.productsBought || 0;
     let invested = u.totalInvested || 0;
-    let income = u.totalIncome || 0;
-    let todayInc = u.todayIncome || 0;
+    let spent = u.totalSpent || 0;
+    let todayInv = u.todayInvested || 0;
+    let todaySpent = u.todaySpent || 0;
+
+    let referredUsers = allUsers.filter(x => x.referredBy === u.myReferralCode);
+    let totalRefs = referredUsers.length;
+    let refSpend = referredUsers.reduce((sum, ru) => sum + (ru.totalSpent || 0), 0);
 
     html += `<div class="user-card" onclick='openUserInfoModal(${JSON.stringify(u).replace(/'/g, "&apos;")})'>
       <div class="user-num">#${userCounter}</div>
@@ -340,9 +476,12 @@ function renderUsers(users){
         ID: ${u.userID || 'NO ID'} | Ref: ${u.myReferralCode || 'NO CODE'}<br>
         Balance: <b style="color:#22c55e">Ksh ${(u.balance||0).toFixed(2)}</b><br>
         📦 Products: <b>${products}</b><br>
-        💰 Invested: <b style="color:#3b82f6">Ksh ${invested.toFixed(2)}</b><br>
-        📈 Total Income: <b style="color:#22c55e">Ksh ${income.toFixed(2)}</b><br>
-        🔥 Today: <b style="color:#f59e0b">Ksh ${todayInc.toFixed(2)}</b>
+        💰 Invested: <b style="color:#22c55e">+Ksh ${invested.toFixed(2)}</b><br>
+        💸 Spent: <b style="color:#ef4444">-Ksh ${spent.toFixed(2)}</b><br>
+        📈 Today In: <b style="color:#22c55e">+Ksh ${todayInv.toFixed(2)}</b><br>
+        📉 Today Out: <b style="color:#ef4444">-Ksh ${todaySpent.toFixed(2)}</b><br>
+        👥 Referrals: <b style="color:#a855f7">${totalRefs}</b><br>
+        🎁 Ref Spent: <b style="color:#ef4444">-Ksh ${refSpend.toFixed(2)}</b>
       </div>
       <div class="btn-group" onclick="event.stopPropagation()">
         <button class="btn btn-purple" onclick="openMessageModal('${u.phone}')">Msg</button>
