@@ -21,14 +21,17 @@ header{background:#111;padding:20px;text-align:center;border-bottom:1px solid #2
 .package.lvl2 { border-color:#ffffff; background:#1a1a1a; box-shadow:0 0 15px #ffffff44; }
 .package.lvl3 { border-color:#a855f7; background:#2e1065; box-shadow:0 0 15px #a855f744; }
 .nav{position:fixed;bottom:0;width:100%;background:#111;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #222}
-.nav button{background:none;border:none;color:#aaa;font-size:12px;font-weight:600;cursor:pointer}
+.nav button{background:none;border:none;color:#aaa;font-size:12px;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px}
 .nav button.active{color:#fbbf24}
+.nav button svg{width:22px;height:22px}
 .task{background:#111;padding:15px;border-radius:12px;margin:10px 0;border:1px solid #222}
 .task button{width:100%;padding:14px;background:#22c55e;color:black;border:none;border-radius:10px;font-weight:bold;font-size:15px;cursor:pointer}
 .task button:disabled{background:#444;color:#888}
 table{width:100%;font-size:12px;border-collapse:collapse}
 th,td{padding:8px;text-align:left;border-bottom:1px solid #222}
 th{color:#fbbf24}
+.wallet-card{background:#111;padding:20px;border-radius:16px;margin:15px 0;border:1px solid #222;text-align:center}
+.wallet-btn{width:48%;padding:14px;margin:10px 1%;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:10px;font-weight:bold;font-size:15px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -48,6 +51,18 @@ th{color:#fbbf24}
   <div id="taskList"></div>
 </div>
 
+<div id="wallet" class="page">
+  <h2>💰 WALLET</h2>
+  <div class="wallet-card">
+    <div style="color:#aaa">Available Balance</div>
+    <div class="balance" id="walletBalance">Ksh 0.00</div>
+  </div>
+  <button class="wallet-btn" onclick="alert('Deposit coming soon')">DEPOSIT</button>
+  <button class="wallet-btn" onclick="alert('Withdraw coming soon')">WITHDRAW</button>
+  <h3 style="margin-top:20px">Transaction History</h3>
+  <div id="txHistory" style="background:#111;padding:15px;border-radius:12px">No transactions yet</div>
+</div>
+
 <div id="info" class="page">
   <h2>📖 INFORMATION CENTER</h2>
   <div style="background:#111;padding:15px;border-radius:12px;margin:15px 0;border:1px solid #222">
@@ -57,32 +72,25 @@ th{color:#fbbf24}
     <p>3. Each task = Daily Amount ÷ 20</p>
     <p>4. You can stack the same package multiple times</p>
   </div>
-  <div style="background:#111;padding:15px;border-radius:12px;margin:15px 0;border:1px solid #222">
-    <h3 style="color:#fbbf24">STACKING COLORS</h3>
-    <p><span style="color:#22c55e">● GREEN</span> = You bought this package 1 time</p>
-    <p><span style="color:#ffffff">● WHITE</span> = You bought this package 2 times</p>
-    <p><span style="color:#a855f7">● PURPLE</span> = You bought this package 3+ times</p>
-  </div>
-  <div style="background:#111;padding:15px;border-radius:12px;margin:15px 0;border:1px solid #222">
-    <h3 style="color:#fbbf24">PACKAGE LIST</h3>
-    <table>
-      <tr><th>Package</th><th>Stake</th><th>Daily</th><th>Days</th><th>Total</th></tr>
-      <tr><td>L1</td><td>300</td><td>25</td><td>20</td><td>500</td></tr>
-      <tr><td>L2</td><td>700</td><td>50</td><td>20</td><td>1000</td></tr>
-      <tr><td>L3</td><td>1300</td><td>100</td><td>20</td><td>2000</td></tr>
-      <tr><td>L4</td><td>2500</td><td>150</td><td>30</td><td>4500</td></tr>
-      <tr><td>L5</td><td>3500</td><td>200</td><td>30</td><td>6000</td></tr>
-      <tr><td>L6</td><td>4800</td><td>250</td><td>30</td><td>7500</td></tr>
-      <tr><td>L7</td><td>7500</td><td>350</td><td>30</td><td>10500</td></tr>
-      <tr><td>L8</td><td>10000</td><td>500</td><td>30</td><td>15000</td></tr>
-    </table>
-  </div>
 </div>
 
 <div class="nav">
-  <button onclick="showPage('home')" class="active">Home</button>
-  <button onclick="showPage('tasks')">Tasks</button>
-  <button onclick="showPage('info')">Info</button>
+  <button onclick="showPage('home')" class="active">
+    <svg fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+    Home
+  </button>
+  <button onclick="showPage('tasks')">
+    <svg fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5z" clip-rule="evenodd"/></svg>
+    Tasks
+  </button>
+  <button onclick="showPage('wallet')">
+    <svg fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4z"/></svg>
+    Wallet
+  </button>
+  <button onclick="showPage('info')">
+    <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+    Info
+  </button>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -115,6 +123,7 @@ db.collection("users").doc(phone).onSnapshot(doc=>{
   if(doc.exists){
     currentUser = doc.data();
     document.getElementById('balance').innerText = `Ksh ${currentUser.balance.toFixed(2)}`;
+    document.getElementById('walletBalance').innerText = `Ksh ${currentUser.balance.toFixed(2)}`;
     loadPackages();
     loadTasks();
   } else {
@@ -126,7 +135,7 @@ function showPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
-  event.target.classList.add('active');
+  event.target.closest('button').classList.add('active');
 }
 
 function loadPackages(){
