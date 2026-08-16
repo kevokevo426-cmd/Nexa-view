@@ -7,83 +7,39 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 *{box-sizing:border-box}
 body{background:#000;color:white;font-family:Poppins;margin:0;padding:0 0 80px 0}
-
-/* NEW TOP BAR */
 .top-bar{display:flex;justify-content:space-between;align-items:center;padding:12px 15px;background:#0a0a0a;border-bottom:1px solid #222;position:sticky;top:0;z-index:100}
 .total-income-box{text-align:left}
 .total-income-box p{font-size:10px;color:#888;margin:0}
 .total-income-box b{font-size:16px;color:#fbbf24;font-weight:800}
-
 .welcome-bar{background:linear-gradient(90deg,#059669,#047857);color:#fff;padding:12px 0;overflow:hidden;white-space:nowrap;border-bottom:1px solid #22c55e}
 .welcome-text{display:inline-block;padding-left:100%;animation: scroll-left 15s linear infinite;font-weight:700;font-size:13px}
 @keyframes scroll-left {0% { transform: translateX(0); } 100% { transform: translateX(-100%); }}
-
 .box{margin:15px;padding:14px;border-radius:14px;background:#111;border:1px solid #222}
-.package-card{background:linear-gradient(135deg,#1a1a1a,#222);border:1px solid #333;border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;transition:0.2s}
-.package-card:active{transform:scale(0.98);border-color:#fbbf24}
-
+.package-card{background:linear-gradient(135deg,#1a1a1a,#222);border:1px solid #333;border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer}
 .wallet-card{background:#181818;border-radius:14px;padding:14px;margin:15px;border:1px solid #333}
 .stat-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #222;font-size:13px}
-.stat-row:last-child{border:none}
-.stat-row b{color:#22c55e;font-size:13px}
-.stat-row.green{color:#22c55e}
-.stat-row.yellow{color:#fbbf24}
-
-h3{display:flex;align-items:center;gap:8px;color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
-.btn-wrap{display:flex;gap:8px;margin-top:12px}
 .btn{flex:1;padding:11px;background:linear-gradient(180deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:12px}
-.btn:active{transform:scale(0.97)}
 .btn-green{background:linear-gradient(180deg,#22c55e,#16a34a);color:white}
 .btn-orange{background:linear-gradient(180deg,#f97316,#ea580c);color:white}
-
-input{width:100%;padding:10px;background:#1a1a1a;border:1px solid #333;color:white;border-radius:8px;margin:6px 0;font-size:13px}
-label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
-
-/* MODAL POPUP */
-.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:999;justify-content:center;align-items:center;overflow-y:auto}
-.modal-content{background:#111;width:90%;max-height:90%;overflow-y:auto;border-radius:16px;padding:18px;border:1px solid #333}
-.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
-.modal-back{font-size:28px;cursor:pointer;color:#aaa;font-weight:700;background:#222;padding:6px 12px;border-radius:10px;line-height:1}
-
-.deposit-box{background:#1a3d2a;border:1px solid #22c55e;border-radius:14px;padding:14px;margin-bottom:15px}
-.mpesa-number{font-size:18px;color:#22c55e;font-weight:700;text-align:center;padding:8px;background:#000;border-radius:8px;margin:10px 0}
-.copy-btn{padding:5px 10px;background:#22c55e;color:#000;border:none;border-radius:6px;font-size:10px;cursor:pointer;font-weight:700}
-
-.green-banner{background:linear-gradient(90deg,#059669,#047857);padding:10px;border-radius:12px;margin-bottom:15px;font-size:11px}
-.amount-btns{display:flex;gap:6px;margin-bottom:15px;flex-wrap:wrap}
-.amount-btn{padding:7px 12px;background:#2a2a2a;border:1px solid #444;border-radius:20px;cursor:pointer;font-weight:600;font-size:12px;min-width:60px}
-.amount-btn.active{background:#fbbf24;color:#000;border-color:#fbbf24;font-weight:700}
-.calc-row{display:flex;gap:8px;margin-bottom:15px}
-.calc-box{flex:1;background:#1a1a1a;padding:8px;border-radius:8px;font-size:11px}
-.calc-box b{color:#fbbf24}
-
-/* BOTTOM NAV */
+.btn-wrap{display:flex;gap:8px;margin-top:12px}
+input{width:100%;padding:10px;background:#1a1a1a;border:1px solid #333;color:white;border-radius:8px;margin:6px 0}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:999;justify-content:center;align-items:center}
+.modal-content{background:#111;width:90%;border-radius:16px;padding:18px;border:1px solid #333}
+.modal-back{font-size:24px;cursor:pointer;color:#aaa;float:right}
 .bottom-nav{position:fixed;bottom:0;left:0;width:100%;background:#111;border-top:1px solid #222;display:flex;justify-content:space-around;padding:8px 0;z-index:99}
-.nav-item{flex:1;text-align:center;font-size:10px;color:#888;cursor:pointer}
+.nav-item{flex:1;text-align:center;font-size:10px;color:#888;cursor:pointer;padding:5px 0}
 .nav-item.active{color:#fbbf24;font-weight:700}
-.nav-item svg{width:20px;height:20px;margin-bottom:3px}
-
-/* CONGRATULATIONS MODAL */
-.congo-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:1000;justify-content:center;align-items:center;animation:fadeIn 0.3s}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.congo-content{background:linear-gradient(135deg,#22c55e,#16a34a);width:85%;max-width:350px;border-radius:20px;padding:25px;text-align:center;border:2px solid #fbbf24;box-shadow:0 0 30px rgba(34,197,94,0.5)}
-.congo-content h2{font-size:24px;color:#fff;margin:0 0 10px 0;font-weight:800}
-.congo-content p{font-size:15px;color:#fff;margin:0 0 15px 0}
+.congo-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:1000;justify-content:center;align-items:center}
+.congo-content{background:linear-gradient(135deg,#22c55e,#16a34a);width:85%;border-radius:20px;padding:25px;text-align:center;border:2px solid #fbbf24}
 .congo-amount{font-size:28px;color:#fbbf24;font-weight:900;margin:10px 0}
-.congo-btn{padding:12px 30px;background:#fff;color:#16a34a;border:none;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer;margin-top:10px}
-.balloons{font-size:40px;margin-bottom:10px}
-
-/* CUSTOM ALERT - NO DOMAIN LINK */
+.congo-btn{padding:12px 30px;background:#fff;color:#16a34a;border:none;border-radius:10px;font-weight:800;cursor:pointer}
 .custom-alert{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1001;justify-content:center;align-items:center}
-.alert-box{background:#1a1a1a;width:85%;max-width:380px;border-radius:16px;padding:20px;border:2px solid #ef4444;text-align:center}
-.alert-box.icon{font-size:40px;margin-bottom:10px}
-.alert-box p{font-size:15px;color:#fff;margin:0 0 15px 0;line-height:1.5}
-.alert-btn{padding:12px 40px;background:#ef4444;color:white;border:none;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer;width:100%}
+.alert-box{background:#1a1a1a;width:85%;border-radius:16px;padding:20px;border:2px solid #ef4444;text-align:center}
+.alert-btn{padding:12px;background:#ef4444;color:white;border:none;border-radius:10px;font-weight:800;width:100%;cursor:pointer}
 </style>
 </head>
 <body>
 
-<!-- NEW TOP BAR WITH TOTAL EARNINGS -->
 <div class="top-bar">
   <div class="total-income-box">
     <p>Total Earnings</p>
@@ -92,84 +48,45 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
 </div>
 
 <div id="homeTab">
-  <div class="welcome-bar">
-    <div class="welcome-text" id="welcomeText">Loading...</div>
-  </div>
-
+  <div class="welcome-bar"><div class="welcome-text" id="welcomeText">Loading...</div></div>
   <div class="box">
-    <h3 style="background: linear-gradient(90deg,#fbbf24,#f59e0b);-webkit-background-clip: text;-webkit-text-fill-color: transparent;font-size:18px;font-weight:800;text-shadow: 0 0 8px rgba(251,191,36,0.4);margin-bottom:5px">🛍️ PRODUCTS</h3>
-    <p style="font-size:12px;color:#22c55e;margin-bottom:15px;font-weight:600">Choose a plan and earn daily interest</p>
-
-    <div class="package-card" onclick="buyPackage(300, 20, 25)"><div style="display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:15px;color:#3b82f6">L1 - Service</b><p style="font-size:11px;color:#aaa;margin:3px 0">20 Days · Ksh 25/Day</p></div><div style="text-align:right"><b style="color:#fbbf24;font-size:14px">Stake: Ksh 300</b><p style="font-size:15px;color:#22c55e;font-weight:800;margin:2px 0">Income: Ksh 500</p></div></div></div>
-    <div class="package-card" onclick="buyPackage(700, 20, 50)"><div style="display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:15px;color:#22c55e">L2 - Food Stuffs</b><p style="font-size:11px;color:#aaa;margin:3px 0">20 Days · Ksh 50/Day</p></div><div style="text-align:right"><b style="color:#fbbf24;font-size:14px">Stake: Ksh 700</b><p style="font-size:15px;color:#22c55e;font-weight:800;margin:2px 0">Income: Ksh 1000</p></div></div></div>
-    <div class="package-card" onclick="buyPackage(1300, 20, 100)"><div style="display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:15px;color:#ec4899">L3 - By products</b><p style="font-size:11px;color:#aaa;margin:3px 0">20 Days · Ksh 100/Day</p></div><div style="text-align:right"><b style="color:#fbbf24;font-size:14px">Stake: Ksh 1300</b><p style="font-size:15px;color:#22c55e;font-weight:800;margin:2px 0">Income: Ksh 2000</p></div></div></div>
-    <div class="package-card" onclick="buyPackage(2500, 30, 150)"><div style="display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:15px;color:#f97316">L4 - House Hold</b><p style="font-size:11px;color:#aaa;margin:3px 0">30 Days · Ksh 150/Day</p></div><div style="text-align:right"><b style="color:#fbbf24;font-size:14px">Stake: Ksh 2500</b><p style="font-size:15px;color:#22c55e;font-weight:800;margin:2px 0">Income: Ksh 4500</p></div></div></div>
-    <div class="package-card" onclick="buyPackage(3500, 30, 200)"><div style="display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:15px;color:#a855f7">L5 - Beauty</b><p style="font-size:11px;color:#aaa;margin:3px 0">30 Days · Ksh 200/Day</p></div><div style="text-align:right"><b style="color:#fbbf24;font-size:14px">Stake: Ksh 3500</b><p style="font-size:15px;color:#22c55e;font-weight:800;margin:2px 0">Income: Ksh 6000</p></div></div></div>
-    <div class="package-card" onclick="buyPackage(4800, 30, 250)"><div style="display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:15px;color:#06b6d4">L6 - Stationaries</b><p style="font-size:11px;color:#aaa;margin:3px 0">30 Days · Ksh 250/Day</p></div><div style="text-align:right"><b style="color:#fbbf24;font-size:14px">Stake: Ksh 4800</b><p style="font-size:15px;color:#22c55e;font-weight:800;margin:2px 0">Income: Ksh 7500</p></div></div></div>
-    <div class="package-card" onclick="buyPackage(7500, 30, 350)"><div style="display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:15px;color:#ef4444">L7 - Sporting <span style="background:#ef4444;color:#fff;font-size:9px;padding:2px 6px;border-radius:4px">HOT</span></b><p style="font-size:11px;color:#aaa;margin:3px 0">30 Days · Ksh 350/Day</p></div><div style="text-align:right"><b style="color:#fbbf24;font-size:14px">Stake: Ksh 7500</b><p style="font-size:15px;color:#22c55e;font-weight:800;margin:2px 0">Income: Ksh 10500</p></div></div></div>
-    <div class="package-card" onclick="buyPackage(10000, 30, 500)"><div style="display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:15px;color:#eab308">L8 - Appliances</b><p style="font-size:11px;color:#aaa;margin:3px 0">30 Days · Ksh 500/Day</p></div><div style="text-align:right"><b style="color:#fbbf24;font-size:14px">Stake: Ksh 10000</b><p style="font-size:15px;color:#22c55e;font-weight:800;margin:2px 0">Income: Ksh 15000</p></div></div></div>
+    <h3>🛍️ PRODUCTS</h3>
+    <div class="package-card" onclick="buyPackage(300, 20, 25)"><b>L1 - Service</b><br>Ksh 300 → Earn Ksh 25/Day</div>
+    <div class="package-card" onclick="buyPackage(700, 20, 50)"><b>L2 - Food Stuffs</b><br>Ksh 700 → Earn Ksh 50/Day</div>
+    <div class="package-card" onclick="buyPackage(1300, 20, 100)"><b>L3 - By products</b><br>Ksh 1300 → Earn Ksh 100/Day</div>
+    <div class="package-card" onclick="buyPackage(2500, 30, 150)"><b>L4 - House Hold</b><br>Ksh 2500 → Earn Ksh 150/Day</div>
+    <div class="package-card" onclick="buyPackage(3500, 30, 200)"><b>L5 - Beauty</b><br>Ksh 3500 → Earn Ksh 200/Day</div>
   </div>
 </div>
 
-<div id="tasksTab" style="display:none">
-  <div class="box">
-    <h3>✅ Daily Tasks</h3>
-    <p style="color:#aaa;margin-bottom:15px">Complete tasks to earn daily</p>
-    <div id="taskList"><p style="color:#888">No active package</p></div>
-  </div>
-</div>
+<div id="tasksTab" style="display:none"><div class="box"><h3>✅ Daily Tasks</h3><div id="taskList">No active package</div></div></div>
 
 <div id="walletTab" style="display:none">
   <div class="wallet-card">
-    <div class="stat-row"><span>User ID</span><b class="green" id="userID">NEXAUXXXXXX</b></div>
+    <div class="stat-row"><span>User ID</span><b class="green" id="userID">N/A</b></div>
     <div class="stat-row"><span>Total Invested</span><b class="yellow">Ksh <span id="totalInvested">0.00</span></b></div>
     <div class="stat-row"><span>Today's Income</span><b class="green">Ksh <span id="todayIncome">0.00</span></b></div>
-    <div class="stat-row"><span>Referral Bonus Total</span><b class="yellow">Ksh <span id="refIncome">0.00</span></b></div>
+    <div class="stat-row"><span>Referral Bonus</span><b class="yellow">Ksh <span id="refIncome">0.00</span></b></div>
     <div class="stat-row"><span>Total Income So Far</span><b class="green">Ksh <span id="totalIncome">0.00</span></b></div>
-    <div class="btn-wrap">
-      <button class="btn" onclick="openDepositModal()">DEPOSIT</button>
-      <button class="btn btn-orange" onclick="openAccountModal()">ACCOUNT</button>
-      <button class="btn" onclick="openWithdrawModal()">WITHDRAW</button>
-    </div>
+    <div class="btn-wrap"><button class="btn" onclick="openDepositModal()">DEPOSIT</button><button class="btn btn-orange" onclick="openAccountModal()">ACCOUNT</button><button class="btn" onclick="openWithdrawModal()">WITHDRAW</button></div>
   </div>
-  <div class="box"><h3>🎁 Referral & Earn 10%</h3><label>Your Referral Code</label><input id="myCode" readonly><label>Your Referral Link</label><input id="myLink" readonly><button class="btn btn-green" onclick="copyLink()">Copy Link</button></div>
-  <div class="box"><h3>📜 Referral History <span style="font-size:11px;color:#fbbf24">(<span id="teamCount">0</span> Members)</span></h3><div id="refHistory"><p style="color:#888">No team members yet</p></div></div>
+  <div class="box"><h3>🎁 Referral</h3><input id="myCode" readonly><button class="btn btn-green" onclick="copyLink()">Copy Code</button></div>
 </div>
 
-<div id="infoTab" style="display:none"><div class="box"><h3>ℹ️ About NEXA</h3><p style="font-size:13px;line-height:1.6">NEXA VIEW TRADEHU is an earning platform. Complete daily tasks and earn. Available in KE, UG, TZ.</p></div></div>
+<div id="infoTab" style="display:none"><div class="box"><h3>ℹ️ About</h3><p>NEXA VIEW TRADEHU</p></div></div>
 
-<div id="accountModal" class="modal" onclick="closeAccountModal()"><div class="modal-content" onclick="event.stopPropagation()"><div class="modal-header"><h3>👤 Withdrawal Account</h3><span class="modal-back" onclick="closeAccountModal()">🔙</span></div><div style="background:#1f1f1f;border-radius:12px;padding:14px"><label>Receiving account number (M-Pesa)</label><input id="accNumber" type="tel"><label>Real name</label><input id="accName" type="text"><label>Set/Change PIN (4 digits)</label><input id="accPin" type="password" maxlength="4"><button class="btn btn-orange" style="width:100%;margin-top:12px" onclick="updateAccount()">Update wallet</button></div></div></div>
+<div id="accountModal" class="modal"><div class="modal-content"><span class="modal-back" onclick="closeAccountModal()">🔙</span><h3>Account</h3><input id="accNumber" placeholder="M-Pesa"><input id="accName" placeholder="Name"><input id="accPin" placeholder="4 Digit PIN" maxlength="4"><button class="btn btn-orange" onclick="updateAccount()">Update</button></div></div>
+<div id="depositModal" class="modal"><div class="modal-content"><span class="modal-back" onclick="closeDepositModal()">🔙</span><h3>Deposit</h3><p>Send to: 0718422377</p><input id="depositAmount" placeholder="Amount"><input id="depositMsg" placeholder="MPESA Code"><button class="btn btn-green" onclick="submitDeposit()">Submit</button></div></div>
+<div id="withdrawModal" class="modal"><div class="modal-content"><span class="modal-back" onclick="closeWithdrawModal()">🔙</span><h3>Withdraw</h3><p>Balance: Ksh <span id="withdrawBalance">0</span></p><input id="withdrawAmount" placeholder="Amount"><input id="withdrawPin" placeholder="PIN" maxlength="4"><button class="btn btn-green" onclick="submitWithdraw()">Withdraw</button></div></div>
 
-<div id="depositModal" class="modal" onclick="closeDepositModal()"><div class="modal-content" onclick="event.stopPropagation()"><div class="modal-header"><h3>💰 Deposit Funds</h3><span class="modal-back" onclick="closeDepositModal()">🔙</span></div><div class="deposit-box"><p style="font-size:12px;color:#aaa">1. Send money to MPESA Number below</p><div class="mpesa-number">0718422377 <button class="copy-btn" onclick="copyNumber()">Copy</button></div></div><label>Amount Deposited (KSH)</label><input id="depositAmount" type="number"><label>Paste MPESA Message / Transaction Code</label><input id="depositMsg"><button class="btn btn-green" style="width:100%;margin-top:10px" onclick="submitDeposit()">Submit Deposit</button><h4 style="margin-top:20px">📜 Deposit History</h4><div id="depositHistory"><p style="color:#888">Loading...</p></div></div></div>
-
-<div id="withdrawModal" class="modal" onclick="closeWithdrawModal()"><div class="modal-content" onclick="event.stopPropagation()"><div class="modal-header"><div></div><span class="modal-back" onclick="closeWithdrawModal()">🔙</span></div><div style="background:#5a3d1f;border-radius:16px;padding:14px;margin-bottom:15px"><p>Available balance</p><h2 style="color:#fbbf24">KSH<span id="withdrawBalance">0.00</span></h2></div><div class="green-banner"><b>⚡ Withdrawals processed instantly</b></div><h4>Choose amount (KSH)</h4><div class="amount-btns"><div class="amount-btn" onclick="selectAmount(200,this)">200</div><div class="amount-btn" onclick="selectAmount(400,this)">400</div><div class="amount-btn" onclick="selectAmount(500,this)">500</div><div class="amount-btn" onclick="selectAmount(700,this)">700</div><div class="amount-btn" onclick="selectAmount(1000,this)">1000</div><div class="amount-btn" onclick="selectAmount(1500,this)">1500</div><div class="amount-btn" onclick="selectAmount(2500,this)">2500</div><div class="amount-btn" onclick="selectAmount(5000,this)">5000</div></div><label>Amount (KSH)</label><input id="withdrawAmount" type="number" oninput="calcWithdraw()"><div class="calc-row"><div class="calc-box">Tax: <b id="taxAmount">KSH0</b></div><div class="calc-box">You receive: <b id="netAmount">KSH0</b></div></div><label>4-digit PIN</label><input id="withdrawPin" type="password" maxlength="4"><button class="btn btn-green" style="width:100%;margin-top:10px" onclick="submitWithdraw()">Submit withdrawal</button><h4 style="margin-top:20px">💸 Withdrawal Records</h4><div id="withdrawHistory"><p style="color:#888">Loading...</p></div></div></div>
-
-<!-- CONGRATULATIONS MODAL -->
-<div id="congoModal" class="congo-modal" onclick="closeCongo()">
-  <div class="congo-content" onclick="event.stopPropagation()">
-    <div class="balloons">🎉🎈🎊🎈🎉</div>
-    <h2>CONGRATULATIONS! 🎉</h2>
-    <p>You earned today</p>
-    <div class="congo-amount"><span id="congoAmount">+Ksh 0</span></div>
-    <p style="font-size:12px">Money added to your balance</p>
-    <button class="congo-btn" onclick="closeCongo()">AWESOME!</button>
-  </div>
-</div>
-
-<!-- CUSTOM ALERT MODAL -->
-<div id="customAlert" class="custom-alert" onclick="closeCustomAlert()">
-  <div class="alert-box" onclick="event.stopPropagation()">
-    <div class="icon">⚠️</div>
-    <p id="alertText">Message here</p>
-    <button class="alert-btn" onclick="closeCustomAlert()">OK</button>
-  </div>
-</div>
+<div id="congoModal" class="congo-modal" onclick="closeCongo()"><div class="congo-content"><div style="font-size:40px">🎉</div><h2>CONGRATULATIONS! 🎉</h2><p>You earned today</p><div class="congo-amount" id="congoAmount">+Ksh 0</div><button class="congo-btn" onclick="closeCongo()">AWESOME!</button></div></div>
+<div id="customAlert" class="custom-alert" onclick="closeCustomAlert()"><div class="alert-box"><p id="alertText">Message</p><button class="alert-btn" onclick="closeCustomAlert()">OK</button></div></div>
 
 <div class="bottom-nav">
-  <div class="nav-item active" onclick="showTab('home',this)"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>Home</div>
-  <div class="nav-item" onclick="showTab('tasks',this)"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path d="M4 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h6a1 1 0 100-2H7z"/></svg>Tasks</div>
-  <div class="nav-item" onclick="showTab('wallet',this)"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4z"/></svg>Wallet</div>
-  <div class="nav-item" onclick="showTab('info',this)"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"/></svg>Info</div>
+  <div class="nav-item active" onclick="showTab('home', this)">Home</div>
+  <div class="nav-item" onclick="showTab('tasks', this)">Tasks</div>
+  <div class="nav-item" onclick="showTab('wallet', this)">Wallet</div>
+  <div class="nav-item" onclick="showTab('info', this)">Info</div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -181,9 +98,6 @@ const db = firebase.firestore();
 const phone = localStorage.getItem("nexaPhone");
 if(!phone){ window.location.href = "index.html"; }
 
-const foodPics = ["https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=400","https://images.unsplash.com/photo-1618164439484-1e3e29e3d6b5?w=400","https://images.unsplash.com/photo-1542838132-92c53300491e?w=400","https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400","https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400"];
-
-// CUSTOM ALERT FUNCTIONS - NO DOMAIN LINK
 function showAlert(text){document.getElementById('alertText').innerText = text;document.getElementById('customAlert').style.display = 'flex';}
 function closeCustomAlert(){ document.getElementById('customAlert').style.display='none'; }
 function closeCongo(){ document.getElementById('congoModal').style.display='none'; }
@@ -193,109 +107,49 @@ function openWithdrawModal(){ document.getElementById('withdrawModal').style.dis
 function closeWithdrawModal(){ document.getElementById('withdrawModal').style.display='none'; }
 function openAccountModal(){ document.getElementById('accountModal').style.display='flex'; }
 function closeAccountModal(){ document.getElementById('accountModal').style.display='none'; }
-function copyNumber(){ navigator.clipboard.writeText("0718422377"); showAlert("MPESA Number copied"); }
-function copyLink(){ let link = document.getElementById('myLink'); link.select(); document.execCommand('copy'); showAlert("Referral link copied!"); }
-function selectAmount(amt,el){document.querySelectorAll('.amount-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');document.getElementById('withdrawAmount').value=amt;calcWithdraw();}
-function calcWithdraw(){let amt=parseFloat(document.getElementById('withdrawAmount').value)||0;let tax=amt*0.05;document.getElementById('taxAmount').innerText='KSH'+tax.toFixed(0);document.getElementById('netAmount').innerText='KSH'+(amt-tax).toFixed(0);}
+function copyLink(){ let link = document.getElementById('myCode'); link.select(); document.execCommand('copy'); showAlert("Referral code copied!"); }
 
-function showTab(tab,el){document.querySelectorAll('.nav-item').forEach(t=>t.classList.remove('active'));el.classList.add('active');['home','tasks','wallet','info'].forEach(t=>document.getElementById(t+'Tab').style.display='none');document.getElementById(tab+'Tab').style.display = 'block';if(tab == 'wallet'){ loadReferralInfo(); loadIncomeStats(); } if(tab == 'tasks'){ loadTasks(); }}
+// FIXED TAB FUNCTION
+function showTab(tab, el){
+  document.querySelectorAll('.nav-item').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('homeTab').style.display='none';
+  document.getElementById('tasksTab').style.display='none';
+  document.getElementById('walletTab').style.display='none';
+  document.getElementById('infoTab').style.display='none';
+  document.getElementById(tab+'Tab').style.display = 'block';
+  if(tab == 'wallet'){ loadReferralInfo(); loadIncomeStats(); } 
+  if(tab == 'tasks'){ loadTasks(); }
+}
 
-function loadWelcome(){db.collection("users").doc(phone).get().then(doc=>{if(doc.exists){let u = doc.data();let username = u.userID || "User";let refCode = u.myReferralCode || "N/A";document.getElementById('welcomeText').innerHTML = `🎉 WELCOME TO NEXA VIEW TRADEHU | ${username} | Ref Code: ${refCode} | Earn 10% on referrals 🎉`;}})}
-
-function loadTasks(){
+function loadWelcome(){
   db.collection("users").doc(phone).get().then(doc=>{
     if(doc.exists){
       let u = doc.data();
-      let owned = u.ownedPackages || {};
-      let html = "";
-      let keys = Object.keys(owned);
-      if(keys.length == 0){
-        html = "<p style='color:#888'>No active package</p>";
-      } else {
-        keys.forEach(key=>{
-          let p = owned[key];
-          let today = new Date().toDateString();
-          let lastClaim = u.lastClaim || {};
-          let canClaim = lastClaim[key]!= today;
-          let dayIndex = new Date().getDate() % foodPics.length;
-          let pic = foodPics[dayIndex];
-          let statusText = canClaim? "Sell your Product & Earn" : "Already Sold Today";
-          let statusColor = canClaim? "#22c55e" : "#ef4444";
-          let btnColor = canClaim? "linear-gradient(180deg,#22c55e,#16a34a)" : "#444";
-          let btnText = canClaim? "SELL" : "SOLD";
-          html += `<div style="background:#111;padding:16px;border-radius:14px;margin-bottom:15px;border:1px solid #333">
-            <div style="background:${statusColor};color:#000;padding:6px 10px;border-radius:20px;font-size:11px;font-weight:700;text-align:center;margin-bottom:10px">${statusText}</div>
-            <h3 style="margin:0 0 10px 0;color:#22c55e">Package</h3>
-            <img src="${pic}" style="width:100%;height:120px;object-fit:cover;border-radius:10px;margin-bottom:12px;border:1px solid #333">
-            <div style="display:flex;gap:10px;margin-bottom:12px">
-              <button onclick="claimTask('${key}')" style="flex:1;padding:12px;background:${btnColor};color:white;border:none;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer" ${canClaim?'':'disabled'}>${btnText}</button>
-              <div style="flex:1;background:#1a3d2a;border:1px solid #22c55e;border-radius:10px;padding:10px;text-align:center"><div style="font-size:10px;color:#aaa">PROFIT</div><b style="color:#22c55e;font-size:16px">Ksh ${p.daily}</b></div>
-            </div>
-          </div>`;
-        });
-      }
-      document.getElementById('taskList').innerHTML = html;
+      document.getElementById('welcomeText').innerHTML = `🎉 WELCOME TO NEXA VIEW TRADEHU | ${u.userID} | Earn 10% 🎉`;
+    } else {
+      document.getElementById('welcomeText').innerHTML = `🎉 WELCOME TO NEXA VIEW TRADEHU 🎉`;
     }
-  })
+  });
 }
 
-function claimTask(key){
-  let today = new Date().toDateString();
-  db.collection("users").doc(phone).get().then(doc=>{
-    let u = doc.data();
-    let p = u.ownedPackages[key];
-    let newBalance = (u.balance || 0) + p.daily;
-    let newTotal = (u.totalIncome || 0) + p.daily;
-    let lastClaim = u.lastClaim || {};
-    lastClaim[key] = today;
-    db.collection("users").doc(phone).update({
-      balance: newBalance,
-      totalIncome: newTotal,
-      todayIncome: (u.todayIncome || 0) + p.daily,
-      lastClaim: lastClaim
-    }).then(()=>{
-      document.getElementById('congoAmount').innerText = `+Ksh ${p.daily}`;
-      document.getElementById('congoModal').style.display = 'flex';
-      loadTasks();
-      loadIncomeStats();
-    })
-  })
-}
+function loadTasks(){db.collection("users").doc(phone).get().then(doc=>{if(doc.exists){let u = doc.data();let owned = u.ownedPackages || {};let html = "";let keys = Object.keys(owned);if(keys.length == 0){ html = "No active package"; } else {keys.forEach(key=>{let p = owned[key];html += `<button onclick="claimTask('${key}')" style="width:100%;padding:12px;background:#22c55e;color:white;border:none;border-radius:10px;margin-bottom:10px;cursor:pointer">SELL - Earn Ksh ${p.daily}</button>`;});}document.getElementById('taskList').innerHTML = html;}})}
 
-function buyPackage(price, days, daily){
-  db.collection("users").doc(phone).get().then(doc=>{
-    let u = doc.data();
-    if(u.balance < price){ showAlert("Insufficient balance. Go to Wallet to Deposit"); showTab('wallet', document.querySelectorAll('.nav-item')[2]); return; }
-    if(!confirm(`Buy package for Ksh ${price}?`)) return;
-    let newBalance = u.balance - price;
-    let owned = u.ownedPackages || {};
-    owned[Date.now()] = {price, days, daily, start: new Date()};
-    db.collection("users").doc(phone).update({balance: newBalance, totalInvested: (u.totalInvested || 0) + price, ownedPackages: owned}).then(()=>{ showAlert("Package purchased successfully!"); })
-  })
-}
+function claimTask(key){db.collection("users").doc(phone).get().then(doc=>{let u = doc.data();let p = u.ownedPackages[key];db.collection("users").doc(phone).update({balance: (u.balance || 0) + p.daily,totalIncome: (u.totalIncome || 0) + p.daily,todayIncome: (u.todayIncome || 0) + p.daily}).then(()=>{document.getElementById('congoAmount').innerText = `+Ksh ${p.daily}`;document.getElementById('congoModal').style.display = 'flex';loadTasks();loadIncomeStats();})}
 
-function loadIncomeStats(){
-  db.collection("users").doc(phone).get().then(doc=>{
-    if(doc.exists){
-      let u = doc.data();
-      let totalProfile = u.totalIncome || 0;
-      let totalReferral = u.totalReferralEarned || 0;
-      let todayProfile = u.todayIncome || 0;
-      let todayReferral = u.todayReferralIncome || 0;
-      let totalInvested = u.totalInvested || 0;
-      let todayTotal = todayProfile + todayReferral;
-      let totalAll = totalProfile + totalReferral;
+function buyPackage(price, days, daily){db.collection("users").doc(phone).get().then(doc=>{let u = doc.data();if(u.balance < price){ showAlert("Insufficient balance. Go to Wallet to Deposit"); return; }if(!confirm(`Buy package for Ksh ${price}?`)) return;let newBalance = u.balance - price;let owned = u.ownedPackages || {};owned[Date.now()] = {price, days, daily};db.collection("users").doc(phone).update({balance: newBalance, totalInvested: (u.totalInvested || 0) + price, ownedPackages: owned}).then(()=>{ showAlert("Package purchased successfully!"); })})}
 
-      document.getElementById('totalInvested').innerText = totalInvested.toFixed(2);
-      document.getElementById('withdrawBalance').innerText = (u.balance || 0).toFixed(2);
-      document.getElementById('todayIncome').innerText = todayTotal.toFixed(2);
-      document.getElementById('refIncome').innerText = totalReferral.toFixed(2);
-      document.getElementById('totalIncome').innerText = totalAll.toFixed(2);
-      document.getElementById('totalEarnings').innerText = totalAll.toFixed(2);
-    }
-  })
-}
+function loadIncomeStats(){db.collection("users").doc(phone).get().then(doc=>{if(doc.exists){let u = doc.data();let totalAll = (u.totalIncome || 0) + (u.totalReferralEarned || 0);let todayAll = (u.todayIncome || 0) + (u.todayReferralIncome || 0);document.getElementById('totalInvested').innerText = (u.totalInvested || 0).toFixed(2);document.getElementById('withdrawBalance').innerText = (u.balance || 0).toFixed(2);document.getElementById('todayIncome').innerText = todayAll.toFixed(2);document.getElementById('refIncome').innerText = (u.totalReferralEarned || 0).toFixed(2);document.getElementById('totalIncome').innerText = totalAll.toFixed(2);document.getElementById('totalEarnings').innerText = totalAll.toFixed(2);}})}
 
-function loadReferralInfo(){ db.collection("users").doc(phone).get().then(doc=>{ if(doc.exists){ let u = doc.data(); document.getElementById('userID').innerText = u.userID || "N/A"; document.getElementById('myCode').value = u.myReferralCode || "N/A"; document.getElementById('myLink').value = window.location.origin + "/index.html?ref=" + (u.myReferralCode || ""); db.collection("users").where("referredBy","==",phone).get().then(snap=>{document.getElementById('teamCount').innerText = snap.size;}) } })}
+function loadReferralInfo(){db.collection("users").doc(phone).get().then(doc=>{ if(doc.exists){ let u = doc.data(); document.getElementById('userID').innerText = u.userID || "N/A"; document.getElementById('myCode').value = u.myReferralCode || "N/A"; } })}
 
-function updateAccount(){let acc=document.getElementById('accNumber').value;let name=document.getElementById('accName').value;let pin=document.getElementById('accPin').value;if(pin.length!=4){showAlert("PIN must be 4 digits");return;}db.collection("users").doc(phone).update({mpesa:acc,name:name,pin:pin}).then(()=>{
+function updateAccount(){let acc=document.getElementById('accNumber').value;let name=document.getElementById('accName').value;let pin=document.getElementById('accPin').value;db.collection("users").doc(phone).update({mpesa:acc,name:name,pin:pin}).then(()=>{showAlert("Account updated");closeAccountModal();})}
+
+function submitDeposit(){let amt=document.getElementById('depositAmount').value;db.collection("deposits").add({phone:phone,amount:amt,status:"pending"}).then(()=>{showAlert("Deposit submitted");closeDepositModal();})}
+
+function submitWithdraw(){let amt=parseFloat(document.getElementById('withdrawAmount').value);db.collection("users").doc(phone).get().then(doc=>{let u=doc.data();db.collection("withdrawals").add({phone:phone,amount:amt,status:"pending"});db.collection("users").doc(phone).update({balance:u.balance-amt});showAlert("Withdrawal submitted");closeWithdrawModal();})}
+
+window.onload = function(){ loadWelcome(); loadIncomeStats(); }
+</script>
+</body>
+</html>
