@@ -13,8 +13,6 @@ body{background:#000;color:white;font-family:Poppins;margin:0;padding:0 0 80px 0
 .total-income-box{text-align:left}
 .total-income-box p{font-size:10px;color:#888;margin:0}
 .total-income-box b{font-size:16px;color:#fbbf24;font-weight:800}
-.msg-icon{position:relative;font-size:26px;cursor:pointer;background:#1a1a1a;padding:10px;border-radius:10px;border:1px solid #333}
-.msg-badge{position:absolute;top:-6px;right:-6px;background:#ef4444;color:white;border-radius:50%;font-size:12px;font-weight:800;padding:3px 7px;min-width:20px;text-align:center;display:none}
 
 .welcome-bar{background:linear-gradient(90deg,#059669,#047857);color:#fff;padding:12px 0;overflow:hidden;white-space:nowrap;border-bottom:1px solid #22c55e}
 .welcome-text{display:inline-block;padding-left:100%;animation: scroll-left 15s linear infinite;font-weight:700;font-size:13px}
@@ -54,7 +52,7 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
 .green-banner{background:linear-gradient(90deg,#059669,#047857);padding:10px;border-radius:12px;margin-bottom:15px;font-size:11px}
 .amount-btns{display:flex;gap:6px;margin-bottom:15px;flex-wrap:wrap}
 .amount-btn{padding:7px 12px;background:#2a2a2a;border:1px solid #444;border-radius:20px;cursor:pointer;font-weight:600;font-size:12px;min-width:60px}
-.amount-btn.active{color:#000;border-color:#fbbf24;font-weight:700}
+.amount-btn.active{background:#fbbf24;color:#000;border-color:#fbbf24;font-weight:700}
 .calc-row{display:flex;gap:8px;margin-bottom:15px}
 .calc-box{flex:1;background:#1a1a1a;padding:8px;border-radius:8px;font-size:11px}
 .calc-box b{color:#fbbf24}
@@ -64,8 +62,6 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
 .nav-item{flex:1;text-align:center;font-size:10px;color:#888;cursor:pointer}
 .nav-item.active{color:#fbbf24;font-weight:700}
 .nav-item svg{width:20px;height:20px;margin-bottom:3px}
-
-.message-card{background:#1a1a1a;padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid #333;border-left:3px solid #8b5cf6;font-size:12px}
 
 /* CONGRATULATIONS MODAL */
 .congo-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:1000;justify-content:center;align-items:center;animation:fadeIn 0.3s}
@@ -77,42 +73,33 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
 .congo-btn{padding:12px 30px;background:#fff;color:#16a34a;border:none;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer;margin-top:10px}
 .balloons{font-size:40px;margin-bottom:10px}
 
-/* CUSTOM ALERT MODAL - NO DOMAIN LINK */
+/* CUSTOM ALERT - NO DOMAIN LINK */
 .custom-alert{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1001;justify-content:center;align-items:center}
 .alert-box{background:#1a1a1a;width:85%;max-width:380px;border-radius:16px;padding:20px;border:2px solid #ef4444;text-align:center}
 .alert-box.icon{font-size:40px;margin-bottom:10px}
 .alert-box p{font-size:15px;color:#fff;margin:0 0 15px 0;line-height:1.5}
 .alert-btn{padding:12px 40px;background:#ef4444;color:white;border:none;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer;width:100%}
-
-/* CUSTOM CONFIRM MODAL */
-.custom-confirm{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1002;justify-content:center;align-items:center}
-.confirm-box{background:#1a1a1a;width:85%;max-width:380px;border-radius:16px;padding:20px;border:2px solid #fbbf24;text-align:center}
-.confirm-box.icon{font-size:40px;margin-bottom:10px}
-.confirm-box p{font-size:15px;color:#fff;margin:0 0 15px 0;line-height:1.5}
-.confirm-btns{display:flex;gap:10px}
-.confirm-btn{flex:1;padding:12px;border:none;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer}
-.btn-yes{background:#22c55e;color:white}
-.btn-no{background:#444;color:white}
 </style>
 </head>
 <body>
 
-<!-- NEW TOP BAR -->
+<!-- NEW TOP BAR WITH TOTAL EARNINGS -->
 <div class="top-bar">
   <div class="total-income-box">
     <p>Total Earnings</p>
     <b>Ksh <span id="totalEarnings">0.00</span></b>
   </div>
-  <div class="msg-icon" onclick="openUserMessages()">📩<span id="msgBadge" class="msg-badge">0</span></div>
 </div>
 
 <div id="homeTab">
   <div class="welcome-bar">
-    <div class="welcome-text" id="welcomeText">Welcome to NEXA VIEW! | Loading...</div>
+    <div class="welcome-text" id="welcomeText">Loading...</div>
   </div>
+
   <div class="box">
     <h3 style="background: linear-gradient(90deg,#fbbf24,#f59e0b);-webkit-background-clip: text;-webkit-text-fill-color: transparent;font-size:18px;font-weight:800;text-shadow: 0 0 8px rgba(251,191,36,0.4);margin-bottom:5px">🛍️ PRODUCTS</h3>
     <p style="font-size:12px;color:#22c55e;margin-bottom:15px;font-weight:600">Choose a plan and earn daily interest</p>
+
     <div class="package-card" onclick="buyPackage(300, 20, 25)"><div style="display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:15px;color:#3b82f6">L1 - Service</b><p style="font-size:11px;color:#aaa;margin:3px 0">20 Days · Ksh 25/Day</p></div><div style="text-align:right"><b style="color:#fbbf24;font-size:14px">Stake: Ksh 300</b><p style="font-size:15px;color:#22c55e;font-weight:800;margin:2px 0">Income: Ksh 500</p></div></div></div>
     <div class="package-card" onclick="buyPackage(700, 20, 50)"><div style="display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:15px;color:#22c55e">L2 - Food Stuffs</b><p style="font-size:11px;color:#aaa;margin:3px 0">20 Days · Ksh 50/Day</p></div><div style="text-align:right"><b style="color:#fbbf24;font-size:14px">Stake: Ksh 700</b><p style="font-size:15px;color:#22c55e;font-weight:800;margin:2px 0">Income: Ksh 1000</p></div></div></div>
     <div class="package-card" onclick="buyPackage(1300, 20, 100)"><div style="display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:15px;color:#ec4899">L3 - By products</b><p style="font-size:11px;color:#aaa;margin:3px 0">20 Days · Ksh 100/Day</p></div><div style="text-align:right"><b style="color:#fbbf24;font-size:14px">Stake: Ksh 1300</b><p style="font-size:15px;color:#22c55e;font-weight:800;margin:2px 0">Income: Ksh 2000</p></div></div></div>
@@ -124,7 +111,13 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
   </div>
 </div>
 
-<div id="tasksTab" style="display:none"><div class="box"><h3>✅ Daily Tasks</h3><p style="color:#aaa;margin-bottom:15px">Complete tasks to earn daily</p><div id="taskList"><p style="color:#888">No active package</p></div></div></div>
+<div id="tasksTab" style="display:none">
+  <div class="box">
+    <h3>✅ Daily Tasks</h3>
+    <p style="color:#aaa;margin-bottom:15px">Complete tasks to earn daily</p>
+    <div id="taskList"><p style="color:#888">No active package</p></div>
+  </div>
+</div>
 
 <div id="walletTab" style="display:none">
   <div class="wallet-card">
@@ -133,13 +126,17 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
     <div class="stat-row"><span>Today's Income</span><b class="green">Ksh <span id="todayIncome">0.00</span></b></div>
     <div class="stat-row"><span>Referral Bonus Total</span><b class="yellow">Ksh <span id="refIncome">0.00</span></b></div>
     <div class="stat-row"><span>Total Income So Far</span><b class="green">Ksh <span id="totalIncome">0.00</span></b></div>
-    <div class="btn-wrap"><button class="btn" onclick="openDepositModal()">DEPOSIT</button><button class="btn btn-orange" onclick="openAccountModal()">ACCOUNT</button><button class="btn" onclick="openWithdrawModal()">WITHDRAW</button></div>
+    <div class="btn-wrap">
+      <button class="btn" onclick="openDepositModal()">DEPOSIT</button>
+      <button class="btn btn-orange" onclick="openAccountModal()">ACCOUNT</button>
+      <button class="btn" onclick="openWithdrawModal()">WITHDRAW</button>
+    </div>
   </div>
   <div class="box"><h3>🎁 Referral & Earn 10%</h3><label>Your Referral Code</label><input id="myCode" readonly><label>Your Referral Link</label><input id="myLink" readonly><button class="btn btn-green" onclick="copyLink()">Copy Link</button></div>
   <div class="box"><h3>📜 Referral History <span style="font-size:11px;color:#fbbf24">(<span id="teamCount">0</span> Members)</span></h3><div id="refHistory"><p style="color:#888">No team members yet</p></div></div>
 </div>
 
-<div id="infoTab" style="display:none"><div class="box"><h3>ℹ️ About NEXA</h3><p style="font-size:13px;line-height:1.6">NEXA VIEW is an earning platform. Complete daily tasks and earn. Available in KE, UG, TZ.</p></div></div>
+<div id="infoTab" style="display:none"><div class="box"><h3>ℹ️ About NEXA</h3><p style="font-size:13px;line-height:1.6">NEXA VIEW TRADEHU is an earning platform. Complete daily tasks and earn. Available in KE, UG, TZ.</p></div></div>
 
 <div id="accountModal" class="modal" onclick="closeAccountModal()"><div class="modal-content" onclick="event.stopPropagation()"><div class="modal-header"><h3>👤 Withdrawal Account</h3><span class="modal-back" onclick="closeAccountModal()">🔙</span></div><div style="background:#1f1f1f;border-radius:12px;padding:14px"><label>Receiving account number (M-Pesa)</label><input id="accNumber" type="tel"><label>Real name</label><input id="accName" type="text"><label>Set/Change PIN (4 digits)</label><input id="accPin" type="password" maxlength="4"><button class="btn btn-orange" style="width:100%;margin-top:12px" onclick="updateAccount()">Update wallet</button></div></div></div>
 
@@ -147,17 +144,26 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
 
 <div id="withdrawModal" class="modal" onclick="closeWithdrawModal()"><div class="modal-content" onclick="event.stopPropagation()"><div class="modal-header"><div></div><span class="modal-back" onclick="closeWithdrawModal()">🔙</span></div><div style="background:#5a3d1f;border-radius:16px;padding:14px;margin-bottom:15px"><p>Available balance</p><h2 style="color:#fbbf24">KSH<span id="withdrawBalance">0.00</span></h2></div><div class="green-banner"><b>⚡ Withdrawals processed instantly</b></div><h4>Choose amount (KSH)</h4><div class="amount-btns"><div class="amount-btn" onclick="selectAmount(200,this)">200</div><div class="amount-btn" onclick="selectAmount(400,this)">400</div><div class="amount-btn" onclick="selectAmount(500,this)">500</div><div class="amount-btn" onclick="selectAmount(700,this)">700</div><div class="amount-btn" onclick="selectAmount(1000,this)">1000</div><div class="amount-btn" onclick="selectAmount(1500,this)">1500</div><div class="amount-btn" onclick="selectAmount(2500,this)">2500</div><div class="amount-btn" onclick="selectAmount(5000,this)">5000</div></div><label>Amount (KSH)</label><input id="withdrawAmount" type="number" oninput="calcWithdraw()"><div class="calc-row"><div class="calc-box">Tax: <b id="taxAmount">KSH0</b></div><div class="calc-box">You receive: <b id="netAmount">KSH0</b></div></div><label>4-digit PIN</label><input id="withdrawPin" type="password" maxlength="4"><button class="btn btn-green" style="width:100%;margin-top:10px" onclick="submitWithdraw()">Submit withdrawal</button><h4 style="margin-top:20px">💸 Withdrawal Records</h4><div id="withdrawHistory"><p style="color:#888">Loading...</p></div></div></div>
 
-<!-- USER MESSAGES MODAL -->
-<div id="userMessagesModal" class="modal" onclick="closeUserMessages()"><div class="modal-content" onclick="event.stopPropagation()"><div class="modal-header"><h3>📩 Messages From Admin</h3><span class="modal-back" onclick="closeUserMessages()">🔙</span></div><div id="userMessagesList"><p style="color:#888">Loading...</p></div></div></div>
-
 <!-- CONGRATULATIONS MODAL -->
-<div id="congoModal" class="congo-modal" onclick="closeCongo()"><div class="congo-content" onclick="event.stopPropagation()"><div class="balloons">🎉🎈🎊🎈🎉</div><h2>CONGRATULATIONS! 🎉</h2><p>You earned today</p><div class="congo-amount"><span id="congoAmount">+Ksh 0</span></div><p style="font-size:12px">Money added to your balance</p><button class="congo-btn" onclick="closeCongo()">AWESOME!</button></div></div>
+<div id="congoModal" class="congo-modal" onclick="closeCongo()">
+  <div class="congo-content" onclick="event.stopPropagation()">
+    <div class="balloons">🎉🎈🎊🎈🎉</div>
+    <h2>CONGRATULATIONS! 🎉</h2>
+    <p>You earned today</p>
+    <div class="congo-amount"><span id="congoAmount">+Ksh 0</span></div>
+    <p style="font-size:12px">Money added to your balance</p>
+    <button class="congo-btn" onclick="closeCongo()">AWESOME!</button>
+  </div>
+</div>
 
 <!-- CUSTOM ALERT MODAL -->
-<div id="customAlert" class="custom-alert" onclick="closeCustomAlert()"><div class="alert-box" onclick="event.stopPropagation()"><div class="icon" id="alertIcon">❌</div><p id="alertText">Message here</p><button class="alert-btn" onclick="closeCustomAlert()">OK</button></div></div>
-
-<!-- CUSTOM CONFIRM MODAL -->
-<div id="customConfirm" class="custom-confirm" onclick="closeCustomConfirm()"><div class="confirm-box" onclick="event.stopPropagation()"><div class="icon">❓</div><p id="confirmText">Are you sure?</p><div class="confirm-btns"><button class="confirm-btn btn-no" onclick="closeCustomConfirm(false)">NO</button><button class="confirm-btn btn-yes" onclick="closeCustomConfirm(true)">YES</button></div></div></div>
+<div id="customAlert" class="custom-alert" onclick="closeCustomAlert()">
+  <div class="alert-box" onclick="event.stopPropagation()">
+    <div class="icon">⚠️</div>
+    <p id="alertText">Message here</p>
+    <button class="alert-btn" onclick="closeCustomAlert()">OK</button>
+  </div>
+</div>
 
 <div class="bottom-nav">
   <div class="nav-item active" onclick="showTab('home',this)"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>Home</div>
@@ -177,24 +183,119 @@ if(!phone){ window.location.href = "index.html"; }
 
 const foodPics = ["https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=400","https://images.unsplash.com/photo-1618164439484-1e3e29e3d6b5?w=400","https://images.unsplash.com/photo-1542838132-92c53300491e?w=400","https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400","https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400"];
 
-// CUSTOM ALERT & CONFIRM FUNCTIONS
-let confirmCallback = null;
-function showAlert(icon, text){document.getElementById('alertIcon').innerText = icon;document.getElementById('alertText').innerText = text;document.getElementById('customAlert').style.display = 'flex';}
+// CUSTOM ALERT FUNCTIONS - NO DOMAIN LINK
+function showAlert(text){document.getElementById('alertText').innerText = text;document.getElementById('customAlert').style.display = 'flex';}
 function closeCustomAlert(){ document.getElementById('customAlert').style.display='none'; }
-function showConfirm(text, callback){document.getElementById('confirmText').innerText = text;confirmCallback = callback;document.getElementById('customConfirm').style.display = 'flex';}
-function closeCustomConfirm(result){document.getElementById('customConfirm').style.display='none';if(confirmCallback) confirmCallback(result);confirmCallback = null;}
 function closeCongo(){ document.getElementById('congoModal').style.display='none'; }
-function openUserMessages(){ document.getElementById('userMessagesModal').style.display='flex'; loadUserMessages(); }
-function closeUserMessages(){ document.getElementById('userMessagesModal').style.display='none'; }
+function openDepositModal(){ document.getElementById('depositModal').style.display='flex'; }
+function closeDepositModal(){ document.getElementById('depositModal').style.display='none'; }
+function openWithdrawModal(){ document.getElementById('withdrawModal').style.display='flex'; loadIncomeStats(); }
+function closeWithdrawModal(){ document.getElementById('withdrawModal').style.display='none'; }
+function openAccountModal(){ document.getElementById('accountModal').style.display='flex'; }
+function closeAccountModal(){ document.getElementById('accountModal').style.display='none'; }
+function copyNumber(){ navigator.clipboard.writeText("0718422377"); showAlert("MPESA Number copied"); }
+function copyLink(){ let link = document.getElementById('myLink'); link.select(); document.execCommand('copy'); showAlert("Referral link copied!"); }
+function selectAmount(amt,el){document.querySelectorAll('.amount-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');document.getElementById('withdrawAmount').value=amt;calcWithdraw();}
+function calcWithdraw(){let amt=parseFloat(document.getElementById('withdrawAmount').value)||0;let tax=amt*0.05;document.getElementById('taxAmount').innerText='KSH'+tax.toFixed(0);document.getElementById('netAmount').innerText='KSH'+(amt-tax).toFixed(0);}
 
-function showTab(tab,el){document.querySelectorAll('.nav-item').forEach(t=>t.classList.remove('active'));el.classList.add('active');['home','tasks','wallet','info'].forEach(t=>document.getElementById(t+'Tab').style.display='none');document.getElementById(tab+'Tab').style.display = 'block';if(tab == 'wallet'){ loadReferralInfo(); loadIncomeStats(); loadAccountInfo(); } if(tab == 'tasks'){ loadTasks(); }}
+function showTab(tab,el){document.querySelectorAll('.nav-item').forEach(t=>t.classList.remove('active'));el.classList.add('active');['home','tasks','wallet','info'].forEach(t=>document.getElementById(t+'Tab').style.display='none');document.getElementById(tab+'Tab').style.display = 'block';if(tab == 'wallet'){ loadReferralInfo(); loadIncomeStats(); } if(tab == 'tasks'){ loadTasks(); }}
 
-function loadWelcome(){db.collection("users").doc(phone).get().then(doc=>{if(doc.exists){let u = doc.data();let username = u.userID || "User";let refCode = u.myReferralCode || "N/A";document.getElementById('welcomeText').innerHTML = `🎉 WELCOME TO NEXA VIEW TRADEHU | ${username} | Ref Code: ${refCode} | Earn 10% 🎉`;}}); loadUserMessages();}
+function loadWelcome(){db.collection("users").doc(phone).get().then(doc=>{if(doc.exists){let u = doc.data();let username = u.userID || "User";let refCode = u.myReferralCode || "N/A";document.getElementById('welcomeText').innerHTML = `🎉 WELCOME TO NEXA VIEW TRADEHU | ${username} | Ref Code: ${refCode} | Earn 10% on referrals 🎉`;}})}
 
-function loadTasks(){db.collection("users").doc(phone).get().then(doc=>{if(doc.exists){let u = doc.data();let owned = u.ownedPackages || {};let html = "";let keys = Object.keys(owned);if(keys.length == 0){html = "<p style='color:#888'>No active package</p>";} else {keys.forEach(key=>{let p = owned[key];let today = new Date().toDateString();let lastClaim = u.lastClaim || {};let canClaim = lastClaim[key]!= today;let dayIndex = new Date().getDate() % foodPics.length;let pic = foodPics[dayIndex];let statusText = canClaim? "Sell your Product & Earn" : "Already Sold Today";let statusColor = canClaim? "#22c55e" : "#ef4444";let btnColor = canClaim? "linear-gradient(180deg,#22c55e,#16a34a)" : "#444";let btnText = canClaim? "SELL" : "SOLD";html += `<div style="background:#111;padding:16px;border-radius:14px;margin-bottom:15px;border:1px solid #333"><div style="background:${statusColor};color:#000;padding:6px 10px;border-radius:20px;font-size:11px;font-weight:700;text-align:center;margin-bottom:10px">${statusText}</div><h3 style="margin:0 0 10px 0;color:#22c55e">Package</h3><img src="${pic}" style="width:100%;height:120px;object-fit:cover;border-radius:10px;margin-bottom:12px;border:1px solid #333"><div style="display:flex;gap:10px;margin-bottom:12px"><button onclick="claimTask('${key}')" style="flex:1;padding:12px;background:${btnColor};color:white;border:none;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer" ${canClaim?'':'disabled'}>${btnText}</button><div style="flex:1;background:#1a3d2a;border:1px solid #22c55e;border-radius:10px;padding:10px;text-align:center"><div style="font-size:10px;color:#aaa">PROFIT</div><b style="color:#22c55e;font-size:16px">Ksh ${p.daily}</b></div></div><p style="font-size:11px;color:#aaa;margin:0">Tap <b>SELL</b> every day.</p></div>`;});}document.getElementById('taskList').innerHTML = html;}})}
+function loadTasks(){
+  db.collection("users").doc(phone).get().then(doc=>{
+    if(doc.exists){
+      let u = doc.data();
+      let owned = u.ownedPackages || {};
+      let html = "";
+      let keys = Object.keys(owned);
+      if(keys.length == 0){
+        html = "<p style='color:#888'>No active package</p>";
+      } else {
+        keys.forEach(key=>{
+          let p = owned[key];
+          let today = new Date().toDateString();
+          let lastClaim = u.lastClaim || {};
+          let canClaim = lastClaim[key]!= today;
+          let dayIndex = new Date().getDate() % foodPics.length;
+          let pic = foodPics[dayIndex];
+          let statusText = canClaim? "Sell your Product & Earn" : "Already Sold Today";
+          let statusColor = canClaim? "#22c55e" : "#ef4444";
+          let btnColor = canClaim? "linear-gradient(180deg,#22c55e,#16a34a)" : "#444";
+          let btnText = canClaim? "SELL" : "SOLD";
+          html += `<div style="background:#111;padding:16px;border-radius:14px;margin-bottom:15px;border:1px solid #333">
+            <div style="background:${statusColor};color:#000;padding:6px 10px;border-radius:20px;font-size:11px;font-weight:700;text-align:center;margin-bottom:10px">${statusText}</div>
+            <h3 style="margin:0 0 10px 0;color:#22c55e">Package</h3>
+            <img src="${pic}" style="width:100%;height:120px;object-fit:cover;border-radius:10px;margin-bottom:12px;border:1px solid #333">
+            <div style="display:flex;gap:10px;margin-bottom:12px">
+              <button onclick="claimTask('${key}')" style="flex:1;padding:12px;background:${btnColor};color:white;border:none;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer" ${canClaim?'':'disabled'}>${btnText}</button>
+              <div style="flex:1;background:#1a3d2a;border:1px solid #22c55e;border-radius:10px;padding:10px;text-align:center"><div style="font-size:10px;color:#aaa">PROFIT</div><b style="color:#22c55e;font-size:16px">Ksh ${p.daily}</b></div>
+            </div>
+          </div>`;
+        });
+      }
+      document.getElementById('taskList').innerHTML = html;
+    }
+  })
+}
 
-function claimTask(key){let today = new Date().toDateString();db.collection("users").doc(phone).get().then(doc=>{let u = doc.data();let p = u.ownedPackages[key];let newBalance = (u.balance || 0) + p.daily;let newTotal = (u.totalIncome || 0) + p.daily;let lastClaim = u.lastClaim || {};lastClaim[key] = today;db.collection("users").doc(phone).update({balance: newBalance,totalIncome: newTotal,todayIncome: (u.todayIncome || 0) + p.daily,lastClaim: lastClaim}).then(()=>{document.getElementById('congoAmount').innerText = `+Ksh ${p.daily}`;document.getElementById('congoModal').style.display = 'flex';loadTasks();loadIncomeStats();})}
+function claimTask(key){
+  let today = new Date().toDateString();
+  db.collection("users").doc(phone).get().then(doc=>{
+    let u = doc.data();
+    let p = u.ownedPackages[key];
+    let newBalance = (u.balance || 0) + p.daily;
+    let newTotal = (u.totalIncome || 0) + p.daily;
+    let lastClaim = u.lastClaim || {};
+    lastClaim[key] = today;
+    db.collection("users").doc(phone).update({
+      balance: newBalance,
+      totalIncome: newTotal,
+      todayIncome: (u.todayIncome || 0) + p.daily,
+      lastClaim: lastClaim
+    }).then(()=>{
+      document.getElementById('congoAmount').innerText = `+Ksh ${p.daily}`;
+      document.getElementById('congoModal').style.display = 'flex';
+      loadTasks();
+      loadIncomeStats();
+    })
+  })
+}
 
-function buyPackage(price, days, daily){db.collection("users").doc(phone).get().then(doc=>{let u = doc.data();if(u.balance < price){ showAlert("❌", "Insufficient balance. Go to Wallet to Deposit"); showTab('wallet', document.querySelectorAll('.nav-item')[2]); return; }showConfirm(`Buy package for Ksh ${price}?`, (yes)=>{if(!yes) return;let newBalance = u.balance - price;let owned = u.ownedPackages || {};owned[Date.now()] = {price, days, daily, start: new Date()};db.collection("users").doc(phone).update({balance: newBalance, totalInvested: (u.totalInvested || 0) + price, ownedPackages: owned}).then(()=>{ showAlert("✅", "Package purchased successfully!"); })})}
+function buyPackage(price, days, daily){
+  db.collection("users").doc(phone).get().then(doc=>{
+    let u = doc.data();
+    if(u.balance < price){ showAlert("Insufficient balance. Go to Wallet to Deposit"); showTab('wallet', document.querySelectorAll('.nav-item')[2]); return; }
+    if(!confirm(`Buy package for Ksh ${price}?`)) return;
+    let newBalance = u.balance - price;
+    let owned = u.ownedPackages || {};
+    owned[Date.now()] = {price, days, daily, start: new Date()};
+    db.collection("users").doc(phone).update({balance: newBalance, totalInvested: (u.totalInvested || 0) + price, ownedPackages: owned}).then(()=>{ showAlert("Package purchased successfully!"); })
+  })
+}
 
-function loadIncomeStats(){db.collection("users").doc(phone).get().then(doc=>{if(doc.exists){let u = doc.data();let totalProfile = u.totalIncome || 0;let totalReferral = u.totalReferralEarned || 0;let todayProfile = u.todayIncome || 0;let todayReferral = u.todayReferralIncome || 0;let totalInvested
+function loadIncomeStats(){
+  db.collection("users").doc(phone).get().then(doc=>{
+    if(doc.exists){
+      let u = doc.data();
+      let totalProfile = u.totalIncome || 0;
+      let totalReferral = u.totalReferralEarned || 0;
+      let todayProfile = u.todayIncome || 0;
+      let todayReferral = u.todayReferralIncome || 0;
+      let totalInvested = u.totalInvested || 0;
+      let todayTotal = todayProfile + todayReferral;
+      let totalAll = totalProfile + totalReferral;
+
+      document.getElementById('totalInvested').innerText = totalInvested.toFixed(2);
+      document.getElementById('withdrawBalance').innerText = (u.balance || 0).toFixed(2);
+      document.getElementById('todayIncome').innerText = todayTotal.toFixed(2);
+      document.getElementById('refIncome').innerText = totalReferral.toFixed(2);
+      document.getElementById('totalIncome').innerText = totalAll.toFixed(2);
+      document.getElementById('totalEarnings').innerText = totalAll.toFixed(2);
+    }
+  })
+}
+
+function loadReferralInfo(){ db.collection("users").doc(phone).get().then(doc=>{ if(doc.exists){ let u = doc.data(); document.getElementById('userID').innerText = u.userID || "N/A"; document.getElementById('myCode').value = u.myReferralCode || "N/A"; document.getElementById('myLink').value = window.location.origin + "/index.html?ref=" + (u.myReferralCode || ""); db.collection("users").where("referredBy","==",phone).get().then(snap=>{document.getElementById('teamCount').innerText = snap.size;}) } })}
+
+function updateAccount(){let acc=document.getElementById('accNumber').value;let name=document.getElementById('accName').value;let pin=document.getElementById('accPin').value;if(pin.length!=4){showAlert("PIN must be 4 digits");return;}db.collection("users").doc(phone).update({mpesa:acc,name:name,pin:pin}).then(()=>{
