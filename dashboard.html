@@ -12,10 +12,11 @@ body{background:#000;color:white;font-family:Poppins;margin:0;padding:0 0 80px 0
 .welcome-text{display:inline-block;padding-left:100%;animation: scroll-left 15s linear infinite;font-weight:700;font-size:13px}
 @keyframes scroll-left {0% { transform: translateX(0); } 100% { transform: translateX(-100%); }}
 
-.box{margin:15px;padding:14px;border-radius:14px;background:#111;border:1px solid #222;position:relative}
+.box{margin:15px;padding:14px;border-radius:14px;background:#111;border:1px solid #222}
 .package-card{background:linear-gradient(135deg,#1a1a1a,#222);border:1px solid #333;border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer}
 .wallet-card{background:#181818;border-radius:14px;padding:14px;margin:15px;border:1px solid #333}
 .stat-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #222;font-size:13px}
+.stat-row b{color:#22c55e}
 .btn{flex:1;padding:11px;background:linear-gradient(180deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:8px;font-weight:700;cursor:pointer}
 .btn-green{background:linear-gradient(180deg,#22c55e,#16a34a);color:white}
 .btn-orange{background:linear-gradient(180deg,#f97316,#ea580c);color:white}
@@ -28,34 +29,13 @@ input{width:100%;padding:10px;background:#1a1a1a;border:1px solid #333;color:whi
 .nav-item{flex:1;text-align:center;font-size:10px;color:#888;cursor:pointer}
 .nav-item.active{color:#fbbf24;font-weight:700}
 
-/* NEW: FLOATING WHATSAPP ICON */
-.whatsapp-float{
-  position:fixed;
-  bottom:90px;
-  right:15px;
-  width:55px;
-  height:55px;
-  background:#25D366;
-  border-radius:50%;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  font-size:32px;
-  color:white;
-  text-decoration:none;
-  box-shadow:0 4px 12px rgba(37,211,102,0.5);
-  z-index:999;
-  cursor:grab;
-  transition:0.2s;
-}
-.whatsapp-float:active{transform:scale(0.9);cursor:grabbing}
+/* WHATSAPP FLOAT */
+.whatsapp-float{position:fixed;bottom:90px;right:15px;width:55px;height:55px;background:#25D366;border-radius:50%;display:flex;justify-content:center;align-items:center;font-size:32px;color:white;text-decoration:none;box-shadow:0 4px 12px rgba(37,211,102,0.5);z-index:999}
 
-/* CUSTOM ALERT */
 .custom-alert{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1001;justify-content:center;align-items:center}
 .alert-box{background:#1a1a1a;width:85%;border-radius:16px;padding:20px;border:2px solid #22c55e;text-align:center}
 .alert-btn{padding:12px;background:#22c55e;color:white;border:none;border-radius:10px;font-weight:800;width:100%;cursor:pointer}
 
-/* CONGRATULATIONS */
 .congo-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:1000;justify-content:center;align-items:center}
 .congo-content{background:linear-gradient(135deg,#22c55e,#16a34a);width:85%;border-radius:20px;padding:25px;text-align:center;border:2px solid #fbbf24}
 .congo-amount{font-size:28px;color:#fbbf24;font-weight:900;margin:10px 0}
@@ -64,16 +44,21 @@ input{width:100%;padding:10px;background:#1a1a1a;border:1px solid #333;color:whi
 </head>
 <body>
 
+<!-- REMOVED TOP BAR -->
+
 <div id="homeTab">
   <div class="welcome-bar"><div class="welcome-text" id="welcomeText">Loading...</div></div>
   <div class="box">
     <h3 style="background: linear-gradient(90deg,#fbbf24,#f59e0b);-webkit-background-clip: text;-webkit-text-fill-color: transparent;font-size:18px;font-weight:800">🛍️ PRODUCTS</h3>
     <p style="font-size:12px;color:#22c55e">Choose a plan and earn daily interest</p>
-    <div class="package-card" onclick="buyPackage(300, 20, 25)"><b style="color:#3b82f6">L1 - Service</b><br>Stake: Ksh 300 | Income: Ksh 500</div>
-    <div class="package-card" onclick="buyPackage(700, 20, 50)"><b style="color:#22c55e">L2 - Food Stuffs</b><br>Stake: Ksh 700 | Income: Ksh 1000</div>
-    <div class="package-card" onclick="buyPackage(1300, 20, 100)"><b style="color:#ec4899">L3 - By products</b><br>Stake: Ksh 1300 | Income: Ksh 2000</div>
-    <div class="package-card" onclick="buyPackage(2500, 30, 150)"><b style="color:#f97316">L4 - House Hold</b><br>Stake: Ksh 2500 | Income: Ksh 4500</div>
-    <div class="package-card" onclick="buyPackage(3500, 30, 200)"><b style="color:#a855f7">L5 - Beauty</b><br>Stake: Ksh 3500 | Income: Ksh 6000</div>
+    <div class="package-card" onclick="buyPackage(300, 20, 25)"><b style="color:#3b82f6">L1 - Service</b><p style="font-size:11px;color:#aaa">20 Days · Ksh 25/Day</p><b style="color:#fbbf24">Stake: Ksh 300</b><p style="font-size:15px;color:#22c55e;font-weight:800">Income: Ksh 500</p></div>
+    <div class="package-card" onclick="buyPackage(700, 20, 50)"><b style="color:#22c55e">L2 - Food Stuffs</b><p style="font-size:11px;color:#aaa">20 Days · Ksh 50/Day</p><b style="color:#fbbf24">Stake: Ksh 700</b><p style="font-size:15px;color:#22c55e;font-weight:800">Income: Ksh 1000</p></div>
+    <div class="package-card" onclick="buyPackage(1300, 20, 100)"><b style="color:#ec4899">L3 - By products</b><p style="font-size:11px;color:#aaa">20 Days · Ksh 100/Day</p><b style="color:#fbbf24">Stake: Ksh 1300</b><p style="font-size:15px;color:#22c55e;font-weight:800">Income: Ksh 2000</p></div>
+    <div class="package-card" onclick="buyPackage(2500, 30, 150)"><b style="color:#f97316">L4 - House Hold</b><p style="font-size:11px;color:#aaa">30 Days · Ksh 150/Day</p><b style="color:#fbbf24">Stake: Ksh 2500</b><p style="font-size:15px;color:#22c55e;font-weight:800">Income: Ksh 4500</p></div>
+    <div class="package-card" onclick="buyPackage(3500, 30, 200)"><b style="color:#a855f7">L5 - Beauty</b><p style="font-size:11px;color:#aaa">30 Days · Ksh 200/Day</p><b style="color:#fbbf24">Stake: Ksh 3500</b><p style="font-size:15px;color:#22c55e;font-weight:800">Income: Ksh 6000</p></div>
+    <div class="package-card" onclick="buyPackage(4800, 30, 250)"><b style="color:#06b6d4">L6 - Stationaries</b><p style="font-size:11px;color:#aaa">30 Days · Ksh 250/Day</p><b style="color:#fbbf24">Stake: Ksh 4800</b><p style="font-size:15px;color:#22c55e;font-weight:800">Income: Ksh 7500</p></div>
+    <div class="package-card" onclick="buyPackage(7500, 30, 350)"><b style="color:#ef4444">L7 - Sporting</b><p style="font-size:11px;color:#aaa">30 Days · Ksh 350/Day</p><b style="color:#fbbf24">Stake: Ksh 7500</b><p style="font-size:15px;color:#22c55e;font-weight:800">Income: Ksh 10500</p></div>
+    <div class="package-card" onclick="buyPackage(10000, 30, 500)"><b style="color:#eab308">L8 - Appliances</b><p style="font-size:11px;color:#aaa">30 Days · Ksh 500/Day</p><b style="color:#fbbf24">Stake: Ksh 10000</b><p style="font-size:15px;color:#22c55e;font-weight:800">Income: Ksh 15000</p></div>
   </div>
 </div>
 
@@ -91,15 +76,16 @@ input{width:100%;padding:10px;background:#1a1a1a;border:1px solid #333;color:whi
 
 <div id="infoTab" style="display:none"><div class="box"><h3>ℹ️ About</h3><p>NEXA VIEW TRADEHU</p></div></div>
 
-<div id="accountModal" class="modal"><div class="modal-content"><span class="modal-back" onclick="closeAccountModal()">🔙</span><h3>Withdrawal Account</h3><input id="accNumber" placeholder="M-Pesa"><input id="accName" placeholder="Name"><input id="accPin" placeholder="4 Digit PIN" maxlength="4"><button class="btn btn-orange" onclick="updateAccount()">Update wallet</button></div></div>
+<div id="accountModal" class="modal"><div class="modal-content"><span class="modal-back" onclick="closeAccountModal()">🔙</span><h3>Withdrawal Account</h3><input id="accNumber"><input id="accName"><input id="accPin" maxlength="4"><button class="btn btn-orange" onclick="updateAccount()">Update wallet</button></div></div>
 <div id="depositModal" class="modal"><div class="modal-content"><span class="modal-back" onclick="closeDepositModal()">🔙</span><h3>Deposit</h3><button class="btn btn-green" onclick="closeDepositModal()">Close</button></div></div>
-<div id="withdrawModal" class="modal"><div class="modal-content"><span class="modal-back" onclick="closeWithdrawModal()">🔙</span><h3>Withdraw</h3><button class="btn btn-green" onclick="submitWithdraw()">Submit withdrawal</button></div></div>
+<div id="withdrawModal" class="modal"><div class="modal-content"><span class="modal-back" onclick="closeWithdrawModal()">🔙</span><h3>Withdraw</h3><p>Balance: Ksh <span id="withdrawBalance">0</span></p><input id="withdrawAmount" placeholder="Amount"><input id="withdrawPin" placeholder="PIN" maxlength="4"><button class="btn btn-green" onclick="submitWithdraw()">Submit withdrawal</button></div></div>
 
-<div id="congoModal" class="congo-modal" onclick="closeCongo()"><div class="congo-content"><div style="font-size:40px">🎉</div><h2>CONGRATULATIONS! 🎉</h2><div class="congo-amount" id="congoAmount">+Ksh 0</div><button class="congo-btn" onclick="closeCongo()">AWESOME!</button></div></div>
-<div id="customAlert" class="custom-alert" onclick="closeCustomAlert()"><div class="alert-box"><p id="alertText">Message</p><button class="alert-btn" onclick="closeCustomAlert()">OK</button></div></div>
+<div id="congoModal" class="congo-modal"><div class="congo-content"><div style="font-size:40px">🎉</div><h2>CONGRATULATIONS!</h2><div class="congo-amount" id="congoAmount">+Ksh 0</div><button class="congo-btn" onclick="closeCongo()">AWESOME!</button></div></div>
 
-<!-- NEW: FLOATING MOVABLE WHATSAPP BUTTON -->
-<a href="https://chat.whatsapp.com/JmXM1kYBXuiF5dmbBU25f2?s=cl&p=a&ilr=0" target="_blank" class="whatsapp-float" id="whatsappBtn">💬</a>
+<div id="customAlert" class="custom-alert"><div class="alert-box"><p id="alertText">Message</p><button class="alert-btn" onclick="closeCustomAlert()">OK</button></div></div>
+
+<!-- WHATSAPP ICON -->
+<a href="https://chat.whatsapp.com/JmXM1kYBXuiF5dmbBU25f2?s=cl&p=a&ilr=0" target="_blank" class="whatsapp-float">💬</a>
 
 <div class="bottom-nav">
   <div class="nav-item active" onclick="showTab('home',this)">Home</div>
@@ -122,7 +108,7 @@ function closeCustomAlert(){ document.getElementById('customAlert').style.displa
 function closeCongo(){ document.getElementById('congoModal').style.display='none'; }
 function openDepositModal(){ document.getElementById('depositModal').style.display='flex'; }
 function closeDepositModal(){ document.getElementById('depositModal').style.display='none'; }
-function openWithdrawModal(){ document.getElementById('withdrawModal').style.display='flex'; }
+function openWithdrawModal(){ document.getElementById('withdrawModal').style.display='flex'; loadIncomeStats(); }
 function closeWithdrawModal(){ document.getElementById('withdrawModal').style.display='none'; }
 function openAccountModal(){ document.getElementById('accountModal').style.display='flex'; }
 function closeAccountModal(){ document.getElementById('accountModal').style.display='none'; }
@@ -130,25 +116,12 @@ function closeAccountModal(){ document.getElementById('accountModal').style.disp
 function showTab(tab,el){document.querySelectorAll('.nav-item').forEach(t=>t.classList.remove('active'));el.classList.add('active');['home','tasks','wallet','info'].forEach(t=>document.getElementById(t+'Tab').style.display='none');document.getElementById(tab+'Tab').style.display = 'block';}
 
 function loadWelcome(){db.collection("users").doc(phone).get().then(doc=>{if(doc.exists){document.getElementById('welcomeText').innerHTML = `🎉 WELCOME TO NEXA VIEW TRADEHU 🎉`;}})}
-function loadIncomeStats(){db.collection("users").doc(phone).get().then(doc=>{if(doc.exists){let u = doc.data();document.getElementById('totalInvested').innerText = (u.totalInvested || 0).toFixed(2);document.getElementById('walletBalance').innerText = (u.balance || 0).toFixed(2);document.getElementById('totalIncome').innerText = ((u.totalIncome||0)+(u.totalReferralEarned||0)).toFixed(2);}})}
-function updateAccount(){let acc=document.getElementById('accNumber').value;let name=document.getElementById('accName').value;let pin=document.getElementById('accPin').value;db.collection("users").doc(phone).update({mpesa:acc,name:name,pin:pin}).then(()=>{showAlert("Account updated successfully");closeAccountModal();})}
-function submitWithdraw(){showAlert("Withdrawal submitted successfully");closeWithdrawModal();}
+function loadIncomeStats(){db.collection("users").doc(phone).get().then(doc=>{if(doc.exists){let u = doc.data();document.getElementById('totalInvested').innerText = (u.totalInvested || 0).toFixed(2);document.getElementById('walletBalance').innerText = (u.balance || 0).toFixed(2);document.getElementById('withdrawBalance').innerText = (u.balance || 0).toFixed(2);document.getElementById('totalIncome').innerText = ((u.totalIncome||0)+(u.totalReferralEarned||0)).toFixed(2);}})}
+function updateAccount(){db.collection("users").doc(phone).update({mpesa:document.getElementById('accNumber').value,name:document.getElementById('accName').value,pin:document.getElementById('accPin').value}).then(()=>{showAlert("Account updated successfully");closeAccountModal();})}
+function submitWithdraw(){let amt=parseFloat(document.getElementById('withdrawAmount').value);db.collection("users").doc(phone).get().then(doc=>{let u=doc.data();db.collection("withdrawals").add({phone:phone,amount:amt,status:"pending"});db.collection("users").doc(phone).update({balance:u.balance-amt});showAlert("Withdrawal submitted successfully");closeWithdrawModal();})}
 function buyPackage(price, days, daily){if(!confirm(`Buy package for Ksh ${price}?`)) return;showAlert("Package purchased");}
 
 window.onload = function(){ loadWelcome(); loadIncomeStats(); }
-
-// NEW: MAKE WHATSAPP ICON DRAGGABLE
-let isDragging = false;
-let whatsappBtn = document.getElementById('whatsappBtn');
-whatsappBtn.addEventListener('touchstart', function(e){ isDragging = true; });
-whatsappBtn.addEventListener('touchmove', function(e){
-  if(isDragging){
-    let touch = e.touches[0];
-    whatsappBtn.style.right = (window.innerWidth - touch.clientX - 27) + 'px';
-    whatsappBtn.style.bottom = (window.innerHeight - touch.clientY - 27) + 'px';
-  }
-});
-whatsappBtn.addEventListener('touchend', function(){ isDragging = false; });
 </script>
 </body>
 </html>
