@@ -16,43 +16,17 @@ body{background:#000;color:white;font-family:Poppins;margin:0;padding:0 0 80px 0
 .package-card{background:linear-gradient(135deg,#1a1a1a,#222);border:1px solid #333;border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;transition:0.2s}
 .package-card:active{transform:scale(0.98);border-color:#fbbf24}
 
-.wallet-card{background:#181818;border-radius:14px;padding:14px;margin:15px;border:1px solid #333}
-.stat-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #222;font-size:13px}
-.stat-row:last-child{border:none}
-.stat-row b{color:#22c55e;font-size:13px}
-.stat-row.green{color:#22c55e}
-.stat-row.yellow{color:#fbbf24}
-
 h3{display:flex;align-items:center;gap:8px;color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
-.btn-wrap{display:flex;gap:8px;margin-top:12px}
-.btn{flex:1;padding:11px;background:linear-gradient(180deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:12px}
-.btn:active{transform:scale(0.97)}
-.btn-green{background:linear-gradient(180deg,#22c55e,#16a34a);color:white}
-.btn-orange{background:linear-gradient(180deg,#f97316,#ea580c);color:white}
-
-input{width:100%;padding:10px;background:#1a1a1a;border:1px solid #333;color:white;border-radius:8px;margin:6px 0;font-size:13px}
-label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
+.btn{width:100%;padding:11px;background:linear-gradient(180deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:12px;margin:5px 0}
 
 .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:999;justify-content:center;align-items:center;overflow-y:auto}
 .modal-content{background:#111;width:90%;max-height:90%;overflow-y:auto;border-radius:16px;padding:18px;border:1px solid #333}
 .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
 .modal-back{font-size:28px;cursor:pointer;color:#aaa;font-weight:700;background:#222;padding:6px 12px;border-radius:10px;line-height:1}
 
-.deposit-box{background:#1a3d2a;border:1px solid #22c55e;border-radius:14px;padding:14px;margin-bottom:15px}
-.mpesa-number{font-size:18px;color:#22c55e;font-weight:700;text-align:center;padding:8px;background:#000;border-radius:8px;margin:10px 0}
-.copy-btn{padding:5px 10px;background:#22c55e;color:#000;border:none;border-radius:6px;font-size:10px;cursor:pointer;font-weight:700}
-
-.green-banner{background:linear-gradient(90deg,#059669,#047857);padding:10px;border-radius:12px;margin-bottom:15px;font-size:11px}
-.amount-btns{display:flex;gap:6px;margin-bottom:15px;flex-wrap:wrap}
-.amount-btn{padding:7px 12px;background:#2a2a2a;border:1px solid #444;border-radius:20px;cursor:pointer;font-weight:600;font-size:12px;min-width:60px}
-.amount-btn.active{color:#000;border-color:#fbbf24;font-weight:700}
-.calc-row{display:flex;gap:8px;margin-bottom:15px}
-.calc-box{flex:1;background:#1a1a1a;padding:8px;border-radius:8px;font-size:11px}
-.calc-box b{color:#fbbf24}
-
 /* BOTTOM NAV */
 .bottom-nav{position:fixed;bottom:0;left:0;width:100%;background:#111;border-top:1px solid #222;display:flex;justify-content:space-around;padding:8px 0;z-index:99}
-.nav-item{flex:1;text-align:center;font-size:10px;color:#888;cursor:pointer}
+.nav-item{flex:1;text-align:center;font-size:10px;color:#888;cursor:pointer;text-decoration:none}
 .nav-item.active{color:#fbbf24;font-weight:700}
 .nav-item svg{width:20px;height:20px;margin-bottom:3px}
 
@@ -81,21 +55,6 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
   </div>
 </div>
 
-<div id="tasksTab" style="display:none"><div class="box"><h3>✅ Daily Tasks</h3><p style="color:#aaa;margin-bottom:15px">Complete tasks to earn daily</p><div id="taskList"><p style="color:#888">No active package</p></div></div></div>
-
-<div id="walletTab" style="display:none">
-  <div class="wallet-card">
-    <div class="stat-row"><span>User ID</span><b class="green" id="userID">NEXAUXXXXXX</b></div>
-    <div class="stat-row"><span>Available Balance</span><b class="green">Ksh <span id="walletBalance">0.00</span></b></div>
-    <div class="stat-row"><span>Today's Income</span><b class="green">Ksh <span id="todayIncome">0.00</span></b></div>
-    <div class="stat-row"><span>Total Income So Far</span><b class="green">Ksh <span id="totalIncome">0.00</span></b></div>
-    <div class="stat-row"><span>Referral Income Total</span><b class="yellow">Ksh <span id="refIncome">0.00</span></b></div>
-    <div class="btn-wrap"><button class="btn" onclick="openDepositModal()">DEPOSIT</button><button class="btn btn-orange" onclick="openAccountModal()">ACCOUNT</button><button class="btn" onclick="openWithdrawModal()">WITHDRAW</button></div>
-  </div>
-  <div class="box"><h3>🎁 Referral & Earn 10%</h3><label>Your Referral Code</label><input id="myCode" readonly><label>Your Referral Link</label><input id="myLink" readonly><div class="btn-wrap"><button class="btn btn-green" onclick="copyLink()">📋 Copy</button><button class="btn btn-orange" onclick="shareLink()">🔗 Share</button></div></div>
-  <div class="box"><h3>📜 Referral History <span style="font-size:11px;color:#fbbf24">(<span id="teamCount">0</span> Members)</span></h3><div id="refHistory"><p style="color:#888">No team members yet</p></div></div>
-</div>
-
 <div id="infoTab" style="display:none">
   <div class="box">
     <h3>ℹ️ About NEXA</h3>
@@ -104,58 +63,36 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
 
   <div class="box">
     <h3>📄 Legal & Support</h3>
-    <div style="display:flex;flex-direction:column;gap:10px">
-      <button class="btn" onclick="showInfo('terms')" style="background:#1a1a1a;border:1px solid #333;color:white">📜 Terms & Conditions</button>
-      <button class="btn" onclick="showInfo('privacy')" style="background:#1a1a1a;border:1px solid #333;color:white">🔒 Privacy Policy</button>
-      <button class="btn" onclick="showInfo('contact')" style="background:#1a1a1a;border:1px solid #333;color:white">📞 Contact Us</button>
-    </div>
+    <button class="btn" onclick="showInfo('terms')" style="background:#1a1a1a;border:1px solid #333;color:white">📜 Terms & Conditions</button>
+    <button class="btn" onclick="showInfo('privacy')" style="background:#1a1a1a;border:1px solid #333;color:white">🔒 Privacy Policy</button>
+    <button class="btn" onclick="showInfo('contact')" style="background:#1a1a1a;border:1px solid #333;color:white">📞 Contact Us</button>
   </div>
 
   <div class="box">
     <h3>🌐 Connect With Us</h3>
     <div style="display:flex;justify-content:space-around;gap:10px">
-      <a id="whatsappLink" target="_blank" style="flex:1;text-align:center;background:#25D366;padding:12px;border-radius:10px;text-decoration:none;color:white;font-weight:700">
-        <div style="font-size:24px">💬</div>
-        <div style="font-size:11px">WhatsApp</div>
-      </a>
-      <a id="telegramLink" target="_blank" style="flex:1;text-align:center;background:#0088cc;padding:12px;border-radius:10px;text-decoration:none;color:white;font-weight:700">
-        <div style="font-size:24px">✈️</div>
-        <div style="font-size:11px">Telegram</div>
-      </a>
-      <a id="instagramLink" target="_blank" style="flex:1;text-align:center;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);padding:12px;border-radius:10px;text-decoration:none;color:white;font-weight:700">
-        <div style="font-size:24px">📷</div>
-        <div style="font-size:11px">Instagram</div>
-      </a>
+      <a id="whatsappLink" target="_blank" style="flex:1;text-align:center;background:#25D366;padding:12px;border-radius:10px;text-decoration:none;color:white;font-weight:700"><div>💬</div><div>WhatsApp</div></a>
+      <a id="telegramLink" target="_blank" style="flex:1;text-align:center;background:#0088cc;padding:12px;border-radius:10px;text-decoration:none;color:white;font-weight:700"><div>✈️</div><div>Telegram</div></a>
+      <a id="instagramLink" target="_blank" style="flex:1;text-align:center;background:#bc1888;padding:12px;border-radius:10px;text-decoration:none;color:white;font-weight:700"><div>📷</div><div>Instagram</div></a>
     </div>
-    <a id="downloadAppLink" target="_blank" style="display:block;margin-top:10px;text-align:center;background:#fbbf24;padding:12px;border-radius:10px;text-decoration:none;color:black;font-weight:700">
-      📲 Download The App
-    </a>
+    <a id="downloadAppLink" target="_blank" style="display:block;margin-top:10px;text-align:center;background:#fbbf24;padding:12px;border-radius:10px;text-decoration:none;color:black;font-weight:700">📲 Download The App</a>
   </div>
 </div>
 
-<div id="accountModal" class="modal" onclick="closeAccountModal()"><div class="modal-content" onclick="event.stopPropagation()"><div class="modal-header"><h3>👤 Withdrawal Account</h3><span class="modal-back" onclick="closeAccountModal()">🔙</span></div><div style="background:#1f1f1f;border-radius:12px;padding:14px"><label>Receiving account number (M-Pesa)</label><input id="accNumber" type="tel"><label>Real name</label><input id="accName" type="text"><label>Set/Change PIN (4 digits)</label><input id="accPin" type="password" maxlength="4"><button class="btn btn-orange" style="width:100%;margin-top:12px" onclick="updateAccount()">Update wallet</button></div></div></div>
-
-<div id="depositModal" class="modal" onclick="closeDepositModal()"><div class="modal-content" onclick="event.stopPropagation()"><div class="modal-header"><h3>💰 Deposit Funds</h3><span class="modal-back" onclick="closeDepositModal()">🔙</span></div><div class="deposit-box"><p style="font-size:12px;color:#aaa">1. Send money to MPESA Number below</p><div class="mpesa-number">0718422377 <button class="copy-btn" onclick="copyNumber()">Copy</button></div></div><label>Amount Deposited (KSH)</label><input id="depositAmount" type="number"><label>Paste MPESA Message / Transaction Code</label><input id="depositMsg"><button class="btn btn-green" style="width:100%;margin-top:10px" onclick="submitDeposit()">Submit Deposit</button><h4 style="margin-top:20px">📜 Deposit History</h4><div id="depositHistory"><p style="color:#888">Loading...</p></div></div></div>
-
-<div id="withdrawModal" class="modal" onclick="closeWithdrawModal()"><div class="modal-content" onclick="event.stopPropagation()"><div class="modal-header"><div></div><span class="modal-back" onclick="closeWithdrawModal()">🔙</span></div><div style="background:#5a3d1f;border-radius:16px;padding:14px;margin-bottom:15px"><p>Available balance</p><h2 style="color:#fbbf24">KSH<span id="withdrawBalance">0.00</span></h2></div><div class="green-banner"><b>⚡ Withdrawals processed instantly</b></div><h4>Choose amount (KSH)</h4><div class="amount-btns"><div class="amount-btn" onclick="selectAmount(200,this)">200</div><div class="amount-btn" onclick="selectAmount(400,this)">400</div><div class="amount-btn" onclick="selectAmount(500,this)">500</div><div class="amount-btn" onclick="selectAmount(700,this)">700</div><div class="amount-btn" onclick="selectAmount(1000,this)">1000</div><div class="amount-btn" onclick="selectAmount(1500,this)">1500</div><div class="amount-btn" onclick="selectAmount(2500,this)">2500</div><div class="amount-btn" onclick="selectAmount(5000,this)">5000</div></div><label>Amount (KSH)</label><input id="withdrawAmount" type="number" oninput="calcWithdraw()"><div class="calc-row"><div class="calc-box">Tax: <b id="taxAmount">KSH0</b></div><div class="calc-box">You receive: <b id="netAmount">KSH0</b></div></div><label>4-digit PIN</label><input id="withdrawPin" type="password" maxlength="4"><button class="btn btn-green" style="width:100%;margin-top:10px" onclick="submitWithdraw()">Submit withdrawal</button><h4 style="margin-top:20px">💸 Withdrawal Records</h4><div id="withdrawHistory"><p style="color:#888">Loading...</p></div></div></div>
-
 <div id="infoModal" class="modal" onclick="closeInfoModal()">
   <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      <h3 id="infoModalTitle">Title</h3>
-      <span class="modal-back" onclick="closeInfoModal()">🔙</span>
-    </div>
+    <div class="modal-header"><h3 id="infoModalTitle">Title</h3><span class="modal-back" onclick="closeInfoModal()">🔙</span></div>
     <div id="infoModalContent" style="font-size:13px;line-height:1.7"></div>
   </div>
 </div>
 
-<a href="https://chat.whatsapp.com/JmXM1kYBXuiF5dmbBU25f2?s=cl&p=a&ilr=0" target="_blank" class="whatsapp-float">💬</a>
+<a href="https://chat.whatsapp.com/JmXM1kYBXuiF5dmbBU25f2" target="_blank" class="whatsapp-float">💬</a>
 
 <div class="bottom-nav">
-  <div class="nav-item active" onclick="showTab('home',this)"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>Home</div>
-  <div class="nav-item" onclick="showTab('tasks',this)"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path d="M4 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h6a1 1 0 100-2H7z"/></svg>Tasks</div>
-  <div class="nav-item" onclick="showTab('wallet',this)"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 0 01-2-2v-4z"/></svg>Wallet</div>
-  <div class="nav-item" onclick="showTab('info',this)"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"/></svg>Info</div>
+  <a href="dashboard.html" class="nav-item active"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>Home</a>
+  <a href="tasks.html" class="nav-item"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/></svg>Tasks</a>
+  <a href="wallet.html" class="nav-item"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4z"/></svg>Wallet</a>
+  <a href="referrals.html" class="nav-item"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Team</a>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -167,92 +104,28 @@ const db = firebase.firestore();
 const phone = localStorage.getItem("nexaPhone");
 if(!phone){ window.location.href = "index.html"; }
 
-const foodPics = [
-  "https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=400",
-  "https://images.unsplash.com/photo-1618164439484-1e3e29e3d6b5?w=400",
-  "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400",
-  "https://images.unsplash.com/photo-1597362925123-77861d3fbac7?w=400",
-  "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400"
-];
-
-function showTab(tab,el){document.querySelectorAll('.nav-item').forEach(t=>t.classList.remove('active'));el.classList.add('active');['home','tasks','wallet','info'].forEach(t=>document.getElementById(t+'Tab').style.display='none');document.getElementById(tab+'Tab').style.display = 'block';if(tab == 'wallet'){ loadReferralInfo(); loadIncomeStats(); loadAccountInfo(); } if(tab == 'tasks'){ loadTasks(); } if(tab == 'info'){ loadInfoData(); }}
-
-function loadWelcome(){db.collection("users").doc(phone).get().then(doc=>{if(doc.exists){let u = doc.data();let username = u.userID || "User";let refCode = u.myReferralCode || "N/A";document.getElementById('welcomeText').innerHTML = `🎉 Welcome ${username} | Your Referral Code: ${refCode} | Earn 10% on referrals | NEXA VIEW 🎉`;}})}
-
-function loadTasks(){
-  db.collection("users").doc(phone).get().then(doc=>{
-    if(doc.exists){
-      let u = doc.data();
-      let owned = u.ownedPackages || {};
-      let html = "";
-      let keys = Object.keys(owned);
-      if(keys.length == 0){
-        html = "<p style='color:#888'>No active package</p>";
-      } else {
-        keys.forEach(key=>{
-          let p = owned[key];
-          let today = new Date().toDateString();
-          let lastClaim = u.lastClaim || {};
-          let canClaim = lastClaim[key]!= today;
-          let dayIndex = new Date().getDate() % foodPics.length;
-          let pic = foodPics[dayIndex];
-          let statusText = canClaim? "Sell your Product & Earn" : "Already Sold Today";
-          let statusColor = canClaim? "#22c55e" : "#ef4444";
-          let btnColor = canClaim? "linear-gradient(180deg,#22c55e,#16a34a)" : "#444";
-          let btnText = canClaim? "SELL" : "SOLD";
-          html += `<div style="background:#111;padding:16px;border-radius:14px;margin-bottom:15px;border:1px solid #333"><div style="background:${statusColor};color:#000;padding:6px 10px;border-radius:20px;font-size:11px;font-weight:700;text-align:center;margin-bottom:10px">${statusText}</div><h3 style="margin:0 0 10px 0;color:#22c55e">Package</h3><img src="${pic}" style="width:100%;height:120px;object-fit:cover;border-radius:10px;margin-bottom:12px;border:1px solid #333"><div style="display:flex;gap:10px;margin-bottom:12px"><button onclick="claimTask('${key}')" style="flex:1;padding:12px;background:${btnColor};color:white;border:none;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer" ${canClaim?'':'disabled'}>${btnText}</button><div style="flex:1;background:#1a3d2a;border:1px solid #22c55e;border-radius:10px;padding:10px;text-align:center"><div style="font-size:10px;color:#aaa">PROFIT</div><b style="color:#22c55e;font-size:16px">Ksh ${p.daily}</b></div></div><p style="font-size:11px;color:#aaa;margin:0">Tap <b>SELL</b> every day. <br>Color changes: <span style="color:#ef4444">Red →</span> <span style="color:#22c55e">Green</span> after you sell.</p></div>`;
-        });
-      }
-      document.getElementById('taskList').innerHTML = html;
-    }
-  })
-}
-
-function claimTask(key){
-  let today = new Date().toDateString();
-  db.collection("users").doc(phone).get().then(doc=>{
-    let u = doc.data();
-    let p = u.ownedPackages[key];
-    let newBalance = (u.balance || 0) + p.daily;
-    let newTotal = (u.totalIncome || 0) + p.daily;
-    let lastClaim = u.lastClaim || {};
-    lastClaim[key] = today;
-    db.collection("users").doc(phone).update({balance:newBalance,totalIncome:newTotal,lastClaim:lastClaim}).then(()=>{alert("Earned Ksh "+p.daily);loadTasks();loadIncomeStats();})
-  })
-}
+function loadWelcome(){db.collection("users").doc(phone).get().then(doc=>{if(doc.exists){let u = doc.data();document.getElementById('welcomeText').innerHTML = `🎉 Welcome ${u.userID} | Code: ${u.myReferralCode} | NEXA VIEW 🎉`;}})}
 
 function buyPackage(price, days, daily){
   db.collection("users").doc(phone).get().then(doc=>{
     let u = doc.data();
-    let balance = u.balance || 0;
-
-    if(balance < price){
-      alert("Insufficient Balance. Please Deposit First");
-      return;
-    }
-
+    if((u.balance || 0) < price) return alert("Insufficient Balance. Please Deposit First");
     if(!confirm(`Buy this package for Ksh ${price}?`)) return;
-
-    let newBalance = balance - price;
     let owned = u.ownedPackages || {};
     owned[Date.now()] = {price:price, days:days, daily:daily};
-
     db.collection("users").doc(phone).update({
-      balance: newBalance,
+      balance: u.balance - price,
       totalInvested: (u.totalInvested || 0) + price,
       ownedPackages: owned
     }).then(()=>{
-
       if(u.referredBy){
         db.collection("users").where("myReferralCode","==",u.referredBy).get().then(snap=>{
           snap.forEach(uplineDoc=>{
-            let uplinePhone = uplineDoc.id;
             let uplineData = uplineDoc.data();
             let bonus = price * 0.10;
             let newRefs = uplineData.referrals || [];
             if(!newRefs.includes(phone)) newRefs.push(phone);
-
-            db.collection("users").doc(uplinePhone).update({
+            db.collection("users").doc(uplineDoc.id).update({
               balance: (uplineData.balance || 0) + bonus,
               totalReferralEarned: (uplineData.totalReferralEarned || 0) + bonus,
               referrals: newRefs
@@ -260,126 +133,39 @@ function buyPackage(price, days, daily){
           })
         })
       }
-
       alert("Package Purchased Successfully!");
-      loadIncomeStats();
-      loadTasks();
     })
   })
-}
-
-function loadIncomeStats(){
-  db.collection("users").doc(phone).get().then(doc=>{
-    if(doc.exists){
-      let u = doc.data();
-      document.getElementById('walletBalance').innerText = (u.balance || 0).toFixed(2);
-      document.getElementById('withdrawBalance').innerText = (u.balance || 0).toFixed(2);
-      document.getElementById('todayIncome').innerText = (u.todayIncome || 0).toFixed(2);
-      document.getElementById('totalIncome').innerText = ((u.totalIncome||0)+(u.totalReferralEarned||0)).toFixed(2);
-      document.getElementById('refIncome').innerText = (u.totalReferralEarned || 0).toFixed(2);
-    }
-  })
-}
-
-function loadReferralInfo(){
-  db.collection("users").doc(phone).get().then(doc=>{
-    if(doc.exists){
-      let u = doc.data();
-      let myCode = u.myReferralCode || phone.substring(3,9);
-      let myLink = `https://nexa-view.vercel.app/register.html?ref=${myCode}`;
-      let refs = u.referrals || [];
-
-      document.getElementById('myCode').value = myCode;
-      document.getElementById('myLink').value = myLink;
-      document.getElementById('userID').innerText = u.userID || myCode;
-      document.getElementById('teamCount').innerText = refs.length;
-
-      let html = "";
-      if(refs.length == 0){
-        html = "<p style='color:#888'>No team members yet</p>";
-      }else{
-        refs.forEach(refPhone=>{
-          html += `<div style="background:#1a1a1a;padding:8px;border-radius:8px;margin:5px 0;font-size:12px">${refPhone} - Joined</div>`;
-        })
-      }
-      document.getElementById('refHistory').innerHTML = html;
-    }
-  })
-}
-
-function shareLink(){
-  let link = document.getElementById('myLink').value;
-  let code = document.getElementById('myCode').value;
-  let text = `🔥 Join NEXA VIEW and Earn Daily!\n\nUse my referral code: ${code}\nRegister here: ${link}\n\nEarn 10% bonus on referrals!`;
-  let whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
-  window.open(whatsappUrl, '_blank');
 }
 
 function loadInfoData(){
   db.collection("settings").doc("info").get().then(doc=>{
     if(doc.exists){
       let data = doc.data();
-      document.getElementById('aboutText').innerText = data.about || "NEXA VIEW is an earning platform. Complete daily tasks and earn. Available in KE, UG, TZ.";
+      document.getElementById('aboutText').innerText = data.about || "NEXA VIEW is an earning platform.";
       document.getElementById('whatsappLink').href = data.whatsapp || "https://chat.whatsapp.com/JmXM1kYBXuiF5dmbBU25f2";
       document.getElementById('telegramLink').href = data.telegram || "https://t.me/nexaview";
       document.getElementById('instagramLink').href = data.instagram || "https://instagram.com/nexaview";
       document.getElementById('downloadAppLink').href = data.appDownload || "#";
-    } else {
-      document.getElementById('whatsappLink').href = "https://chat.whatsapp.com/JmXM1kYBXuiF5dmbBU25f2";
-      document.getElementById('telegramLink').href = "https://t.me/nexaview";
-            document.getElementById('instagramLink').href = "https://instagram.com/nexaview";
     }
   })
 }
 
-// FIXED: THIS MAKES INFO BUTTONS CLICKABLE
 function showInfo(type){
   db.collection("settings").doc("info").get().then(doc=>{
     let data = doc.exists? doc.data() : {};
-    let title = "";
-    let content = "";
-
-    if(type == 'terms'){
-      title = "📜 Terms & Conditions";
-      content = data.terms || "1. You must be 18+ to use NEXA VIEW\n2. Daily earnings are not guaranteed\n3. Withdrawals have 10% tax\n4. Admin reserves right to ban fraud accounts";
-    }
-    if(type == 'privacy'){
-      title = "🔒 Privacy Policy"; // FIXED: removed duplicate "content ="
-      content = data.privacy || "We collect your phone and M-PESA for withdrawals only. We do not share data with 3rd parties.";
-    }
-    if(type == 'contact'){
-      title = "📞 Contact Us";
-      content = data.contact || "Email: support@nexa-view.com\nWhatsApp: 0718422377\nWorking Hours: 8AM - 8PM";
-    }
-    
+    let title = ""; let content = "";
+    if(type == 'terms'){title = "📜 Terms"; content = data.terms || "Terms here";}
+    if(type == 'privacy'){title = "🔒 Privacy"; content = data.privacy || "Privacy here";}
+    if(type == 'contact'){title = "📞 Contact"; content = data.contact || "Contact here";}
     document.getElementById('infoModalTitle').innerText = title;
     document.getElementById('infoModalContent').innerHTML = content.replace(/\n/g, '<br>');
     document.getElementById('infoModal').style.display = 'flex';
-    document.body.style.overflow = 'hidden';
   })
 }
+function closeInfoModal(){document.getElementById('infoModal').style.display = 'none';}
 
-function closeInfoModal(){
-  document.getElementById('infoModal').style.display = 'none';
-  document.body.style.overflow = 'auto';
-}
-
-function loadAccountInfo(){ db.collection("users").doc(phone).get().then(doc=>{ if(doc.exists){ let u=doc.data(); document.getElementById('accNumber').value=u.accNumber||''; document.getElementById('accName').value=u.accName||''; document.getElementById('accPin').value=u.accPin||''; }})}
-function openDepositModal(){ document.getElementById('depositModal').style.display='flex'; }
-function closeDepositModal(){ document.getElementById('depositModal').style.display='none'; }
-function openWithdrawModal(){ document.getElementById('withdrawModal').style.display='flex'; }
-function closeWithdrawModal(){ document.getElementById('withdrawModal').style.display='none'; }
-function openAccountModal(){ document.getElementById('accountModal').style.display='flex'; loadAccountInfo(); }
-function closeAccountModal(){ document.getElementById('accountModal').style.display='none'; }
-function copyNumber(){ navigator.clipboard.writeText("0718422377"); alert("Number copied"); }
-function copyLink(){ let link = document.getElementById('myLink'); link.select(); document.execCommand('copy'); alert("✅ Referral Link Copied!"); }
-function selectAmount(amt,el){ document.querySelectorAll('.amount-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); document.getElementById('withdrawAmount').value = amt; calcWithdraw(); }
-function calcWithdraw(){ let amt = parseFloat(document.getElementById('withdrawAmount').value)||0; let tax = amt*0.1; let net = amt*0.9; document.getElementById('taxAmount').innerText = "KSH"+tax.toFixed(0); document.getElementById('netAmount').innerText = "KSH"+net.toFixed(0); }
-function updateAccount(){ let accNumber=document.getElementById('accNumber').value; let accName=document.getElementById('accName').value; let accPin=document.getElementById('accPin').value; if(accPin.length!=4) return alert("PIN must be 4 digits"); db.collection("users").doc(phone).update({accNumber,accName,accPin}).then(()=>{alert("Account Updated");closeAccountModal();})}
-function submitDeposit(){ let amount=parseFloat(document.getElementById('depositAmount').value); let msg=document.getElementById('depositMsg').value; if(amount<100) return alert("Min 100"); db.collection("deposits").add({phone,amount,msg,status:"pending",date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{alert("Deposit sent");closeDepositModal();})}
-function submitWithdraw(){ let amount=parseFloat(document.getElementById('withdrawAmount').value); let pin=document.getElementById('withdrawPin').value; db.collection("users").doc(phone).get().then(doc=>{ let u=doc.data(); if(pin!=u.accPin) return alert("Wrong PIN"); if(amount>u.balance) return alert("Low Balance"); let net=amount*0.9; db.collection("withdrawals").add({phone,amount,net,status:"pending",date:firebase.firestore.FieldValue.serverTimestamp()}); db.collection("users").doc(phone).update({balance:u.balance-amount}); alert("Withdrawal sent"); closeWithdrawModal();})}
-
-window.onload = function(){ loadWelcome(); loadIncomeStats(); loadInfoData(); }
+window.onload = function(){ loadWelcome(); loadInfoData(); }
 </script>
 </body>
 </html>
