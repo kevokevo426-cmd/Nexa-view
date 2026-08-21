@@ -15,12 +15,22 @@ body{background:#000;color:white;font-family:Poppins;margin:0;padding:15px 15px 
 .box{background:#111;padding:18px;border-radius:16px;margin:15px 0;border:1px solid #222}
 h3{color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
 
-.product{border:1px solid #333;padding:14px;border-radius:12px;margin:12px 0;background:#1a1a1a}
-.product b{font-size:15px}
-.product.stake{color:#fbbf24;font-weight:700}
-.product.income{color:#22c55e;font-weight:700}
+/* NEAT PRODUCT CARDS */
+.products-grid{display:grid;grid-template-columns:1fr;gap:12px}
+.product{border:1px solid #333;padding:16px;border-radius:14px;background:#1a1a1a;transition:0.2s}
+.product:active{transform:scale(0.98)}
+.product-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.product-name{font-size:15px;font-weight:700}
+.product-days{font-size:12px;color:#aaa;margin-top:4px}
+.product-stats{display:flex;justify-content:space-between;gap:10px;margin-bottom:12px}
+.stat-box{flex:1;background:#0a0a0a;padding:10px;border-radius:10px;text-align:center}
+.stat-label{font-size:10px;color:#aaa;margin-bottom:4px}
+.stat-value{font-size:14px;font-weight:800}
 
-.btn{width:100%;padding:12px;background:#fbbf24;color:#000;border:none;border-radius:10px;font-weight:800;font-size:14px;margin:5px 0;cursor:pointer}
+.stake{color:#fbbf24} /* YELLOW */
+.income{color:#3b82f6} /* BLUE */
+
+.btn{width:100%;padding:12px;background:#fbbf24;color:#000;border:none;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer}
 .btn:active{transform:scale(0.97)}
 .btn-outline{width:100%;padding:12px;background:#1a1a1a;border:1px solid #333;color:white;border-radius:10px;font-weight:700;font-size:14px;margin:6px 0;cursor:pointer}
 
@@ -50,7 +60,7 @@ h3{color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
 <div class="box">
   <h3>🛍️ PRODUCTS</h3>
   <p style="color:#aaa;font-size:12px;margin-bottom:10px">Choose a plan and earn daily interest</p>
-  <div id="products"></div>
+  <div class="products-grid" id="products"></div>
 </div>
 
 <!-- INFO SECTION -->
@@ -63,7 +73,6 @@ h3{color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
   <h3>📄 Legal & Support</h3>
   <button class="btn-outline" onclick="showInfo('terms')">📜 Terms & Conditions</button>
   <button class="btn-outline" onclick="showInfo('privacy')">🔒 Privacy Policy</button>
-  <!-- CONTACT REMOVED -->
 </div>
 
 <div class="box">
@@ -145,17 +154,23 @@ function loadProducts(){
   let html = "";
   packages.forEach((p,i)=>{
     html += `<div class="product">
-      <div style="display:flex;justify-content:space-between">
+      <div class="product-header">
         <div>
-          <b style="color:${p.color}">${p.name}</b><br>
-          <span style="font-size:12px;color:#aaa">${p.days} Days · Ksh ${p.daily}/Day</span>
-        </div>
-        <div style="text-align:right">
-          <div class="stake">Stake: Ksh ${p.price}</div>
-          <div class="income">Income: Ksh ${p.total}</div>
+          <div class="product-name" style="color:${p.color}">${p.name}</div>
+          <div class="product-days">${p.days} Days · Ksh ${p.daily}/Day</div>
         </div>
       </div>
-      <button class="btn" onclick="openBuy(${i})" style="background:${p.color};color:white;margin-top:10px">BUY NOW</button>
+      <div class="product-stats">
+        <div class="stat-box">
+          <div class="stat-label">STAKE</div>
+          <div class="stat-value stake">Ksh ${p.price}</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">TOTAL INCOME</div>
+          <div class="stat-value income">Ksh ${p.total}</div>
+        </div>
+      </div>
+      <button class="btn" onclick="openBuy(${i})" style="background:${p.color};color:white">BUY NOW</button>
     </div>`;
   });
   document.getElementById('products').innerHTML = html;
@@ -185,7 +200,7 @@ function loadInfoData(){
   db.collection("settings").doc("info").get().then(doc=>{
     if(doc.exists){
       let data = doc.data();
-      document.getElementById('aboutText').innerText = data.about || "NEXA VIEW is an earning platform.";
+      document.getElementById('aboutText').innerText = data.about || `NEXA VIEW is Kenya's trusted platform for daily income.`;
       document.getElementById('whatsappLink').href = data.whatsapp || "#";
       document.getElementById('telegramLink').href = data.telegram || "#";
       document.getElementById('instagramLink').href = data.instagram || "#";
@@ -195,11 +210,18 @@ function loadInfoData(){
 }
 
 function showInfo(type){
-  db.collection("settings").doc("info").get().then(doc=>{
-    let data = doc.data();
-    let title = type=='terms'?'Terms & Conditions':'Privacy Policy';
-    document.getElementById('infoModalTitle').innerText = title;
-    document.getElementById('infoModalContent').innerText = data[type] || "No data found. Please add it in Firebase > settings > info";
+  let docName = type;
+  let field = 'content';
+  db.collection("settings").doc(docName).get().then(doc=>{
+    if(doc.exists){
+      let data = doc.data();
+      let title = type=='terms'?'Terms & Conditions':'Privacy Policy';
+      document.getElementById('infoModalTitle').innerText = title;
+      document.getElementById('infoModalContent').innerText = data[field] || "No data found.";
+    } else {
+      document.getElementById('infoModalTitle').innerText = "Error";
+      document.getElementById('infoModalContent').innerText = "Please add " + type + " in Firebase > settings > " + type + " > content";
+    }
     document.getElementById('infoModal').style.display = 'block';
   })
 }
