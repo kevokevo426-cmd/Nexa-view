@@ -324,36 +324,38 @@ function loadInfoData(){
       document.getElementById('telegramLink').href = data.telegram || "https://t.me/nexaview";
       document.getElementById('instagramLink').href = data.instagram || "https://instagram.com/nexaview";
       document.getElementById('downloadAppLink').href = data.appDownload || "#";
+    } else {
+      document.getElementById('whatsappLink').href = "https://chat.whatsapp.com/JmXM1kYBXuiF5dmbBU25f2";
+      document.getElementById('telegramLink').href = "https://t.me/nexaview";
+            document.getElementById('instagramLink').href = "https://instagram.com/nexaview";
     }
   })
 }
 
+// FIXED: THIS MAKES INFO BUTTONS CLICKABLE
 function showInfo(type){
   db.collection("settings").doc("info").get().then(doc=>{
-    if(doc.exists){
-      let data = doc.data();
-      let title = "";
-      let content = "";
+    let data = doc.exists? doc.data() : {};
+    let title = "";
+    let content = "";
 
-      if(type == 'terms'){
-        title = "📜 Terms & Conditions";
-        content = data.terms || "No Terms set. Add in Firebase > settings > info > terms";
-      }
-      if(type == 'privacy'){
-        title = "🔒 Privacy Policy";
-        content =
-        content = data.privacy || "No Privacy Policy set. Add in Firebase > settings > info > privacy";
-      }
-      if(type == 'contact'){
-        title = "📞 Contact Us";
-        content = data.contact || "Email: support@nexa-view.com\nWorking Hours: 8AM - 8PM";
-      }
-      
-      document.getElementById('infoModalTitle').innerText = title;
-      document.getElementById('infoModalContent').innerHTML = content.replace(/\n/g, '<br>');
-      document.getElementById('infoModal').style.display = 'flex';
-      document.body.style.overflow = 'hidden';
+    if(type == 'terms'){
+      title = "📜 Terms & Conditions";
+      content = data.terms || "1. You must be 18+ to use NEXA VIEW\n2. Daily earnings are not guaranteed\n3. Withdrawals have 10% tax\n4. Admin reserves right to ban fraud accounts";
     }
+    if(type == 'privacy'){
+      title = "🔒 Privacy Policy"; // FIXED: removed duplicate "content ="
+      content = data.privacy || "We collect your phone and M-PESA for withdrawals only. We do not share data with 3rd parties.";
+    }
+    if(type == 'contact'){
+      title = "📞 Contact Us";
+      content = data.contact || "Email: support@nexa-view.com\nWhatsApp: 0718422377\nWorking Hours: 8AM - 8PM";
+    }
+    
+    document.getElementById('infoModalTitle').innerText = title;
+    document.getElementById('infoModalContent').innerHTML = content.replace(/\n/g, '<br>');
+    document.getElementById('infoModal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
   })
 }
 
@@ -362,23 +364,22 @@ function closeInfoModal(){
   document.body.style.overflow = 'auto';
 }
 
-// OTHER MISSING FUNCTIONS
-function loadAccountInfo(){}
+function loadAccountInfo(){ db.collection("users").doc(phone).get().then(doc=>{ if(doc.exists){ let u=doc.data(); document.getElementById('accNumber').value=u.accNumber||''; document.getElementById('accName').value=u.accName||''; document.getElementById('accPin').value=u.accPin||''; }})}
 function openDepositModal(){ document.getElementById('depositModal').style.display='flex'; }
 function closeDepositModal(){ document.getElementById('depositModal').style.display='none'; }
 function openWithdrawModal(){ document.getElementById('withdrawModal').style.display='flex'; }
 function closeWithdrawModal(){ document.getElementById('withdrawModal').style.display='none'; }
-function openAccountModal(){ document.getElementById('accountModal').style.display='flex'; }
+function openAccountModal(){ document.getElementById('accountModal').style.display='flex'; loadAccountInfo(); }
 function closeAccountModal(){ document.getElementById('accountModal').style.display='none'; }
 function copyNumber(){ navigator.clipboard.writeText("0718422377"); alert("Number copied"); }
 function copyLink(){ let link = document.getElementById('myLink'); link.select(); document.execCommand('copy'); alert("✅ Referral Link Copied!"); }
-function selectAmount(amt,el){ document.getElementById('withdrawAmount').value = amt; }
-function calcWithdraw(){}
-function updateAccount(){}
-function submitDeposit(){}
-function submitWithdraw(){}
+function selectAmount(amt,el){ document.querySelectorAll('.amount-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); document.getElementById('withdrawAmount').value = amt; calcWithdraw(); }
+function calcWithdraw(){ let amt = parseFloat(document.getElementById('withdrawAmount').value)||0; let tax = amt*0.1; let net = amt*0.9; document.getElementById('taxAmount').innerText = "KSH"+tax.toFixed(0); document.getElementById('netAmount').innerText = "KSH"+net.toFixed(0); }
+function updateAccount(){ let accNumber=document.getElementById('accNumber').value; let accName=document.getElementById('accName').value; let accPin=document.getElementById('accPin').value; if(accPin.length!=4) return alert("PIN must be 4 digits"); db.collection("users").doc(phone).update({accNumber,accName,accPin}).then(()=>{alert("Account Updated");closeAccountModal();})}
+function submitDeposit(){ let amount=parseFloat(document.getElementById('depositAmount').value); let msg=document.getElementById('depositMsg').value; if(amount<100) return alert("Min 100"); db.collection("deposits").add({phone,amount,msg,status:"pending",date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{alert("Deposit sent");closeDepositModal();})}
+function submitWithdraw(){ let amount=parseFloat(document.getElementById('withdrawAmount').value); let pin=document.getElementById('withdrawPin').value; db.collection("users").doc(phone).get().then(doc=>{ let u=doc.data(); if(pin!=u.accPin) return alert("Wrong PIN"); if(amount>u.balance) return alert("Low Balance"); let net=amount*0.9; db.collection("withdrawals").add({phone,amount,net,status:"pending",date:firebase.firestore.FieldValue.serverTimestamp()}); db.collection("users").doc(phone).update({balance:u.balance-amount}); alert("Withdrawal sent"); closeWithdrawModal();})}
 
-window.onload = function(){ loadWelcome(); loadIncomeStats(); }
+window.onload = function(){ loadWelcome(); loadIncomeStats(); loadInfoData(); }
 </script>
 </body>
-</html>  
+</html>
