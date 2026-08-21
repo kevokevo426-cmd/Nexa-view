@@ -22,11 +22,17 @@ h3{color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
 
 .btn{width:100%;padding:12px;background:#fbbf24;color:#000;border:none;border-radius:10px;font-weight:800;font-size:14px;margin:5px 0;cursor:pointer}
 .btn:active{transform:scale(0.97)}
+.btn-outline{width:100%;padding:12px;background:#1a1a1a;border:1px solid #333;color:white;border-radius:10px;font-weight:700;font-size:14px;margin:6px 0;cursor:pointer}
 
 .modal{display:none;position:fixed;z-index:9999;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.8)}
 .modal-content{background:#111;margin:10% auto;padding:20px;border-radius:15px;width:90%;max-width:400px;border:1px solid #333;max-height:70vh;overflow-y:auto}
 .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
 .modal-back{color:#fbbf24;font-size:20px;cursor:pointer}
+
+/* SOCIAL BUTTONS */
+.social-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px}
+.social-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;border-radius:12px;text-decoration:none;font-weight:700;font-size:12px;transition:0.2s}
+.social-btn:active{transform:scale(0.95)}
 
 /* BEAUTIFIED BOTTOM NAV */
 .bottom-nav{position:fixed;bottom:0;left:0;width:100%;background:#0a0a0a;border-top:1px solid #222;display:flex;justify-content:space-around;padding:10px 0 15px 0;z-index:99}
@@ -40,8 +46,6 @@ h3{color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
 
 <div class="welcome"><span id="welcomeMsg">Loading...</span></div>
 <div style="height:45px"></div>
-
-<!-- WALLET BOX REMOVED FROM HERE -->
 
 <div class="box">
   <h3>🛍️ PRODUCTS</h3>
@@ -57,19 +61,28 @@ h3{color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
 
 <div class="box">
   <h3>📄 Legal & Support</h3>
-  <button class="btn" onclick="showInfo('terms')" style="background:#1a1a1a;border:1px solid #333;color:white">📜 Terms & Conditions</button>
-  <button class="btn" onclick="showInfo('privacy')" style="background:#1a1a1a;border:1px solid #333;color:white">🔒 Privacy Policy</button>
-  <button class="btn" onclick="showInfo('contact')" style="background:#1a1a1a;border:1px solid #333;color:white">📞 Contact Us</button>
+  <button class="btn-outline" onclick="showInfo('terms')">📜 Terms & Conditions</button>
+  <button class="btn-outline" onclick="showInfo('privacy')">🔒 Privacy Policy</button>
+  <!-- CONTACT REMOVED -->
 </div>
 
 <div class="box">
   <h3>🌐 Connect With Us</h3>
-  <div style="display:flex;justify-content:space-around;gap:10px;margin-bottom:10px">
-    <a id="whatsappLink" target="_blank" style="flex:1;text-align:center;background:#25D366;padding:12px;border-radius:10px;text-decoration:none;color:white;font-weight:700;font-size:12px">💬<br>WhatsApp</a>
-    <a id="telegramLink" target="_blank" style="flex:1;text-align:center;background:#0088cc;padding:12px;border-radius:10px;text-decoration:none;color:white;font-weight:700;font-size:12px">✈️<br>Telegram</a>
-    <a id="instagramLink" target="_blank" style="flex:1;text-align:center;background:#bc1888;padding:12px;border-radius:10px;text-decoration:none;color:white;font-weight:700;font-size:12px">📷<br>Instagram</a>
+  <div class="social-grid">
+    <a id="whatsappLink" target="_blank" class="social-btn" style="background:#25D366;color:white">
+      <div style="font-size:20px">💬</div>
+      WhatsApp
+    </a>
+    <a id="telegramLink" target="_blank" class="social-btn" style="background:#0088cc;color:white">
+      <div style="font-size:20px">✈️</div>
+      Telegram
+    </a>
+    <a id="instagramLink" target="_blank" class="social-btn" style="background:#bc1888;color:white">
+      <div style="font-size:20px">📷</div>
+      Instagram
+    </a>
   </div>
-  <a id="downloadAppLink" target="_blank" style="display:block;text-align:center;background:#fbbf24;padding:12px;border-radius:10px;text-decoration:none;color:black;font-weight:700">📲 Download The App</a>
+  <a id="downloadAppLink" target="_blank" style="display:block;text-align:center;background:#fbbf24;padding:14px;border-radius:12px;text-decoration:none;color:black;font-weight:800;font-size:14px">📲 Download The App</a>
 </div>
 
 <div id="buyModal" class="modal" onclick="closeBuyModal()">
@@ -83,7 +96,7 @@ h3{color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
 <div id="infoModal" class="modal" onclick="closeInfoModal()">
   <div class="modal-content" onclick="event.stopPropagation()">
     <div class="modal-header"><h3 id="infoModalTitle">Title</h3><span class="modal-back" onclick="closeInfoModal()">🔙</span></div>
-    <div id="infoModalContent" style="font-size:13px;line-height:1.7"></div>
+    <div id="infoModalContent" style="font-size:13px;line-height:1.7;white-space:pre-line"></div>
   </div>
 </div>
 
@@ -184,9 +197,9 @@ function loadInfoData(){
 function showInfo(type){
   db.collection("settings").doc("info").get().then(doc=>{
     let data = doc.data();
-    let title = type=='terms'?'Terms & Conditions':type=='privacy'?'Privacy Policy':'Contact Us';
+    let title = type=='terms'?'Terms & Conditions':'Privacy Policy';
     document.getElementById('infoModalTitle').innerText = title;
-    document.getElementById('infoModalContent').innerText = data[type] || "No data found.";
+    document.getElementById('infoModalContent').innerText = data[type] || "No data found. Please add it in Firebase > settings > info";
     document.getElementById('infoModal').style.display = 'block';
   })
 }
