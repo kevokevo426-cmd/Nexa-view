@@ -21,10 +21,9 @@ body{background:#000;color:white;font-family:Poppins;padding:12px;margin:0;paddi
 .badge{padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;text-transform:uppercase}
 .badge-pending{background:#422006;color:#fbbf24}
 .badge-approved{background:#052e16;color:#22c55e}
-.badge-paid{background:#052e16;color:#22c55e}
 .badge-rejected{background:#450a0a;color:#ef4444}
 .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);z-index:999;justify-content:center;align-items:center}
-.modal-content{background:#111;width:92%;max-width:400px;border-radius:16px;padding:20px;border:1px solid #333}
+.modal-content{background:#111;width:92%;max-width:400px;border-radius:16px;padding:20px;border:1px solid #333;max-height:90vh;overflow-y:auto}
 input{width:100%;padding:12px;background:#1a1a1a;border:1px solid #333;color:white;border-radius:8px;margin:8px 0;box-sizing:border-box}
 label{font-size:11px;color:#aaa}
 .calc{font-size:12px;background:#1a3d2a;padding:8px;border-radius:8px;margin:8px 0;border:1px solid #22c55e}
@@ -34,21 +33,25 @@ label{font-size:11px;color:#aaa}
 .toast{background:#111;border:1px solid #22c55e;color:white;padding:16px;border-radius:14px;display:flex;gap:12px;box-shadow:0 10px 30px rgba(0,0,0,0.9);animation:slideDown 0.3s ease;margin-bottom:10px;pointer-events:auto}
 .toast.error{border-color:#ef4444}
 @keyframes slideDown{from{transform:translateY(-30px);opacity:0}to{transform:translateY(0);opacity:1}}
-
-/* ADMIN CHAT ICON - FLOATING */
+/* INTERNAL CHAT ICON */
 .chat-float{position:fixed;bottom:85px;right:15px;z-index:998;background:linear-gradient(135deg,#22c55e,#16a34a);width:60px;height:60px;border-radius:50%;display:flex;justify-content:center;align-items:center;box-shadow:0 5px 20px rgba(34,197,94,0.4);cursor:pointer;animation:pulse 2s infinite}
 .chat-float span{font-size:28px}
+.chat-badge{position:absolute;top:-5px;right:-5px;background:#ef4444;color:white;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;display:none}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(34,197,94,0.7)}70%{box-shadow:0 0 0 12px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
-.chat-label{position:fixed;bottom:90px;right:85px;z-index:998;background:#111;border:1px solid #22c55e;color:white;padding:6px 10px;border-radius:8px;font-size:11px;white-space:nowrap}
+.chat-label{position:fixed;bottom:90px;right:85px;z-index:998;background:#111;border:1px solid #22c55e;color:white;padding:6px 10px;border-radius:8px;font-size:11px}
+.chat-messages{height:250px;overflow-y:auto;background:#0a0a0a;border-radius:10px;padding:10px;margin:10px 0;border:1px solid #222}
+.msg{padding:8px 10px;border-radius:10px;margin:6px 0;max-width:80%;font-size:12px}
+.msg-user{background:#22c55e;color:white;margin-left:auto;text-align:right}
+.msg-admin{background:#222;color:white;border:1px solid #333}
 </style>
 </head>
 <body>
 
 <div id="toastBox"></div>
 
-<!-- FLOATING CHAT WITH ADMIN -->
+<!-- INTERNAL CHAT ICON -->
 <div class="chat-label">Chat with Admin</div>
-<div class="chat-float" onclick="openAdminChat()"><span>💬</span></div>
+<div class="chat-float" onclick="openAdminChat()"><span>💬</span><div class="chat-badge" id="chatBadge">1</div></div>
 
 <div class="main-card">
   <div class="row"><span class="label">User ID</span><span class="value" id="userId">NEXA...</span></div>
@@ -71,19 +74,19 @@ label{font-size:11px;color:#aaa}
     <button onclick="filterHist('approved')" id="fApproved" style="padding:6px 12px;border-radius:6px;border:1px solid #333;background:#222;color:#aaa;font-size:11px">Approved</button>
     <button onclick="filterHist('rejected')" id="fRejected" style="padding:6px 12px;border-radius:6px;border:1px solid #333;background:#222;color:#aaa;font-size:11px">Rejected</button>
   </div>
-  <div id="allHistory"><p style="color:#666;font-size:12px">Loading history...</p></div>
+  <div id="allHistory"><p style="color:#666;font-size:12px">Loading...</p></div>
 </div>
 
-<button class="btn" onclick="window.location.href='dashboard.html'" style="background:#222;color:white;border:1px solid #333">← BACK TO DASHBOARD</button>
+<button class="btn" onclick="window.location.href='dashboard.html'" style="background:#222;color:white;border:1px solid #333;width:100%">← BACK TO DASHBOARD</button>
 
-<!-- ACCOUNT MODAL - WHERE YOU SET PIN AND NUMBER -->
+<!-- ACCOUNT MODAL -->
 <div id="accountModal" class="modal" onclick="closeAccount()">
   <div class="modal-content" onclick="event.stopPropagation()">
     <h3>⚙️ My Receiving Account</h3>
-    <p style="font-size:11px;color:#aaa">Current M-PESA: <b id="currentAcc" style="color:#22c55e">Not Set</b></p>
-    <label>M-PESA Number (Receiving)</label>
+    <p style="font-size:11px;color:#aaa">Current: <b id="currentAcc" style="color:#22c55e">Not Set</b></p>
+    <label>M-PESA Number</label>
     <input type="tel" id="setupAccNumber" placeholder="07xxxxxxxx">
-    <label>Set 4-Digit Withdraw PIN</label>
+    <label>Set 4-Digit PIN</label>
     <div class="input-wrap">
       <input type="password" id="setupPin" placeholder="****" maxlength="4">
       <span class="eye" onclick="toggleEye('setupPin', this)">👁️</span>
@@ -94,7 +97,39 @@ label{font-size:11px;color:#aaa}
       <span class="eye" onclick="toggleEye('setupPinConfirm', this)">👁️</span>
     </div>
     <button class="btn btn-withdraw" onclick="saveAccount()">💾 Save Account & PIN</button>
-    <button class="btn" style="background:#333;color:white" onclick="closeAccount()">Close</button>
+    
+    <div style="margin-top:15px;padding-top:12px;border-top:1px solid #222">
+      <p style="font-size:12px;color:#fbbf24;text-align:center">Forgot PIN? Use options below:</p>
+      <button class="btn" style="background:#333;color:white;border:1px solid #444" onclick="forgotOption1()">Option 1: Verify M-PESA to Reset</button>
+      <button class="btn" style="background:#222;color:#fbbf24;border:1px dashed #fbbf24" onclick="forgotOption2()">Option 2: Quick Reset (Admin Approval)</button>
+    </div>
+    
+    <button class="btn" style="background:#111;color:#aaa;margin-top:10px" onclick="closeAccount()">Close</button>
+  </div>
+</div>
+
+<!-- FORGOT PIN MODAL - OPTION 1 -->
+<div id="forgotModal1" class="modal" onclick="closeForgot1()">
+  <div class="modal-content" onclick="event.stopPropagation()" style="border-color:#fbbf24">
+    <h3>🔐 Reset PIN - Verify Account</h3>
+    <p style="font-size:11px;color:#aaa">Enter your registered M-PESA number to verify it's you</p>
+    <label>Enter Registered M-PESA Number</label>
+    <input type="tel" id="verifyMpesa" placeholder="07xxxxxxxx">
+    <button class="btn btn-deposit" onclick="verifyAndReset()">Verify & Continue</button>
+    <div id="newPinArea" style="display:none;margin-top:15px">
+      <label>New 4-Digit PIN</label>
+      <div class="input-wrap">
+        <input type="password" id="newPin1" placeholder="****" maxlength="4">
+        <span class="eye" onclick="toggleEye('newPin1', this)">👁️</span>
+      </div>
+      <label>Confirm New PIN</label>
+      <div class="input-wrap">
+        <input type="password" id="newPin2" placeholder="****" maxlength="4">
+        <span class="eye" onclick="toggleEye('newPin2', this)">👁️</span>
+      </div>
+      <button class="btn btn-withdraw" onclick="saveNewPin()">✅ Save New PIN</button>
+    </div>
+    <button class="btn" style="background:#333;color:white" onclick="closeForgot1()">Cancel</button>
   </div>
 </div>
 
@@ -125,24 +160,23 @@ label{font-size:11px;color:#aaa}
       <input type="password" id="withPin" placeholder="****" maxlength="4">
       <span class="eye" onclick="toggleEye('withPin', this)">👁️</span>
     </div>
+    <p style="text-align:center;margin:5px 0"><span onclick="forgotOption1();closeWithdraw()" style="color:#fbbf24;font-size:11px;text-decoration:underline;cursor:pointer">Forgot PIN?</span></p>
     <button class="btn btn-withdraw" onclick="submitWithdraw()">Submit Withdraw</button>
     <button class="btn" style="background:#333;color:white" onclick="closeWithdraw()">Cancel</button>
   </div>
 </div>
 
-<!-- ADMIN CHAT MODAL -->
+<!-- INTERNAL ADMIN CHAT MODAL -->
 <div id="chatModal" class="modal" onclick="closeAdminChat()">
-  <div class="modal-content" onclick="event.stopPropagation()" style="border-color:#22c55e">
-    <h3>💬 Chat with Admin</h3>
-    <p style="font-size:12px;color:#aaa">Choose how to contact us:</p>
-    <button class="btn btn-withdraw" onclick="chatWhatsApp()">🟢 WhatsApp Admin</button>
-    <button class="btn btn-deposit" onclick="chatTelegram()">✈️ Telegram Support</button>
-    <div class="box" style="margin:12px 0;padding:12px">
-      <label>Quick Message to Admin</label>
-      <input type="text" id="quickMsg" placeholder="Type your issue... e.g. My deposit not approved">
-      <button class="btn btn-account" onclick="sendQuickMsg()">📤 Send Message</button>
+  <div class="modal-content" onclick="event.stopPropagation()" style="border-color:#22c55e;max-width:420px">
+    <h3>💬 Internal Support Chat</h3>
+    <p style="font-size:11px;color:#aaa">Messages go directly to Admin Panel</p>
+    <div class="chat-messages" id="chatMessages"><p style="color:#666;font-size:11px">Loading messages...</p></div>
+    <div style="display:flex;gap:6px">
+      <input type="text" id="chatInput" placeholder="Type message to admin..." style="flex:1" onkeypress="if(event.key==='Enter') sendChat()">
+      <button class="btn btn-withdraw" style="flex:0 0 70px" onclick="sendChat()">Send</button>
     </div>
-    <button class="btn" style="background:#333;color:white" onclick="closeAdminChat()">Close</button>
+    <button class="btn" style="background:#333;color:white;margin-top:8px" onclick="closeAdminChat()">Close</button>
   </div>
 </div>
 
@@ -155,11 +189,9 @@ const db = firebase.firestore();
 const phone = localStorage.getItem("nexaPhone");
 if(!phone) window.location.href="index.html";
 
-let allTransactions = []; let currentFilter='all';
-const ADMIN_WHATSAPP = "254718422377"; // CHANGE TO YOUR NUMBER
-const ADMIN_TELEGRAM = "NEXA_support";
+let allTransactions=[]; let currentFilter='all';
 
-function showToast(msg, type="success"){
+function showToast(msg,type="success"){
   const box=document.getElementById('toastBox');
   const toast=document.createElement('div');
   toast.className=`toast ${type}`;
@@ -167,7 +199,7 @@ function showToast(msg, type="success"){
   box.appendChild(toast);
   setTimeout(()=>{ toast.style.opacity='0'; setTimeout(()=>toast.remove(),300) },4500);
 }
-function toggleEye(id, el){
+function toggleEye(id,el){
   const input=document.getElementById(id);
   if(input.type==='password'){ input.type='text'; el.innerText='🙈'; } else { input.type='password'; el.innerText='👁️'; }
 }
@@ -190,10 +222,8 @@ function loadWallet(){
       document.getElementById('setupAccNumber').value = u.accNumber||'';
     }
   });
-  db.collection("settings").doc("info").get().then(doc=>{
-    if(doc.exists) document.getElementById('mpesaNum').innerText = doc.data().mpesa || "0718422377";
-  });
-  loadAllHistory();
+  db.collection("settings").doc("info").get().then(doc=>{ if(doc.exists) document.getElementById('mpesaNum').innerText = doc.data().mpesa || "0718422377"; });
+  loadAllHistory(); loadChat();
 }
 function loadAllHistory(){
   allTransactions=[];
@@ -208,13 +238,13 @@ function loadAllHistory(){
 }
 function renderHistory(){
   let html=""; let filtered=currentFilter==='all'?allTransactions:allTransactions.filter(t=> (t.status||'pending').toLowerCase()===currentFilter);
-  if(filtered.length===0){ document.getElementById('allHistory').innerHTML=`<p style="color:#666;font-size:12px">No ${currentFilter} transactions</p>`; return; }
+  if(filtered.length===0){ document.getElementById('allHistory').innerHTML=`<p style="color:#666;font-size:12px">No ${currentFilter}</p>`; return; }
   filtered.forEach(x=>{
     let status=(x.status||'pending').toLowerCase();
     let badgeClass=status==='pending'?'badge-pending':status==='rejected'?'badge-rejected':'badge-approved';
     let amount=x.net||x.amount;
     let sign=x.type==='DEPOSIT'?'+':'-';
-    html+=`<div class="history-item"><div class="history-left"><b>${x.type}</b><br><span style="font-size:11px;color:#888">${formatDateTime(x.date)}</span><br><span style="font-size:12px;color:${x.type==='DEPOSIT'?'#22c55e':'#fbbf24'}">${sign} Ksh ${amount}</span></div><div class="history-right"><span class="badge ${badgeClass}">${status}</span></div></div>`;
+    html+=`<div class="history-item"><div><b>${x.type}</b><br><span style="font-size:11px;color:#888">${formatDateTime(x.date)}</span><br><span style="font-size:12px;color:${x.type==='DEPOSIT'?'#22c55e':'#fbbf24'}">${sign} Ksh ${amount}</span></div><div><span class="badge ${badgeClass}">${status}</span></div></div>`;
   });
   document.getElementById('allHistory').innerHTML=html;
 }
@@ -226,7 +256,7 @@ function filterHist(type){
   });
   renderHistory();
 }
-function copyNum(){ navigator.clipboard.writeText(document.getElementById('mpesaNum').innerText); showToast("📋 Copied: "+document.getElementById('mpesaNum').innerText,"success"); }
+function copyNum(){ navigator.clipboard.writeText(document.getElementById('mpesaNum').innerText); showToast("Copied: "+document.getElementById('mpesaNum').innerText,"success"); }
 function openAccount(){ document.getElementById('accountModal').style.display='flex'; }
 function closeAccount(){ document.getElementById('accountModal').style.display='none'; }
 function openDeposit(){ document.getElementById('depositModal').style.display='flex'; }
@@ -234,7 +264,7 @@ function closeDeposit(){ document.getElementById('depositModal').style.display='
 function openWithdraw(){ 
   db.collection("users").doc(phone).get().then(doc=>{
     let u=doc.data();
-    if(!u.accNumber||!u.accPin){ showToast("⚠️ Set ACCOUNT first","error"); openAccount(); return; }
+    if(!u.accNumber||!u.accPin){ showToast("Set ACCOUNT first","error"); openAccount(); return; }
     document.getElementById('withdrawModal').style.display='flex'; calcTax();
   });
 }
@@ -244,24 +274,55 @@ function saveAccount(){
   let acc=document.getElementById('setupAccNumber').value.trim();
   let pin=document.getElementById('setupPin').value.trim();
   let pinConfirm=document.getElementById('setupPinConfirm').value.trim();
-  if(!acc||acc.length<10){ showToast("Enter valid M-PESA number","error"); return; }
-  if(!pin||pin.length!=4||isNaN(pin)){ showToast("PIN must be 4 digits","error"); return; }
+  if(!acc||acc.length<10){ showToast("Enter valid M-PESA","error"); return; }
+  if(!pin||pin.length!=4||isNaN(pin)){ showToast("PIN 4 digits","error"); return; }
   if(pin!==pinConfirm){ showToast("PINs don't match","error"); return; }
   db.collection("users").doc(phone).update({accNumber:acc, accPin:pin}).then(()=>{
-    showToast(`✅ Account Saved: ${acc}`,"success");
-    closeAccount(); loadWallet();
+    showToast(`✅ Saved: ${acc}`,"success"); closeAccount(); loadWallet();
     document.getElementById('setupPin').value=""; document.getElementById('setupPinConfirm').value="";
+  });
+}
+// FORGOT PIN OPTIONS
+function forgotOption1(){ closeAccount(); closeWithdraw(); document.getElementById('forgotModal1').style.display='flex'; }
+function closeForgot1(){ document.getElementById('forgotModal1').style.display='none'; document.getElementById('newPinArea').style.display='none'; document.getElementById('verifyMpesa').value=""; }
+function verifyAndReset(){
+  let verifyNum=document.getElementById('verifyMpesa').value.trim();
+  db.collection("users").doc(phone).get().then(doc=>{
+    let u=doc.data();
+    if(!u.accNumber){ showToast("No account set yet","error"); return; }
+    if(verifyNum !== u.accNumber && verifyNum.replace(/\D/g,'').slice(-9) !== u.accNumber.replace(/\D/g,'').slice(-9)){
+      showToast("❌ Number doesn't match registered M-PESA","error"); return;
+    }
+    showToast("✅ Verified! Set new PIN below","success");
+    document.getElementById('newPinArea').style.display='block';
+  });
+}
+function saveNewPin(){
+  let p1=document.getElementById('newPin1').value.trim();
+  let p2=document.getElementById('newPin2').value.trim();
+  if(!p1||p1.length!=4||isNaN(p1)){ showToast("PIN must be 4 digits","error"); return; }
+  if(p1!==p2){ showToast("PINs don't match","error"); return; }
+  db.collection("users").doc(phone).update({accPin:p1}).then(()=>{
+    showToast("✅ New PIN saved! Use it to withdraw","success");
+    closeForgot1();
+    document.getElementById('newPin1').value=""; document.getElementById('newPin2').value="";
+  });
+}
+function forgotOption2(){
+  if(!confirm("Request Admin to reset your PIN? Admin will reset to 0000, then you set new PIN.")) return;
+  db.collection("pinResetRequests").add({phone, userId:document.getElementById('userId').innerText, status:"pending", date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{
+    showToast("✅ Reset request sent to Admin!<br>Admin will reset PIN to 0000. Check back in 5 mins","success");
+    // Also send internal chat
+    db.collection("chats").add({phone, message:"🔐 PIN RESET REQUEST - Please reset my PIN to 0000", from:"user", date:firebase.firestore.FieldValue.serverTimestamp()});
   });
 }
 function submitDeposit(){
   let amount=parseFloat(document.getElementById('depAmount').value);
   let code=document.getElementById('depCode').value;
-  if(amount<100){ showToast("Min deposit Ksh 100","error"); return; }
-  if(code.length<5){ showToast("Enter M-PESA code","error"); return; }
+  if(amount<100){ showToast("Min Ksh 100","error"); return; }
+  if(code.length<5){ showToast("Enter code","error"); return; }
   db.collection("deposits").add({phone, amount, code, status:"pending", date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{
-    showToast(`✅ Deposit Ksh ${amount} sent`,"success");
-    closeDeposit(); loadAllHistory();
-    document.getElementById('depAmount').value=""; document.getElementById('depCode').value="";
+    showToast(`✅ Deposit Ksh ${amount} sent`,"success"); closeDeposit(); loadAllHistory();
   });
 }
 function submitWithdraw(){
@@ -269,31 +330,38 @@ function submitWithdraw(){
   let pin=document.getElementById('withPin').value;
   db.collection("users").doc(phone).get().then(doc=>{
     let u=doc.data();
-    if(pin!=u.accPin){ showToast("Wrong PIN","error"); return; }
-    if(amount<200){ showToast("Min withdraw Ksh 200","error"); return; }
-    if(amount>u.balance){ showToast("Insufficient balance","error"); return; }
+    if(pin!=u.accPin){ showToast("Wrong PIN - Use Forgot PIN?","error"); return; }
+    if(amount<200){ showToast("Min Ksh 200","error"); return; }
+    if(amount>u.balance){ showToast("Insufficient","error"); return; }
     let net=amount*0.9; let tax=amount*0.1;
     db.collection("withdrawals").add({phone, amount, net, tax, accNumber:u.accNumber, status:"pending", date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{
       db.collection("users").doc(phone).update({balance:u.balance-amount});
-      showToast(`✅ Withdraw Ksh ${amount} requested! You get ${net}`,"success");
-      closeWithdraw(); loadWallet();
+      showToast(`✅ Withdraw Ksh ${amount} -> You get ${net}`,"success"); closeWithdraw(); loadWallet();
     });
   });
 }
-// ADMIN CHAT FUNCTIONS
-function openAdminChat(){ document.getElementById('chatModal').style.display='flex'; }
+// INTERNAL CHAT - GOES TO ADMIN PANEL
+function openAdminChat(){ document.getElementById('chatModal').style.display='flex'; loadChat(); }
 function closeAdminChat(){ document.getElementById('chatModal').style.display='none'; }
-function chatWhatsApp(){
-  let msg = `Hello Admin, I am ${phone} UserID: ${document.getElementById('userId').innerText} Need help`;
-  window.open(`https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
+function loadChat(){
+  db.collection("chats").where("phone","==",phone).orderBy("date","asc").onSnapshot(snap=>{
+    let html=""; let hasUnread=false;
+    snap.forEach(doc=>{
+      let m=doc.data(); let cls=m.from==='user'?'msg-user':'msg-admin';
+      html+=`<div class="msg ${cls}"><b style="font-size:10px">${m.from==='user'?'You':'Admin'}:</b><br>${m.message}<br><span style="font-size:9px;color:#aaa">${formatDateTime(m.date)}</span></div>`;
+      if(m.from==='admin' && !m.read) hasUnread=true;
+    });
+    document.getElementById('chatMessages').innerHTML = html || '<p style="color:#666;font-size:11px">No messages yet. Say hi to admin!</p>';
+    document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+    document.getElementById('chatBadge').style.display = hasUnread ? 'block' : 'none';
+  });
 }
-function chatTelegram(){ window.open(`https://t.me/${ADMIN_TELEGRAM}`, '_blank'); }
-function sendQuickMsg(){
-  let msg=document.getElementById('quickMsg').value;
-  if(!msg){ showToast("Type a message","error"); return; }
-  db.collection("support").add({phone, message:msg, userId:document.getElementById('userId').innerText, date:firebase.firestore.FieldValue.serverTimestamp(), status:"open"}).then(()=>{
-    showToast("✅ Message sent to Admin! Will reply soon","success");
-    document.getElementById('quickMsg').value=""; closeAdminChat();
+function sendChat(){
+  let msg=document.getElementById('chatInput').value.trim();
+  if(!msg){ showToast("Type message","error"); return; }
+  db.collection("chats").add({phone, message:msg, from:"user", userId:document.getElementById('userId').innerText, date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{
+    document.getElementById('chatInput').value="";
+    showToast("✅ Message sent to admin panel","success");
   });
 }
 window.onload=loadWallet;
