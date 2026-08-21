@@ -3,19 +3,18 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NEXA DASHBOARD</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#fbbf24">
+<link rel="apple-touch-icon" href="nexa_view_icon.webp">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 *{box-sizing:border-box}
 body{background:#000;color:white;font-family:Poppins;margin:0;padding:15px 15px 90px 15px}
-
 .welcome{position:fixed;top:0;left:0;width:100%;background:linear-gradient(90deg,#3b82f6,#2563eb);color:#fff;padding:10px;text-align:center;font-weight:700;font-size:12px;z-index:999;white-space:nowrap;overflow:hidden}
 .welcome span{display:inline-block;animation:marquee 20s linear infinite;padding-left:100%}
 @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-100%)}}
-
 .box{background:#111;padding:18px;border-radius:16px;margin:15px 0;border:1px solid #222}
 h3{color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
-
-/* NEAT PRODUCT CARDS */
 .products-grid{display:grid;grid-template-columns:1fr;gap:12px}
 .product{border:1px solid #333;padding:16px;border-radius:14px;background:#1a1a1a;transition:0.2s}
 .product:active{transform:scale(0.98)}
@@ -26,25 +25,18 @@ h3{color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
 .stat-box{flex:1;background:#0a0a0a;padding:10px;border-radius:10px;text-align:center}
 .stat-label{font-size:10px;color:#aaa;margin-bottom:4px}
 .stat-value{font-size:14px;font-weight:800}
-
-.stake{color:#fbbf24} /* YELLOW */
-.income{color:#3b82f6} /* BLUE */
-
+.stake{color:#fbbf24}
+.income{color:#3b82f6}
 .btn{width:100%;padding:12px;background:#fbbf24;color:#000;border:none;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer}
 .btn:active{transform:scale(0.97)}
 .btn-outline{width:100%;padding:12px;background:#1a1a1a;border:1px solid #333;color:white;border-radius:10px;font-weight:700;font-size:14px;margin:6px 0;cursor:pointer}
-
 .modal{display:none;position:fixed;z-index:9999;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.8)}
 .modal-content{background:#111;margin:10% auto;padding:20px;border-radius:15px;width:90%;max-width:400px;border:1px solid #333;max-height:70vh;overflow-y:auto}
 .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
 .modal-back{color:#fbbf24;font-size:20px;cursor:pointer}
-
-/* SOCIAL BUTTONS */
 .social-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px}
 .social-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;border-radius:12px;text-decoration:none;font-weight:700;font-size:12px;transition:0.2s}
 .social-btn:active{transform:scale(0.95)}
-
-/* BEAUTIFIED BOTTOM NAV */
 .bottom-nav{position:fixed;bottom:0;left:0;width:100%;background:#0a0a0a;border-top:1px solid #222;display:flex;justify-content:space-around;padding:10px 0 15px 0;z-index:99}
 .nav-item{flex:1;text-align:center;font-size:11px;color:#666;cursor:pointer;text-decoration:none;transition:0.2s}
 .nav-item svg{width:24px;height:24px;margin-bottom:4px;display:block;margin:0 auto 4px auto}
@@ -63,7 +55,6 @@ h3{color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
   <div class="products-grid" id="products"></div>
 </div>
 
-<!-- INFO SECTION -->
 <div class="box">
   <h3>ℹ️ About NEXA</h3>
   <p id="aboutText" style="font-size:13px;line-height:1.6;color:#aaa">Loading...</p>
@@ -91,7 +82,9 @@ h3{color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
       Instagram
     </a>
   </div>
-  <a id="downloadAppLink" target="_blank" style="display:block;text-align:center;background:#fbbf24;padding:14px;border-radius:12px;text-decoration:none;color:black;font-weight:800;font-size:14px">📲 Download The App</a>
+  <!-- UPDATED DOWNLOAD BUTTON -->
+  <button id="downloadAppBtn" style="display:block;width:100%;text-align:center;background:#fbbf24;padding:14px;border-radius:12px;border:none;color:black;font-weight:800;font-size:14px;cursor:pointer">📲 Download The App</button>
+  <p id="installHint" style="text-align:center;font-size:11px;color:#888;margin-top:8px;display:none">Tap Install when prompted</p>
 </div>
 
 <div id="buyModal" class="modal" onclick="closeBuyModal()">
@@ -109,7 +102,6 @@ h3{color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
   </div>
 </div>
 
-<!-- BEAUTIFIED ICONS -->
 <div class="bottom-nav">
   <a href="dashboard.html" class="nav-item active">
     <svg fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
@@ -190,14 +182,12 @@ function confirmBuy(){
   })
 }
 
-// NEW: Load user data and show in blue banner
 function loadWelcome(){
   db.collection("users").doc(phone).get().then(doc=>{
     if(doc.exists){
       let u = doc.data();
       let name = u.name || "User";
       let refCode = u.referralCode || phone;
-
       document.getElementById('welcomeMsg').innerText =
       `Welcome ${name}! | ID: ${phone} | Referral: ${refCode} | How it works: 1.Buy Package 2.Complete Daily Tasks 3.Earn Daily Income 4.Withdraw to M-Pesa`;
     }
@@ -212,7 +202,6 @@ function loadInfoData(){
       document.getElementById('whatsappLink').href = data.whatsapp || "#";
       document.getElementById('telegramLink').href = data.telegram || "#";
       document.getElementById('instagramLink').href = data.instagram || "#";
-      document.getElementById('downloadAppLink').href = data.appDownload || "#";
     }
   })
 }
@@ -234,6 +223,46 @@ function showInfo(type){
   })
 }
 function closeInfoModal(){ document.getElementById('infoModal').style.display = 'none'; }
+
+// --- PWA DOWNLOAD LOGIC ---
+let deferredPrompt;
+const downloadBtn = document.getElementById('downloadAppBtn');
+const installHint = document.getElementById('installHint');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  downloadBtn.innerHTML = '📲 Download The App - Tap to Install';
+  installHint.style.display = 'block';
+  installHint.innerText = 'Ready to install! Tap the button';
+});
+
+downloadBtn.addEventListener('click', async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      downloadBtn.innerHTML = '✅ Installed! Check Home Screen';
+      installHint.innerText = 'App added to your phone';
+    }
+    deferredPrompt = null;
+  } else {
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      alert('✅ NEXA VIEW is already installed!');
+    } else {
+      alert('To install NEXA VIEW:\n\n1. Tap the 3 dots ⋮ top-right in Chrome\n2. Tap "Install app" or "Add to Home screen"\n3. NEXA icon will appear on your home screen!');
+    }
+  }
+});
+
+window.addEventListener('appinstalled', () => {
+  downloadBtn.innerHTML = '✅ App Installed!';
+  installHint.style.display = 'none';
+});
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js');
+}
 
 window.onload = function(){ loadProducts(); loadWelcome(); loadInfoData(); }
 </script>
