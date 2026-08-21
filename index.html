@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NEXA LOGIN</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#fbbf24">
+<link rel="apple-touch-icon" href="nexa_view_icon.webp">
 <style>
 body{background:#000;color:white;font-family:Poppins;display:flex;justify-content:center;align-items:center;height:100vh;margin:0}
 .box{background:#111;padding:30px;border-radius:16px;border:1px solid #fbbf24;width:90%;max-width:400px;text-align:center}
@@ -49,6 +52,12 @@ function login(){
     localStorage.setItem("nexaPhone", phone);
     window.location.href = "dashboard.html";
   });
+}
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js');
 }
 </script>
 </body>
