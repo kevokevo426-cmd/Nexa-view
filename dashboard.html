@@ -2,80 +2,88 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEXA VIEW</title>
+<title>NEXA DASHBOARD</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 *{box-sizing:border-box}
-body{background:#000;color:white;font-family:Poppins;margin:0;padding:0 0 80px 0}
+body{background:#000;color:white;font-family:Poppins;margin:0;padding:15px 15px 80px 15px}
 
-.welcome-bar{background:linear-gradient(90deg,#059669,#047857);color:#fff;padding:12px 0;overflow:hidden;white-space:nowrap;border-bottom:1px solid #22c55e}
-.welcome-text{display:inline-block;padding-left:100%;animation: scroll-left 15s linear infinite;font-weight:700;font-size:13px}
-@keyframes scroll-left {0% { transform: translateX(0); } 100% { transform: translateX(-100%); }}
+.welcome{position:fixed;top:0;left:0;width:100%;background:linear-gradient(90deg,#22c55e,#16a34a);color:#000;padding:10px;text-align:center;font-weight:800;font-size:13px;z-index:999;white-space:nowrap;overflow:hidden}
+.welcome span{display:inline-block;animation:marquee 12s linear infinite}
+@keyframes marquee{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
 
-.box{margin:15px;padding:14px;border-radius:14px;background:#111;border:1px solid #222}
-.package-card{background:linear-gradient(135deg,#1a1a1a,#222);border:1px solid #333;border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;transition:0.2s}
-.package-card:active{transform:scale(0.98);border-color:#fbbf24}
+.box{background:#111;padding:18px;border-radius:16px;margin:15px 0;border:1px solid #222}
+h3{color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
 
-h3{display:flex;align-items:center;gap:8px;color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
-.btn{width:100%;padding:11px;background:linear-gradient(180deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:12px;margin:5px 0}
+.product{border:1px solid #333;padding:14px;border-radius:12px;margin:12px 0;background:#1a1a1a}
+.product b{font-size:15px}
+.product.stake{color:#fbbf24;font-weight:700}
+.product.income{color:#22c55e;font-weight:700}
 
-.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:999;justify-content:center;align-items:center;overflow-y:auto}
-.modal-content{background:#111;width:90%;max-height:90%;overflow-y:auto;border-radius:16px;padding:18px;border:1px solid #333}
+.btn{width:100%;padding:12px;background:#fbbf24;color:#000;border:none;border-radius:10px;font-weight:800;font-size:14px;margin:5px 0;cursor:pointer}
+.btn:active{transform:scale(0.97)}
+
+.modal{display:none;position:fixed;z-index:9999;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.8)}
+.modal-content{background:#111;margin:10% auto;padding:20px;border-radius:15px;width:90%;max-width:400px;border:1px solid #333;max-height:70vh;overflow-y:auto}
 .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
-.modal-back{font-size:28px;cursor:pointer;color:#aaa;font-weight:700;background:#222;padding:6px 12px;border-radius:10px;line-height:1}
+.modal-back{color:#fbbf24;font-size:20px;cursor:pointer}
 
-/* BOTTOM NAV */
 .bottom-nav{position:fixed;bottom:0;left:0;width:100%;background:#111;border-top:1px solid #222;display:flex;justify-content:space-around;padding:8px 0;z-index:99}
 .nav-item{flex:1;text-align:center;font-size:10px;color:#888;cursor:pointer;text-decoration:none}
 .nav-item.active{color:#fbbf24;font-weight:700}
 .nav-item svg{width:20px;height:20px;margin-bottom:3px}
-
-.whatsapp-float{position:fixed;bottom:90px;right:15px;width:55px;height:55px;background:#25D366;border-radius:50%;display:flex;justify-content:center;align-items:center;font-size:32px;color:white;text-decoration:none;box-shadow:0 4px 15px rgba(37,211,102,0.6);z-index:999}
 </style>
 </head>
 <body>
 
-<div id="homeTab">
-  <div class="welcome-bar">
-    <div class="welcome-text" id="welcomeText">Welcome to NEXA VIEW! | Loading...</div>
-  </div>
+<div class="welcome"><span id="welcomeMsg">Loading...</span></div>
+<div style="height:45px"></div>
 
-  <div class="box">
-    <h3 style="background: linear-gradient(90deg,#fbbf24,#f59e0b);-webkit-background-clip: text;-webkit-text-fill-color: transparent;font-size:18px;font-weight:800;text-shadow: 0 0 8px rgba(251,191,36,0.4);margin-bottom:5px">🛍️ PRODUCTS</h3>
-    <p style="font-size:12px;color:#22c55e;margin-bottom:15px;font-weight:600">Choose a plan and earn daily interest</p>
-
-    <div class="package-card" onclick="buyPackage(300, 20, 25)"><div style="display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:15px;color:#3b82f6">L1 - Service</b><p style="font-size:11px;color:#aaa;margin:3px 0">20 Days · Ksh 25/Day</p></div><div style="text-align:right"><b style="color:#fbbf24;font-size:14px">Stake: Ksh 300</b><p style="font-size:15px;color:#22c55e;font-weight:800;margin:2px 0">Income: Ksh 500</p></div></div></div>
-    <div class="package-card" onclick="buyPackage(700, 20, 50)"><div style="display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:15px;color:#22c55e">L2 - Food Stuffs</b><p style="font-size:11px;color:#aaa;margin:3px 0">20 Days · Ksh 50/Day</p></div><div style="text-align:right"><b style="color:#fbbf24;font-size:14px">Stake: Ksh 700</b><p style="font-size:15px;color:#22c55e;font-weight:800;margin:2px 0">Income: Ksh 1000</p></div></div></div>
-    <div class="package-card" onclick="buyPackage(1300, 20, 100)"><div style="display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:15px;color:#ec4899">L3 - By products</b><p style="font-size:11px;color:#aaa;margin:3px 0">20 Days · Ksh 100/Day</p></div><div style="text-align:right"><b style="color:#fbbf24;font-size:14px">Stake: Ksh 1300</b><p style="font-size:15px;color:#22c55e;font-weight:800;margin:2px 0">Income: Ksh 2000</p></div></div></div>
-    <div class="package-card" onclick="buyPackage(2500, 30, 150)"><div style="display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:15px;color:#f97316">L4 - House Hold</b><p style="font-size:11px;color:#aaa;margin:3px 0">30 Days · Ksh 150/Day</p></div><div style="text-align:right"><b style="color:#fbbf24;font-size:14px">Stake: Ksh 2500</b><p style="font-size:15px;color:#22c55e;font-weight:800;margin:2px 0">Income: Ksh 4500</p></div></div></div>
-    <div class="package-card" onclick="buyPackage(3500, 30, 200)"><div style="display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:15px;color:#a855f7">L5 - Beauty</b><p style="font-size:11px;color:#aaa;margin:3px 0">30 Days · Ksh 200/Day</p></div><div style="text-align:right"><b style="color:#fbbf24;font-size:14px">Stake: Ksh 3500</b><p style="font-size:15px;color:#22c55e;font-weight:800;margin:2px 0">Income: Ksh 6000</p></div></div></div>
-    <div class="package-card" onclick="buyPackage(4800, 30, 250)"><div style="display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:15px;color:#06b6d4">L6 - Stationaries</b><p style="font-size:11px;color:#aaa;margin:3px 0">30 Days · Ksh 250/Day</p></div><div style="text-align:right"><b style="color:#fbbf24;font-size:14px">Stake: Ksh 4800</b><p style="font-size:15px;color:#22c55e;font-weight:800;margin:2px 0">Income: Ksh 7500</p></div></div></div>
-    <div class="package-card" onclick="buyPackage(7500, 30, 350)"><div style="display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:15px;color:#ef4444">L7 - Sporting <span style="background:#ef4444;color:#fff;font-size:9px;padding:2px 6px;border-radius:4px">HOT</span></b><p style="font-size:11px;color:#aaa;margin:3px 0">30 Days · Ksh 350/Day</p></div><div style="text-align:right"><b style="color:#fbbf24;font-size:14px">Stake: Ksh 7500</b><p style="font-size:15px;color:#22c55e;font-weight:800;margin:2px 0">Income: Ksh 10500</p></div></div></div>
-    <div class="package-card" onclick="buyPackage(10000, 30, 500)"><div style="display:flex;justify-content:space-between;align-items:center"><div><b style="font-size:15px;color:#eab308">L8 - Appliances</b><p style="font-size:11px;color:#aaa;margin:3px 0">30 Days · Ksh 500/Day</p></div><div style="text-align:right"><b style="color:#fbbf24;font-size:14px">Stake: Ksh 10000</b><p style="font-size:15px;color:#22c55e;font-weight:800;margin:2px 0">Income: Ksh 15000</p></div></div></div>
+<div class="box">
+  <h3>💰 WALLET</h3>
+  <p style="font-size:12px;color:#aaa">Balance</p>
+  <h2 id="balance" style="color:#fbbf24;margin:5px 0">Ksh 0</h2>
+  <p style="font-size:12px;color:#aaa">Total Earned: <span id="total" style="color:#22c55e">Ksh 0</span></p>
+  <div style="display:flex;gap:10px;margin-top:10px">
+    <button class="btn" onclick="window.location.href='wallet.html'" style="background:#22c55e">Deposit</button>
+    <button class="btn" onclick="window.location.href='wallet.html'">Withdraw</button>
   </div>
 </div>
 
-<div id="infoTab" style="display:none">
-  <div class="box">
-    <h3>ℹ️ About NEXA</h3>
-    <p id="aboutText" style="font-size:13px;line-height:1.6">Loading...</p>
-  </div>
+<div class="box">
+  <h3>🛍️ PRODUCTS</h3>
+  <p style="color:#aaa;font-size:12px;margin-bottom:10px">Choose a plan and earn daily interest</p>
+  <div id="products"></div>
+</div>
 
-  <div class="box">
-    <h3>📄 Legal & Support</h3>
-    <button class="btn" onclick="showInfo('terms')" style="background:#1a1a1a;border:1px solid #333;color:white">📜 Terms & Conditions</button>
-    <button class="btn" onclick="showInfo('privacy')" style="background:#1a1a1a;border:1px solid #333;color:white">🔒 Privacy Policy</button>
-    <button class="btn" onclick="showInfo('contact')" style="background:#1a1a1a;border:1px solid #333;color:white">📞 Contact Us</button>
-  </div>
+<!-- INFO SECTION ADDED HERE UNDER L8 -->
+<div class="box">
+  <h3>ℹ️ About NEXA</h3>
+  <p id="aboutText" style="font-size:13px;line-height:1.6;color:#aaa">Loading...</p>
+</div>
 
-  <div class="box">
-    <h3>🌐 Connect With Us</h3>
-    <div style="display:flex;justify-content:space-around;gap:10px">
-      <a id="whatsappLink" target="_blank" style="flex:1;text-align:center;background:#25D366;padding:12px;border-radius:10px;text-decoration:none;color:white;font-weight:700"><div>💬</div><div>WhatsApp</div></a>
-      <a id="telegramLink" target="_blank" style="flex:1;text-align:center;background:#0088cc;padding:12px;border-radius:10px;text-decoration:none;color:white;font-weight:700"><div>✈️</div><div>Telegram</div></a>
-      <a id="instagramLink" target="_blank" style="flex:1;text-align:center;background:#bc1888;padding:12px;border-radius:10px;text-decoration:none;color:white;font-weight:700"><div>📷</div><div>Instagram</div></a>
-    </div>
-    <a id="downloadAppLink" target="_blank" style="display:block;margin-top:10px;text-align:center;background:#fbbf24;padding:12px;border-radius:10px;text-decoration:none;color:black;font-weight:700">📲 Download The App</a>
+<div class="box">
+  <h3>📄 Legal & Support</h3>
+  <button class="btn" onclick="showInfo('terms')" style="background:#1a1a1a;border:1px solid #333;color:white">📜 Terms & Conditions</button>
+  <button class="btn" onclick="showInfo('privacy')" style="background:#1a1a1a;border:1px solid #333;color:white">🔒 Privacy Policy</button>
+  <button class="btn" onclick="showInfo('contact')" style="background:#1a1a1a;border:1px solid #333;color:white">📞 Contact Us</button>
+</div>
+
+<div class="box">
+  <h3>🌐 Connect With Us</h3>
+  <div style="display:flex;justify-content:space-around;gap:10px;margin-bottom:10px">
+    <a id="whatsappLink" target="_blank" style="flex:1;text-align:center;background:#25D366;padding:12px;border-radius:10px;text-decoration:none;color:white;font-weight:700;font-size:12px">💬<br>WhatsApp</a>
+    <a id="telegramLink" target="_blank" style="flex:1;text-align:center;background:#0088cc;padding:12px;border-radius:10px;text-decoration:none;color:white;font-weight:700;font-size:12px">✈️<br>Telegram</a>
+    <a id="instagramLink" target="_blank" style="flex:1;text-align:center;background:#bc1888;padding:12px;border-radius:10px;text-decoration:none;color:white;font-weight:700;font-size:12px">📷<br>Instagram</a>
+  </div>
+  <a id="downloadAppLink" target="_blank" style="display:block;text-align:center;background:#fbbf24;padding:12px;border-radius:10px;text-decoration:none;color:black;font-weight:700">📲 Download The App</a>
+</div>
+
+<div id="buyModal" class="modal" onclick="closeBuyModal()">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-header"><h3>Confirm Purchase</h3><span class="modal-back" onclick="closeBuyModal()">🔙</span></div>
+    <p id="buyDetails"></p>
+    <button class="btn" onclick="confirmBuy()" style="background:#22c55e">Confirm Buy</button>
   </div>
 </div>
 
@@ -86,13 +94,23 @@ h3{display:flex;align-items:center;gap:8px;color:white;margin:0 0 12px 0;font-si
   </div>
 </div>
 
-<a href="https://chat.whatsapp.com/JmXM1kYBXuiF5dmbBU25f2" target="_blank" class="whatsapp-float">💬</a>
-
 <div class="bottom-nav">
-  <a href="dashboard.html" class="nav-item active"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>Home</a>
-  <a href="tasks.html" class="nav-item"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/></svg>Tasks</a>
-  <a href="wallet.html" class="nav-item"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4z"/></svg>Wallet</a>
-  <a href="referrals.html" class="nav-item"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Team</a>
+  <a href="dashboard.html" class="nav-item active">
+    <svg fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+    Home
+  </a>
+  <a href="tasks.html" class="nav-item">
+    <svg fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/></svg>
+    Tasks
+  </a>
+  <a href="wallet.html" class="nav-item">
+    <svg fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4z"/></svg>
+    Wallet
+  </a>
+  <a href="referrals.html" class="nav-item">
+    <svg fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+    Team
+  </a>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -104,37 +122,65 @@ const db = firebase.firestore();
 const phone = localStorage.getItem("nexaPhone");
 if(!phone){ window.location.href = "index.html"; }
 
-function loadWelcome(){db.collection("users").doc(phone).get().then(doc=>{if(doc.exists){let u = doc.data();document.getElementById('welcomeText').innerHTML = `🎉 Welcome ${u.userID} | Code: ${u.myReferralCode} | NEXA VIEW 🎉`;}})}
+const packages = [
+ {name:"L1 - Service",price:300,days:20,daily:25,total:500,color:"#3b82f6"},
+ {name:"L2 - Food Stuffs",price:700,days:20,daily:50,total:1000,color:"#22c55e"},
+ {name:"L3 - By products",price:1300,days:20,daily:100,total:2000,color:"#ec4899"},
+ {name:"L4 - House Hold",price:2500,days:30,daily:150,total:4500,color:"#f97316"},
+ {name:"L5 - Beauty",price:3500,days:30,daily:200,total:6000,color:"#a855f7"},
+ {name:"L6 - Stationaries",price:4800,days:30,daily:250,total:7500,color:"#06b6d4"},
+ {name:"L7 - Sporting",price:7500,days:40,daily:300,total:12000,color:"#84cc16"},
+ {name:"L8 - Appliances",price:10000,days:40,daily:400,total:16000,color:"#ef4444"}
+];
 
-function buyPackage(price, days, daily){
+let selectedPkg = null;
+function loadProducts(){
+  let html = "";
+  packages.forEach((p,i)=>{
+    html += `<div class="product">
+      <div style="display:flex;justify-content:space-between">
+        <div>
+          <b style="color:${p.color}">${p.name}</b><br>
+          <span style="font-size:12px;color:#aaa">${p.days} Days · Ksh ${p.daily}/Day</span>
+        </div>
+        <div style="text-align:right">
+          <div class="stake">Stake: Ksh ${p.price}</div>
+          <div class="income">Income: Ksh ${p.total}</div>
+        </div>
+      </div>
+      <button class="btn" onclick="openBuy(${i})" style="background:${p.color};color:white;margin-top:10px">BUY NOW</button>
+    </div>`;
+  });
+  document.getElementById('products').innerHTML = html;
+}
+
+function openBuy(i){ selectedPkg = packages[i]; document.getElementById('buyDetails').innerHTML = `<b>${selectedPkg.name}</b><br>Stake: Ksh ${selectedPkg.price}<br>Earn: Ksh ${selectedPkg.daily}/day for ${selectedPkg.days} days`; document.getElementById('buyModal').style.display='block'; }
+function closeBuyModal(){ document.getElementById('buyModal').style.display='none'; }
+
+function confirmBuy(){
   db.collection("users").doc(phone).get().then(doc=>{
     let u = doc.data();
-    if((u.balance || 0) < price) return alert("Insufficient Balance. Please Deposit First");
-    if(!confirm(`Buy this package for Ksh ${price}?`)) return;
+    if(u.balance < selectedPkg.price){ alert("Insufficient balance"); return; }
+    let newBalance = u.balance - selectedPkg.price;
     let owned = u.ownedPackages || {};
-    owned[Date.now()] = {price:price, days:days, daily:daily};
-    db.collection("users").doc(phone).update({
-      balance: u.balance - price,
-      totalInvested: (u.totalInvested || 0) + price,
-      ownedPackages: owned
-    }).then(()=>{
-      if(u.referredBy){
-        db.collection("users").where("myReferralCode","==",u.referredBy).get().then(snap=>{
-          snap.forEach(uplineDoc=>{
-            let uplineData = uplineDoc.data();
-            let bonus = price * 0.10;
-            let newRefs = uplineData.referrals || [];
-            if(!newRefs.includes(phone)) newRefs.push(phone);
-            db.collection("users").doc(uplineDoc.id).update({
-              balance: (uplineData.balance || 0) + bonus,
-              totalReferralEarned: (uplineData.totalReferralEarned || 0) + bonus,
-              referrals: newRefs
-            });
-          })
-        })
-      }
-      alert("Package Purchased Successfully!");
-    })
+    owned[selectedPkg.name] = {price:selectedPkg.price,daily:selectedPkg.daily,days:selectedPkg.days};
+    db.collection("users").doc(phone).update({balance:newBalance,ownedPackages:owned}).then(()=>{ alert("Package bought!"); closeBuyModal(); loadUserData(); })
+  })
+}
+
+function loadUserData(){
+  db.collection("users").doc(phone).get().then(doc=>{
+    if(doc.exists){
+      let u = doc.data();
+      document.getElementById('balance').innerText = "Ksh " + (u.balance||0);
+      document.getElementById('total').innerText = "Ksh " + (u.totalIncome||0);
+    }
+  })
+}
+
+function loadWelcome(){
+  db.collection("settings").doc("welcome").get().then(doc=>{
+    if(doc.exists){ document.getElementById('welcomeMsg').innerText = doc.data().text; }
   })
 }
 
@@ -143,9 +189,9 @@ function loadInfoData(){
     if(doc.exists){
       let data = doc.data();
       document.getElementById('aboutText').innerText = data.about || "NEXA VIEW is an earning platform.";
-      document.getElementById('whatsappLink').href = data.whatsapp || "https://chat.whatsapp.com/JmXM1kYBXuiF5dmbBU25f2";
-      document.getElementById('telegramLink').href = data.telegram || "https://t.me/nexaview";
-      document.getElementById('instagramLink').href = data.instagram || "https://instagram.com/nexaview";
+      document.getElementById('whatsappLink').href = data.whatsapp || "#";
+      document.getElementById('telegramLink').href = data.telegram || "#";
+      document.getElementById('instagramLink').href = data.instagram || "#";
       document.getElementById('downloadAppLink').href = data.appDownload || "#";
     }
   })
@@ -153,19 +199,16 @@ function loadInfoData(){
 
 function showInfo(type){
   db.collection("settings").doc("info").get().then(doc=>{
-    let data = doc.exists? doc.data() : {};
-    let title = ""; let content = "";
-    if(type == 'terms'){title = "📜 Terms"; content = data.terms || "Terms here";}
-    if(type == 'privacy'){title = "🔒 Privacy"; content = data.privacy || "Privacy here";}
-    if(type == 'contact'){title = "📞 Contact"; content = data.contact || "Contact here";}
+    let data = doc.data();
+    let title = type=='terms'?'Terms & Conditions':type=='privacy'?'Privacy Policy':'Contact Us';
     document.getElementById('infoModalTitle').innerText = title;
-    document.getElementById('infoModalContent').innerHTML = content.replace(/\n/g, '<br>');
-    document.getElementById('infoModal').style.display = 'flex';
+    document.getElementById('infoModalContent').innerText = data[type] || "No data found.";
+    document.getElementById('infoModal').style.display = 'block';
   })
 }
-function closeInfoModal(){document.getElementById('infoModal').style.display = 'none';}
+function closeInfoModal(){ document.getElementById('infoModal').style.display = 'none'; }
 
-window.onload = function(){ loadWelcome(); loadInfoData(); }
+window.onload = function(){ loadProducts(); loadUserData(); loadWelcome(); loadInfoData(); }
 </script>
 </body>
 </html>
