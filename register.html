@@ -152,14 +152,14 @@ function register(){
       phone, username, realName: username, country: countryCode,
       userID: userID, 
       password:pass, balance:0, ownedPackages:{}, tasksDone:0, 
-      referralBonus:0, totalReferralEarned:0, // ADDED FOR WALLET
+      referralBonus:0, totalReferralEarned:0,
       myReferralCode: myRefCode, 
       referredBy: refBy || '', 
-      referrals: [], // ADDED TO TRACK TEAM
+      referrals: [],
       referralStatus: refBy ? 'pending' : '',
       createdAt:new Date()
     }).then(()=>{
-      alert(`✅ Account Created!\n\nUsername: ${username}\nUser ID: ${userID}\nYour Referral Code: ${myRefCode}\n\nYour Referral Link:\nhttps://nexa-view.vercel.app/register.html?ref=${myRefCode}`);
+      alert(`✅ Account Created!\n\nUsername: ${username}\nUser ID: ${userID}\nYour Referral Code: ${myRefCode}\n\nYour Referral Link:\nhttps://nexa-view.vercel.app/register.html?ref=${myRefCode}`); // FIXED DOMAIN
       localStorage.setItem("nexaPhone", phone);
       window.location.href = "dashboard.html";
     });
