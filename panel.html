@@ -3,154 +3,88 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEXA ADMIN</title>
+<title>NEXA USERS PANEL</title>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <style>
-body{font-family:Arial;background:#0a0a0a;color:#fff;margin:0;padding:20px}
-.card{background:#1a1a1a;padding:15px;border-radius:10px;margin:10px 0}
-input,button,select{padding:10px;margin:5px;border-radius:6px;border:none;width:90%}
-button{background:#00ff88;color:#000;font-weight:bold;cursor:pointer}
-.danger{background:#ff4444;color:#fff}
-.warn{background:#ffaa00;color:#000}
-.success{background:#00aaff;color:#fff}
-table{width:100%;border-collapse:collapse;margin-top:10px}
-td,th{border:1px solid #333;padding:8px;text-align:left;font-size:12px}
-.hidden{display:none}
-.package{border:1px solid #00ff88;padding:10px;margin:5px 0;border-radius:8px}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+*{box-sizing:border-box}
+body{background:#000;color:white;font-family:Poppins;padding:12px;margin:0;font-size:13px}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.logout-btn{background:#ef4444;color:white;border:none;padding:6px 10px;border-radius:8px;font-weight:700;cursor:pointer;font-size:11px}
+.box{background:#111;border:1px solid #333;border-radius:10px;padding:12px;margin-bottom:12px}
+.search-box{display:flex;align-items:center;background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:8px;margin-bottom:12px}
+.search-box input{flex:1;background:transparent;border:none;color:white;font-size:13px;outline:none;font-family:Poppins}
+h2{color:#fbbf24;text-align:center;margin:0;font-size:16px} h3{color:#fbbf24;margin:0 0 10px 0;font-size:14px}
+.btn{padding:7px 10px;border:none;border-radius:7px;font-weight:700;cursor:pointer;margin:1px;font-size:11px;font-family:Poppins;position:relative}
+.btn-blue{background:#3b82f6;color:white} .btn-orange{background:#f59e0b;color:#000} .btn-red{background:#ef4444;color:white} .btn-purple{background:#8b5cf6;color:white} .btn-yellow{background:#fbbf24;color:#000} .btn-teal{background:#14b8a6;color:#000} .btn-msg-notif{background:#ef4444!important;color:white!important} .btn-small{padding:4px 8px;font-size:9px}
+.user-card{background:#1a1a1a;padding:10px;border-radius:10px;margin-bottom:8px;border:1px solid #333;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.user-num{background:#fbbf24;color:#000;font-weight:700;font-size:10px;border-radius:5px;padding:4px 6px;min-width:28px;text-align:center}
+.user-info{flex:1;line-height:1.4} .btn-group{display:flex;gap:4px;flex-wrap:wrap;max-width:190px;justify-content:flex-end}
+#loginScreen{display:flex;position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:9999;justify-content:center;align-items:center}
+.login-box{background:#111;padding:20px;border-radius:14px;border:1px solid #333;width:90%;max-width:320px;text-align:center}
+input, textarea{padding:8px;background:#222;border:1px solid #444;color:white;border-radius:6px;width:100%;margin-bottom:8px;font-family:Poppins;font-size:12px}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:999;justify-content:center;align-items:center}
+.modal-content{background:#111;width:95%;max-width:480px;border-radius:14px;padding:16px;border:1px solid #333;max-height:92vh;overflow-y:auto}
+.wallet-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0;background:#0f0f0f;padding:8px;border-radius:8px;border:1px solid #222}
+.detail-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1a1a1a;font-size:11px}
+.input-wrap{position:relative} .eye{position:absolute;right:10px;top:42%;transform:translateY(-50%);cursor:pointer;font-size:16px;z-index:2}
 </style>
 </head>
 <body>
-<div id="login" class="card">
-  <h2>NEXA ADMIN LOGIN</h2>
-  <input id="adminPass" type="password" placeholder="Admin Password">
-  <button onclick="adminLogin()">Login</button>
-  <p id="error" style="color:red"></p>
+<div id="loginScreen"><div class="login-box"><h2>👥 USERS PANEL LOGIN</h2><div class="input-wrap" style="margin-top:10px"><input type="password" id="adminPassword" placeholder="Enter Password" style="padding-right:40px"><span class="eye" onclick="toggleAdminEye()" id="adminEye">👁️</span></div><button class="btn btn-blue" style="width:100%;padding:10px;margin-top:8px" onclick="checkLogin()">Login</button><p id="loginError" style="color:#ef4444;font-size:11px;margin-top:8px"></p></div></div>
+<div id="mainPanel" style="display:none">
+  <div class="header"><h2>👥 USERS PANEL - <span id="userCount">0</span></h2><button class="logout-btn" onclick="logout()">Logout</button></div>
+  <div class="box"><div class="search-box"><input type="text" id="searchInput" placeholder="Search Phone or ID..."></div><div id="userList">Loading...</div></div>
+  <div id="walletModal" class="modal" onclick="closeWalletModal()"><div class="modal-content" onclick="event.stopPropagation()" style="border-color:#fbbf24"><h3>💼 Full Wallet Details</h3><p id="walletPhone" style="color:#fbbf24;font-weight:700"></p><div id="walletDetails">Loading...</div><div style="margin-top:10px"><h4 style="font-size:12px;color:#22c55e">📜 History</h4><div id="walletHistory" style="max-height:200px;overflow-y:auto;background:#0a0a0a;padding:8px;border-radius:8px"></div></div><button class="btn btn-red" style="width:100%;margin-top:10px" onclick="closeWalletModal()">Close</button></div></div>
+  <div id="messageModal" class="modal" onclick="closeMessageModal()"><div class="modal-content" onclick="event.stopPropagation()"><h3>📩 Send Message</h3><p id="messageUserPhone" style="color:#fbbf24;margin-bottom:8px"></p><textarea id="userMessageInput" rows="3"></textarea><div style="display:flex;gap:6px"><button class="btn btn-purple" style="flex:1" onclick="sendUserMessage()">Send</button><button class="btn btn-red" style="flex:1" onclick="closeMessageModal()">Cancel</button></div></div></div>
+  <div id="resetPassModal" class="modal" onclick="closeResetPassModal()"><div class="modal-content" onclick="event.stopPropagation()"><h3>🔑 Reset Passwords</h3><p id="resetUserPhone" style="color:#fbbf24"></p><label>Login Password</label><div class="input-wrap"><input type="password" id="newLoginPass" placeholder="New login"><span class="eye" onclick="toggleEye('newLoginPass', this)">👁️</span></div><button class="btn btn-yellow" style="width:100%" onclick="doResetLoginPass()">Reset Login</button><div style="margin-top:15px;border-top:1px solid #333;padding-top:10px"><label>Withdraw PIN</label><div class="input-wrap"><input type="password" id="newWithdrawPin" placeholder="0000" maxlength="4"><span class="eye" onclick="toggleEye('newWithdrawPin', this)">👁️</span></div><button class="btn btn-green" style="width:100%" onclick="doResetWithdrawPin()">Reset PIN</button></div><button class="btn btn-red" style="width:100%;margin-top:10px" onclick="closeResetPassModal()">Close</button></div></div>
 </div>
-
-<div id="panel" class="hidden">
-  <h2>NEXA VIEW - ADMIN PANEL</h2>
-  
-  <div class="card">
-    <h3>📦 Manage Packages</h3>
-    <input id="pkgName" placeholder="Package Name e.g Basic">
-    <input id="pkgPrice" type="number" placeholder="Investment KES">
-    <input id="pkgEarn" type="number" placeholder="Daily Earning KES">
-    <button onclick="addPackage()">Add/Update Package</button>
-    <div id="packagesList"></div>
-  </div>
-
-  <div class="card">
-    <h3>👥 All Users: <span id="userCount">0</span></h3>
-    <div id="usersList">Loading...</div>
-  </div>
-</div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, updateDoc, setDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyD1ftJH9O9fbV9X5oUr8r5c9YkeV7N1ecI",
-  authDomain: "nexa-view.firebaseapp.com",
-  projectId: "nexa-view",
-  storageBucket: "nexa-view.firebasestorage.app",
-  messagingSenderId: "947915083946",
-  appId: "1:947915083946:web:7f2cb69ddbc2f8bd2ec0d3",
-  measurementId: "G-Q2ZD17234K"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const ADMIN_PASSWORD = "1990";
-
-window.adminLogin = function(){
-  const pass = document.getElementById('adminPass').value;
-  if(pass === ADMIN_PASSWORD){
-    document.getElementById('login').classList.add('hidden');
-    document.getElementById('panel').classList.remove('hidden');
-    loadUsers();
-    loadPackages();
-  } else { 
-    document.getElementById('error').innerText = "Wrong password"; 
-  }
-}
-
-async function loadPackages(){
-  const snap = await getDoc(doc(db,"settings","packages"));
-  let html = "";
-  if(snap.exists()){
-    const pkgs = snap.data().list || [];
-    pkgs.forEach((p,i)=>{
-      html += `<div class="package"><b>${p.name}</b> - Invest: KES ${p.price} | Earn: KES ${p.earn}/day <button class="danger" onclick="deletePackage(${i})">Delete</button></div>`;
+<script>
+const firebaseConfig = {apiKey:"AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",authDomain:"nexa-view.firebaseapp.com",projectId:"nexa-view"};
+firebase.initializeApp(firebaseConfig); const db = firebase.firestore(); const ADMIN_PASSWORD = "admin123";
+let allUsers = []; let userCounter = 1; let selectedUserPhone = ""; let unreadCounts = {}; let resetTargetPhone="";
+function toggleAdminEye(){ const input=document.getElementById('adminPassword'); const eye=document.getElementById('adminEye'); if(input.type==='password'){ input.type='text'; eye.innerText='🙈'; } else { input.type='password'; eye.innerText='👁️'; } }
+function toggleEye(id, el){ const input=document.getElementById(id); if(input.type==='password'){ input.type='text'; el.innerText='🙈'; } else { input.type='password'; el.innerText='👁️'; } }
+function checkLogin(){ let pass=document.getElementById('adminPassword').value; if(pass===ADMIN_PASSWORD){ localStorage.setItem('nexaUsersPanelLoggedIn','true'); showPanel(); }else{ document.getElementById('loginError').innerText="❌ Wrong Password"; } }
+function showPanel(){ document.getElementById('loginScreen').style.display='none'; document.getElementById('mainPanel').style.display='block'; loadMessages(); loadUsers(); }
+function logout(){localStorage.removeItem('nexaUsersPanelLoggedIn');location.reload();}
+function loadMessages(){ db.collection("userMessages").orderBy("date","desc").limit(50).onSnapshot(s=>{ unreadCounts={}; s.forEach(d=>{ let x=d.data(); if(!x.read){ unreadCounts[x.phone]=(unreadCounts[x.phone]||0)+1; } }); renderUsers(allUsers); });}
+function loadUsers(){ db.collection("users").get().then(s=>{ allUsers=[]; s.forEach(d=>{let u=d.data();u.docId=d.id;allUsers.push(u)}); document.getElementById('userCount').innerText=allUsers.length; renderUsers(allUsers); }) }
+function viewWallet(phone){
+  document.getElementById('walletModal').style.display='flex'; document.getElementById('walletPhone').innerText=phone;
+  db.collection("users").doc(phone).get().then(doc=>{
+    if(!doc.exists) return; let u=doc.data();
+    let html=`<div class="wallet-grid"><div><b>User ID:</b><br><span style="color:#22c55e">${u.userID||u.userId||'N/A'}</span></div><div><b>Phone:</b><br><span style="color:#22c55e">${u.phone||phone}</span></div><div><b>Balance:</b><br><span style="color:#22c55e">Ksh ${(u.balance||0).toFixed(2)}</span></div><div><b>Total Income:</b><br><span style="color:#22c55e">Ksh ${((u.totalIncome||0)+(u.totalReferralEarned||0)).toFixed(2)}</span></div><div><b>Referral:</b><br><span style="color:#22c55e">Ksh ${(u.totalReferralEarned||0).toFixed(2)}</span></div><div><b>Today:</b><br><span style="color:#22c55e">Ksh ${(u.todayIncome||0).toFixed(2)}</span></div><div><b>Products:</b><br>${u.productsPurchased||0}</div><div><b>Invested:</b><br>Ksh ${(u.totalInvested||0).toFixed(2)}</div><div><b>Referrals:</b><br>${u.referralCount||0}</div><div><b>Withdrawn:</b><br>Ksh ${(u.totalWithdrawn||0).toFixed(2)}</div></div><div class="detail-row"><span>M-PESA:</span><b style="color:#22c55e">${u.accNumber||'Not Set'}</b></div><div class="detail-row"><span>Login Pass:</span><b style="color:#fbbf24">${u.password||u.loginPassword||'Not Set'}</b></div><div class="detail-row"><span>Withdraw PIN:</span><b style="color:#fbbf24">${u.accPin||'Not Set'}</b></div><div class="detail-row"><span>Invited By:</span><b>${u.invitedBy||'None'}</b></div>`;
+    document.getElementById('walletDetails').innerHTML=html;
+    Promise.all([ db.collection("deposits").where("phone","==",phone).get(), db.collection("withdrawals").where("phone","==",phone).get() ]).then(([depSnap, withSnap])=>{
+      let hist=[]; depSnap.forEach(d=>{ let x=d.data(); hist.push({type:'DEPOSIT', amount:x.amount, status:x.status||'pending', date:x.date}) }); withSnap.forEach(d=>{ let x=d.data(); hist.push({type:'WITHDRAW', amount:x.amount, net:x.net, status:x.status||'pending', date:x.date}) }); hist.sort((a,b)=>(b.date?.seconds||0)-(a.date?.seconds||0));
+      let hHtml=""; if(hist.length==0) hHtml="<p style='color:#666;font-size:11px'>No transactions</p>"; hist.forEach(h=>{ let color=h.status=='approved'?'#22c55e':h.status=='rejected'?'#ef4444':'#fbbf24'; hHtml+=`<div style="display:flex;justify-content:space-between;padding:6px;background:#111;margin:3px 0;border-radius:6px;font-size:11px"><span><b>${h.type}</b> Ksh ${h.amount}${h.net?' → Net '+h.net:''}</span><span style="color:${color};font-weight:700">${h.status}</span></div>`; }); document.getElementById('walletHistory').innerHTML=hHtml;
     });
-  }
-  document.getElementById('packagesList').innerHTML = html || "No packages yet";
-}
-
-window.addPackage = async function(){
-  const name = document.getElementById('pkgName').value;
-  const price = Number(document.getElementById('pkgPrice').value);
-  const earn = Number(document.getElementById('pkgEarn').value);
-  if(!name || !price || !earn) return alert("Fill all fields");
-  const snap = await getDoc(doc(db,"settings","packages"));
-  let pkgs = snap.exists() ? snap.data().list : [];
-  pkgs.push({name,price,earn});
-  await setDoc(doc(db,"settings","packages"),{list:pkgs});
-  document.getElementById('pkgName').value = "";
-  document.getElementById('pkgPrice').value = "";
-  document.getElementById('pkgEarn').value = "";
-  loadPackages();
-  alert("Package added");
-}
-
-window.deletePackage = async function(index){
-  if(!confirm("Delete this package?")) return;
-  const snap = await getDoc(doc(db,"settings","packages"));
-  let pkgs = snap.data().list;
-  pkgs.splice(index,1);
-  await setDoc(doc(db,"settings","packages"),{list:pkgs});
-  loadPackages();
-}
-
-async function loadUsers(){
-  const querySnapshot = await getDocs(collection(db, "users"));
-  document.getElementById('userCount').innerText = querySnapshot.size;
-  let html = `<table><tr><th>Email</th><th>Invested</th><th>Earned</th><th>Actions</th></tr>`;
-  querySnapshot.forEach((docSnap) => {
-    const u = docSnap.data();
-    html += `<tr><td>${u.email}</td><td>KES ${u.invested}</td><td>KES ${u.earned}</td>
-      <td><button class="success" onclick="rewardUser('${docSnap.id}','${u.email}')">Reward</button>
-      <button class="warn" onclick="resetUser('${docSnap.id}')">Reset</button>
-      <button class="danger" onclick="deleteUser('${docSnap.id}','${u.email}')">Delete</button></td></tr>`;
   });
-  html += `</table>`;
-  document.getElementById('usersList').innerHTML = html;
 }
-
-window.rewardUser = async function(uid, email){
-  const amount = prompt(`How much KES to reward ${email}?`);
-  if(amount && !isNaN(amount)){
-    const userRef = doc(db,"users",uid);
-    const snap = await getDoc(userRef);
-    const newEarned = snap.data().earned + Number(amount);
-    await updateDoc(userRef,{earned:newEarned});
-    loadUsers();
-    alert(`KES ${amount} added to ${email}`);
-  }
+function closeWalletModal(){ document.getElementById('walletModal').style.display='none'; }
+function renderUsers(users){
+  let h=""; userCounter=1;
+  users.forEach(u=>{
+    let balance = u.balance || 0; let msgCount = unreadCounts[u.phone] || 0; let btnClass = msgCount > 0? "btn btn-msg-notif btn-small" : "btn btn-purple btn-small";
+    h+=`<div class="user-card"><div class="user-num">#${userCounter}</div><div class="user-info"><div style="color:#fbbf24;font-weight:700;font-size:13px">${u.phone}</div><div style="color:#888;font-size:10px">${u.userID || u.userId || 'N/A'} | 💰 Ksh ${balance.toFixed(2)}</div></div><div class="btn-group"><button class="btn btn-teal btn-small" onclick="viewWallet('${u.phone}')">👁️ Wallet</button><button class="${btnClass}" onclick="openMessageModal('${u.phone}')">📩${msgCount>0?msgCount:''}</button><button class="btn btn-yellow btn-small" onclick="openResetPassModal('${u.phone}')">🔑</button><button class="btn btn-blue btn-small" onclick="deposit('${u.phone}')">+Ksh</button><button class="btn btn-orange btn-small" onclick="resetUser('${u.phone}')">Reset</button><button class="btn btn-red btn-small" onclick="deleteUser('${u.phone}')">Del</button></div></div>`;
+    userCounter++;
+  });
+  document.getElementById('userList').innerHTML=h;
 }
-
-window.resetUser = async function(uid){
-  if(confirm("Reset this user's earnings to 0?")){
-    await updateDoc(doc(db,"users",uid),{earned:0});
-    loadUsers();
-  }
-}
-
-window.deleteUser = async function(uid, email){
-  if(confirm(`DELETE ${email} PERMANENTLY?`)){
-    await deleteDoc(doc(db,"users",uid));
-    loadUsers();
-  }
-}
+document.getElementById('searchInput').addEventListener('keyup', function(){ let q=this.value.toLowerCase(); let f=allUsers.filter(u=> (u.phone && u.phone.toLowerCase().includes(q)) || (u.userID && u.userID.toLowerCase().includes(q)) || (u.userId && u.userId.toLowerCase().includes(q))); renderUsers(f); });
+function openMessageModal(phone){ selectedUserPhone = phone; document.getElementById('messageUserPhone').innerText = "To: " + phone; document.getElementById('messageModal').style.display='flex'; db.collection("userMessages").where("phone","==",phone).where("read","==",false).get().then(s=>{ s.forEach(d=>{ db.collection("userMessages").doc(d.id).update({read:true}) }) }) }
+function closeMessageModal(){document.getElementById('messageModal').style.display='none';}
+function sendUserMessage(){ let msg=document.getElementById('userMessageInput').value; if(!msg)return; db.collection("userMessages").add({phone:selectedUserPhone,message:msg,date:firebase.firestore.FieldValue.serverTimestamp(),read:false}); db.collection("chats").add({phone:selectedUserPhone,message:msg,from:"admin",date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{alert("✅ Sent");closeMessageModal();document.getElementById('userMessageInput').value="";}) }
+function openResetPassModal(phone){ resetTargetPhone=phone; document.getElementById('resetUserPhone').innerText="User: "+phone; document.getElementById('resetPassModal').style.display='flex'; }
+function closeResetPassModal(){document.getElementById('resetPassModal').style.display='none';}
+function doResetLoginPass(){ let newPass=document.getElementById('newLoginPass').value.trim(); if(!newPass){alert("Enter password");return;} db.collection("users").doc(resetTargetPhone).update({ password:newPass, loginPassword:newPass, pass:newPass }).then(()=>{ alert("✅ Login reset to: "+newPass); db.collection("chats").add({phone:resetTargetPhone, message:`✅ Admin reset login to: ${newPass}`, from:"admin", date:firebase.firestore.FieldValue.serverTimestamp()}); closeResetPassModal(); }); }
+function doResetWithdrawPin(){ let newPin=document.getElementById('newWithdrawPin').value.trim(); if(!newPin||newPin.length!=4||isNaN(newPin)){alert("Enter 4-digit PIN");return;} db.collection("users").doc(resetTargetPhone).update({accPin:newPin, withdrawPin:newPin}).then(()=>{ alert("✅ PIN reset to: "+newPin); db.collection("chats").add({phone:resetTargetPhone, message:`✅ Admin reset PIN to: ${newPin}`, from:"admin", date:firebase.firestore.FieldValue.serverTimestamp()}); closeResetPassModal(); }); }
+function deposit(phone){let a=prompt("Amount:");if(a)db.collection("users").doc(phone).update({balance:firebase.firestore.FieldValue.increment(parseFloat(a))}).then(()=>loadUsers());}
+function resetUser(phone){if(confirm("Reset balance?"))db.collection("users").doc(phone).update({balance:0,productsPurchased:0,totalInvested:0,totalWithdrawn:0,todayIncome:0,referralCount:0,totalReferralEarned:0,todayReferralIncome:0,totalIncome:0}).then(()=>loadUsers());}
+function deleteUser(phone){if(confirm("Delete user "+phone+"?"))db.collection("users").doc(phone).delete().then(()=>loadUsers());}
+window.onload=function(){if(localStorage.getItem('nexaUsersPanelLoggedIn')==='true'){showPanel();}}
 </script>
 </body>
 </html>
