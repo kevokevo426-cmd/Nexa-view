@@ -30,11 +30,12 @@ h3{color:#fbbf24;margin:0 0 10px 0;font-size:14px}
 .btn-red{background:#ef4444;color:white}
 .btn-green{background:#22c55e;color:#000}
 .btn-purple{background:#8b5cf6;color:white}
+.btn-yellow{background:#fbbf24;color:#000}
 .btn-msg-notif{background:#ef4444!important; color:white!important}
 .btn-small{padding:4px 8px;font-size:9px}
-.user-card{background:#1a1a1a;padding:10px;border-radius:8px;margin-bottom:8px;border:1px solid #333;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.user-card{background:#1a1a1a;padding:10px;border-radius:8px;margin-bottom:8px;border:1px solid #333;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
 .user-num{background:#fbbf24;color:#000;font-weight:700;font-size:10px;border-radius:5px;padding:3px 6px;min-width:24px;text-align:center}
-.user-info{font-size:11px;line-height:1.6;flex:1}
+.user-info{font-size:11px;line-height:1.6;flex:1;min-width:180px}
 .btn-group{display:flex;gap:4px;flex-wrap:wrap}
 .req-card{background:#1a1a1a;padding:10px;border-radius:8px;margin-bottom:8px;border:1px solid #333;font-size:11px;display:flex;justify-content:space-between;align-items:center}
 #loginScreen{display:flex;position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:9999;justify-content:center;align-items:center}
@@ -46,6 +47,7 @@ textarea{padding:8px;background:#222;border:1px solid #444;color:white;border-ra
 .msg-badge{position:absolute;top:-4px;right:-4px;background:#fbbf24;color:#000;border-radius:50%;font-size:8px;font-weight:700;padding:1px 4px;min-width:14px;text-align:center}
 .message-card{background:#1a1a1a;padding:10px;border-radius:8px;margin-bottom:8px;border:1px solid #333;border-left:3px solid #8b5cf6;font-size:11px}
 .settings-row{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+.chat-card{background:#1a1a1a;padding:10px;border-radius:8px;margin-bottom:8px;border:1px solid #333;border-left:3px solid #22c55e}
 </style>
 </head>
 <body>
@@ -77,10 +79,8 @@ textarea{padding:8px;background:#222;border:1px solid #444;color:white;border-ra
       <input type="text" id="mpesaNumber" placeholder="Enter Mpesa Number" value="0718422377">
       <button class="btn btn-green btn-small" onclick="saveMpesa()">Save</button>
     </div>
-    <p style="color:#888;font-size:10px;margin:0">This number shows to users on deposit page</p>
   </div>
 
-  <!-- MERGED STATS -->
   <div class="stats">
     <div class="stat-card"><h4>Total Invested</h4><p id="totalInvested" style="color:#22c55e">+Ksh 0</p></div>
     <div class="stat-card"><h4>Today Invested</h4><p id="todayInvested" style="color:#22c55e">+Ksh 0</p></div>
@@ -88,11 +88,23 @@ textarea{padding:8px;background:#222;border:1px solid #444;color:white;border-ra
     <div class="stat-card"><h4>Total Withdraw</h4><p id="totalWithdrawals" style="color:#ef4444">-Ksh 0</p></div>
   </div>
 
+  <!-- PIN RESET REQUESTS - NEW -->
+  <div class="box" style="border-color:#fbbf24">
+    <h3>🔐 PIN Reset Requests</h3>
+    <div id="pinResetList">Loading...</div>
+  </div>
+
+  <!-- INTERNAL CHATS - NEW -->
+  <div class="box" style="border-color:#22c55e">
+    <h3>💬 Internal Chats (from wallet icon)</h3>
+    <div id="internalChatList">Loading...</div>
+  </div>
+
   <div class="box"><h3>💸 Pending Withdrawals</h3><div id="withdrawList">Loading...</div></div>
   <div class="box"><h3>🎁 Pending Referral</h3><div id="referralList">Loading...</div></div>
 
   <div class="box">
-    <h3>👥 All Users</h3>
+    <h3>👥 All Users - Reset Login Password & Withdraw PIN</h3>
     <div class="search-box"><input type="text" id="searchInput" placeholder="Search Phone or ID..."></div>
     <div id="userList">Loading...</div>
   </div>
@@ -118,6 +130,24 @@ textarea{padding:8px;background:#222;border:1px solid #444;color:white;border-ra
       </div>
     </div>
   </div>
+
+  <!-- RESET PASSWORD MODAL - NEW -->
+  <div id="resetPassModal" class="modal" onclick="closeResetPassModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <h3>🔑 Reset User Passwords</h3>
+      <p id="resetUserPhone" style="color:#fbbf24"></p>
+      <label>Login Password (App Login)</label>
+      <input type="text" id="newLoginPass" placeholder="New login password - e.g. 1234">
+      <button class="btn btn-yellow" style="width:100%" onclick="doResetLoginPass()">Reset Login Password</button>
+      
+      <div style="margin-top:15px;border-top:1px solid #333;padding-top:10px">
+        <label>Withdraw PIN (4 digits)</label>
+        <input type="text" id="newWithdrawPin" placeholder="New withdraw PIN - e.g. 0000" maxlength="4">
+        <button class="btn btn-green" style="width:100%" onclick="doResetWithdrawPin()">Reset Withdraw PIN</button>
+      </div>
+      <button class="btn btn-red" style="width:100%;margin-top:10px" onclick="closeResetPassModal()">Close</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -126,7 +156,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const ADMIN_PASSWORD = "admin123";
 let allUsers = []; let userCounter = 1; let selectedUserPhone = "";
-let unreadCounts = {}; let totalUnread = 0;
+let unreadCounts = {}; let totalUnread = 0; let resetTargetPhone="";
 
 function checkLogin(){
   let pass=document.getElementById('adminPassword').value;
@@ -141,7 +171,7 @@ function showPanel(){
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('mainPanel').style.display='block';
   loadMpesaNumber();
-  loadMessages(); loadUsers(); loadWithdrawals(); loadReferralRequests(); loadStats();
+  loadMessages(); loadUsers(); loadWithdrawals(); loadReferralRequests(); loadStats(); loadPinResets(); loadInternalChats();
 }
 function logout(){localStorage.removeItem('nexaAdminLoggedIn');location.reload();}
 
@@ -161,21 +191,56 @@ function loadMessages(){
     let h=""; totalUnread=0; unreadCounts={};
     s.forEach(d=>{
       let x=d.data();
-      if(!x.read){
-        totalUnread++;
-        unreadCounts[x.phone] = (unreadCounts[x.phone] || 0) + 1;
-      }
+      if(!x.read){ totalUnread++; unreadCounts[x.phone]=(unreadCounts[x.phone]||0)+1; }
       h+=`<div class="message-card"><b style="color:#8b5cf6">${x.phone}</b><br>${x.message}<br><small style="color:#666">${x.date?x.date.toDate().toLocaleString():""}</small></div>`;
     });
     document.getElementById('messagesList').innerHTML=h||"No messages";
     if(totalUnread>0){
       document.getElementById('notifBadge').style.display='block';
       document.getElementById('notifBadge').innerText=totalUnread;
-    } else {
-      document.getElementById('notifBadge').style.display='none';
-    }
+    } else document.getElementById('notifBadge').style.display='none';
     renderUsers(allUsers);
   });
+}
+
+// NEW: PIN RESET REQUESTS
+function loadPinResets(){
+  db.collection("pinResetRequests").where("status","==","pending").onSnapshot(s=>{
+    let h=""; if(s.empty) h="<p style='color:#888'>No requests</p>";
+    s.forEach(d=>{
+      let x=d.data();
+      h+=`<div class="req-card"><div><b>${x.phone}</b><br><small>ID: ${x.userId||''}</small><br><small>${x.date?x.date.toDate().toLocaleString():''}</small></div><div style="display:flex;gap:4px"><button class="btn btn-green btn-small" onclick="approvePinReset('${d.id}','${x.phone}')">Reset to 0000</button><button class="btn btn-red btn-small" onclick="rejectPinReset('${d.id}')">Reject</button></div></div>`;
+    });
+    document.getElementById('pinResetList').innerHTML=h;
+  });
+}
+function approvePinReset(id, phone){
+  db.collection("users").doc(phone).update({accPin:"0000"}).then(()=>{
+    db.collection("pinResetRequests").doc(id).update({status:"approved"});
+    db.collection("chats").add({phone, message:"✅ Your Withdraw PIN has been reset to 0000 by admin. Please set new PIN in wallet.", from:"admin", date:firebase.firestore.FieldValue.serverTimestamp()});
+    alert("✅ PIN reset to 0000 for "+phone);
+  });
+}
+function rejectPinReset(id){ db.collection("pinResetRequests").doc(id).update({status:"rejected"}); }
+
+// NEW: INTERNAL CHATS FROM WALLET ICON
+function loadInternalChats(){
+  db.collection("chats").orderBy("date","desc").limit(30).onSnapshot(s=>{
+    let h=""; if(s.empty) h="<p style='color:#888'>No chats</p>";
+    let seenPhones={};
+    s.forEach(d=>{
+      let x=d.data();
+      if(seenPhones[x.phone]) return; seenPhones[x.phone]=true;
+      h+=`<div class="chat-card"><div><b style="color:#22c55e">${x.phone}</b> <small style="color:#aaa">${x.userId||''}</small><br>${x.from==='user'?'👤':'👑 Admin'}: ${x.message.substring(0,60)}...<br><small style="color:#666">${x.date?x.date.toDate().toLocaleString():''}</small></div><div><button class="btn btn-green btn-small" onclick="openChatReply('${x.phone}')">Reply</button></div></div>`;
+    });
+    document.getElementById('internalChatList').innerHTML=h;
+  });
+}
+function openChatReply(phone){
+  selectedUserPhone=phone;
+  document.getElementById('messageUserPhone').innerText="Reply to: "+phone+" (Internal Chat)";
+  document.getElementById('messagesModal').style.display='none';
+  document.getElementById('messageModal').style.display='flex';
 }
 
 function openMessagesModal(){document.getElementById('messagesModal').style.display='flex';}
@@ -184,7 +249,6 @@ function closeMessagesModal(){document.getElementById('messagesModal').style.dis
 function loadStats(){
   let today = new Date(); today.setHours(0,0,0);
   let totalInvested = 0; let todayInvested = 0; let totalWithdrawals = 0; let todayWithdrawals = 0;
-  
   db.collection("users").get().then(s=>{
     s.forEach(d=>{let u = d.data();totalInvested += u.totalInvested || 0;
       if(u.lastPurchaseDate && u.lastPurchaseDate.toDate() >= today){todayInvested += u.lastPurchaseAmount || 0;}
@@ -192,7 +256,6 @@ function loadStats(){
     document.getElementById('totalInvested').innerText = `+Ksh ${totalInvested.toFixed(0)}`;
     document.getElementById('todayInvested').innerText = `+Ksh ${todayInvested.toFixed(0)}`;
   });
-
   Promise.all([
     db.collection("withdrawals").where("status","==","paid").get(),
     db.collection("referralRequests").where("status","==","paid").get()
@@ -217,13 +280,10 @@ function renderUsers(users){
   users.forEach(u=>{
     let products = u.productsPurchased || 0;
     let invested = u.totalInvested || 0;
-    let totalIncome = (u.totalWithdrawn || 0) + (u.totalReferralEarned || 0);
-    let todayIncome = (u.todayIncome || 0) + (u.todayReferralIncome || 0);
     let referrals = u.referralCount || 0;
     let refIncome = u.totalReferralEarned || 0;
     let balance = u.balance || 0;
     let msgCount = unreadCounts[u.phone] || 0;
-
     let btnClass = msgCount > 0? "btn btn-msg-notif" : "btn btn-purple";
     let badge = msgCount > 0? `<span class="msg-badge">${msgCount}</span>` : "";
 
@@ -231,11 +291,13 @@ function renderUsers(users){
     <div class="user-card">
       <div class="user-num">#${userCounter}</div>
       <div class="user-info">
-        <b style="color:#fbbf24">${u.phone}</b> | ID: ${u.userID || 'N/A'}<br>
-        💰Ksh ${balance.toFixed(2)} | 📦${products} | 💵Ksh ${invested.toFixed(0)} | 👥${referrals} | 🎁Ksh ${refIncome.toFixed(0)}
+        <b style="color:#fbbf24">${u.phone}</b> | ID: ${u.userID || u.userId || 'N/A'}<br>
+        💰Ksh ${balance.toFixed(2)} | 📦${products} | 💵Ksh ${invested.toFixed(0)} | 👥${referrals} | 🎁Ksh ${refIncome.toFixed(0)}<br>
+        <small style="color:#888">Login: ${u.password ? '***'+u.password.slice(-2) : u.loginPassword ? '***' : 'Not set'} | PIN: ${u.accPin ? '****' : 'Not set'}</small>
       </div>
       <div class="btn-group">
-        <button class="${btnClass}" onclick="openMessageModal('${u.phone}')">📩${msgCount > 0? msgCount : ''}${badge}</button>
+        <button class="${btnClass}" onclick="openMessageModal('${u.phone}')">📩${badge}</button>
+        <button class="btn btn-yellow" onclick="openResetPassModal('${u.phone}')">🔑 Reset Pass/PIN</button>
         <button class="btn btn-blue" onclick="deposit('${u.phone}')">+Ksh</button>
         <button class="btn btn-orange" onclick="resetUser('${u.phone}')">Reset</button>
         <button class="btn btn-red" onclick="deleteUser('${u.phone}')">Del</button>
@@ -248,7 +310,7 @@ function renderUsers(users){
 
 document.getElementById('searchInput').addEventListener('keyup', function(){
   let q=this.value.toLowerCase();
-  let f=allUsers.filter(u=> (u.phone && u.phone.toLowerCase().includes(q)) || (u.userID && u.userID.toLowerCase().includes(q)));
+  let f=allUsers.filter(u=> (u.phone && u.phone.toLowerCase().includes(q)) || (u.userID && u.userID.toLowerCase().includes(q)) || (u.userId && u.userId.toLowerCase().includes(q)));
   renderUsers(f);
 });
 
@@ -264,20 +326,47 @@ function closeMessageModal(){document.getElementById('messageModal').style.displ
 function sendUserMessage(){
   let msg=document.getElementById('userMessageInput').value;
   if(!msg)return;
-  db.collection("userMessages").add({
-    phone:selectedUserPhone,
-    message:msg,
-    date:firebase.firestore.FieldValue.serverTimestamp(),
-    read:false
-  }).then(()=>{alert("✅ Sent");closeMessageModal();document.getElementById('userMessageInput').value="";})
+  // Send to both old collection and new internal chats
+  db.collection("userMessages").add({phone:selectedUserPhone,message:msg,date:firebase.firestore.FieldValue.serverTimestamp(),read:false});
+  db.collection("chats").add({phone:selectedUserPhone,message:msg,from:"admin",date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{alert("✅ Sent");closeMessageModal();document.getElementById('userMessageInput').value="";})
+}
+
+// RESET PASSWORD MODAL LOGIC
+function openResetPassModal(phone){
+  resetTargetPhone=phone;
+  document.getElementById('resetUserPhone').innerText="User: "+phone;
+  document.getElementById('resetPassModal').style.display='flex';
+}
+function closeResetPassModal(){document.getElementById('resetPassModal').style.display='none';}
+function doResetLoginPass(){
+  let newPass=document.getElementById('newLoginPass').value.trim();
+  if(!newPass){alert("Enter new login password");return;}
+  db.collection("users").doc(resetTargetPhone).update({
+    password:newPass,
+    loginPassword:newPass,
+    pass:newPass
+  }).then(()=>{
+    alert("✅ Login password reset to: "+newPass+" for "+resetTargetPhone);
+    db.collection("chats").add({phone:resetTargetPhone, message:`✅ Admin reset your login password to: ${newPass}. Use it to login now.`, from:"admin", date:firebase.firestore.FieldValue.serverTimestamp()});
+    closeResetPassModal();
+  });
+}
+function doResetWithdrawPin(){
+  let newPin=document.getElementById('newWithdrawPin').value.trim();
+  if(!newPin||newPin.length!=4||isNaN(newPin)){alert("Enter 4-digit PIN");return;}
+  db.collection("users").doc(resetTargetPhone).update({accPin:newPin, withdrawPin:newPin}).then(()=>{
+    alert("✅ Withdraw PIN reset to: "+newPin+" for "+resetTargetPhone);
+    db.collection("chats").add({phone:resetTargetPhone, message:`✅ Admin reset your Withdraw PIN to: ${newPin}. Set new PIN in wallet ACCOUNT.`, from:"admin", date:firebase.firestore.FieldValue.serverTimestamp()});
+    closeResetPassModal();
+  });
 }
 
 function deposit(phone){let a=prompt("Amount:");if(a)db.collection("users").doc(phone).update({balance:firebase.firestore.FieldValue.increment(parseFloat(a))}).then(()=>loadUsers());}
-function resetUser(phone){if(confirm("Reset?"))db.collection("users").doc(phone).update({balance:0,productsPurchased:0,totalInvested:0,totalWithdrawn:0,todayIncome:0,referralCount:0,totalReferralEarned:0,todayReferralIncome:0}).then(()=>loadUsers());}
-function deleteUser(phone){if(confirm("Delete?"))db.collection("users").doc(phone).delete().then(()=>loadUsers());}
+function resetUser(phone){if(confirm("Reset balance?"))db.collection("users").doc(phone).update({balance:0,productsPurchased:0,totalInvested:0,totalWithdrawn:0,todayIncome:0,referralCount:0,totalReferralEarned:0,todayReferralIncome:0}).then(()=>loadUsers());}
+function deleteUser(phone){if(confirm("Delete user "+phone+"?"))db.collection("users").doc(phone).delete().then(()=>loadUsers());}
 
-function loadWithdrawals(){db.collection("withdrawals").where("status","==","pending").get().then(s=>{let h="";if(s.empty)h="<p style='color:#888'>No pending</p>";s.forEach(d=>{let x=d.data();h+=`<div class="req-card"><div><b>${x.phone}</b><br>Ksh ${x.amount}</div><div><button class="btn btn-green btn-small" onclick="approveWithdraw('${d.id}')">Approve</button><button class="btn-red btn-small" onclick="rejectWithdraw('${d.id}')">Reject</button></div></div>`;});document.getElementById('withdrawList').innerHTML=h;})}
-function loadReferralRequests(){db.collection("referralRequests").where("status","==","pending").get().then(s=>{let h="";if(s.empty)h="<p style='color:#888'>No pending</p>";s.forEach(d=>{let x=d.data();h+=`<div class="req-card"><div><b>${x.phone}</b><br>Ksh ${x.amount}</div><div><button class="btn btn-green btn-small" onclick="approveReferral('${d.id}')">Approve</button><button class="btn-red btn-small" onclick="rejectReferral('${d.id}')">Reject</button></div></div>`;});document.getElementById('referralList').innerHTML=h;})}
+function loadWithdrawals(){db.collection("withdrawals").where("status","==","pending").get().then(s=>{let h="";if(s.empty)h="<p style='color:#888'>No pending</p>";s.forEach(d=>{let x=d.data();h+=`<div class="req-card"><div><b>${x.phone}</b><br>Ksh ${x.amount} to ${x.accNumber||''}</div><div><button class="btn btn-green btn-small" onclick="approveWithdraw('${d.id}')">Approve</button><button class="btn btn-red btn-small" onclick="rejectWithdraw('${d.id}')">Reject</button></div></div>`;});document.getElementById('withdrawList').innerHTML=h;})}
+function loadReferralRequests(){db.collection("referralRequests").where("status","==","pending").get().then(s=>{let h="";if(s.empty)h="<p style='color:#888'>No pending</p>";s.forEach(d=>{let x=d.data();h+=`<div class="req-card"><div><b>${x.phone}</b><br>Ksh ${x.amount}</div><div><button class="btn btn-green btn-small" onclick="approveReferral('${d.id}')">Approve</button><button class="btn btn-red btn-small" onclick="rejectReferral('${d.id}')">Reject</button></div></div>`;});document.getElementById('referralList').innerHTML=h;})}
 function approveWithdraw(id){db.collection("withdrawals").doc(id).update({status:"paid",date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{loadWithdrawals();loadStats();});}
 function rejectWithdraw(id){db.collection("withdrawals").doc(id).update({status:"rejected"}).then(()=>loadWithdrawals());}
 function approveReferral(id){db.collection("referralRequests").doc(id).get().then(d=>{let x=d.data();db.collection("users").doc(x.phone).update({balance:firebase.firestore.FieldValue.increment(x.amount)});db.collection("referralRequests").doc(id).update({status:"paid",date:firebase.firestore.FieldValue.serverTimestamp()});loadReferralRequests();loadStats();loadUsers();})}
