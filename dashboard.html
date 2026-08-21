@@ -157,7 +157,7 @@ function loadTasks(){
           let statusColor = canClaim? "#22c55e" : "#ef4444";
           let btnColor = canClaim? "linear-gradient(180deg,#22c55e,#16a34a)" : "#444";
           let btnText = canClaim? "SELL" : "SOLD";
-          html += `<div style="background:#111;padding:16px;border-radius:14px;margin-bottom:15px;border:1px solid #333"><div style="background:${statusColor};color:#000;padding:6px 10px;border-radius:20px;font-size:11px;font-weight:700;text-align:center;margin-bottom:10px">${statusText}</div><h3 style="margin:0 0 10px 0;color:#22c55e">L2 - Food Stuffs</h3><img src="${pic}" style="width:100%;height:120px;object-fit:cover;border-radius:10px;margin-bottom:12px;border:1px solid #333"><div style="display:flex;gap:10px;margin-bottom:12px"><button onclick="claimTask('${key}')" style="flex:1;padding:12px;background:${btnColor};color:white;border:none;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer" ${canClaim?'':'disabled'}>${btnText}</button><div style="flex:1;background:#1a3d2a;border:1px solid #22c55e;border-radius:10px;padding:10px;text-align:center"><div style="font-size:10px;color:#aaa">PROFIT</div><b style="color:#22c55e;font-size:16px">Ksh ${p.daily}</b></div></div><p style="font-size:11px;color:#aaa;margin:0">Tap <b>SELL</b> every day. <br>Color changes: <span style="color:#ef4444">Red →</span> <span style="color:#22c55e">Green</span> after you sell.</p></div>`;
+          html += `<div style="background:#111;padding:16px;border-radius:14px;margin-bottom:15px;border:1px solid #333"><div style="background:${statusColor};color:#000;padding:6px 10px;border-radius:20px;font-size:11px;font-weight:700;text-align:center;margin-bottom:10px">${statusText}</div><h3 style="margin:0 0 10px 0;color:#22c55e">Package</h3><img src="${pic}" style="width:100%;height:120px;object-fit:cover;border-radius:10px;margin-bottom:12px;border:1px solid #333"><div style="display:flex;gap:10px;margin-bottom:12px"><button onclick="claimTask('${key}')" style="flex:1;padding:12px;background:${btnColor};color:white;border:none;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer" ${canClaim?'':'disabled'}>${btnText}</button><div style="flex:1;background:#1a3d2a;border:1px solid #22c55e;border-radius:10px;padding:10px;text-align:center"><div style="font-size:10px;color:#aaa">PROFIT</div><b style="color:#22c55e;font-size:16px">Ksh ${p.daily}</b></div></div><p style="font-size:11px;color:#aaa;margin:0">Tap <b>SELL</b> every day. <br>Color changes: <span style="color:#ef4444">Red →</span> <span style="color:#22c55e">Green</span> after you sell.</p></div>`;
         });
       }
       document.getElementById('taskList').innerHTML = html;
@@ -178,7 +178,7 @@ function claimTask(key){
   })
 }
 
-// FIXED: BUY PACKAGE NOW WORKS
+// UPDATED: BUY PACKAGE + 10% REFERRAL BONUS
 function buyPackage(price, days, daily){
   db.collection("users").doc(phone).get().then(doc=>{
     let u = doc.data();
@@ -200,6 +200,26 @@ function buyPackage(price, days, daily){
       totalInvested: (u.totalInvested || 0) + price,
       ownedPackages: owned
     }).then(()=>{
+
+      // GIVE 10% BONUS TO UPLINE
+      if(u.referredBy){
+        db.collection("users").where("myReferralCode","==",u.referredBy).get().then(snap=>{
+          snap.forEach(uplineDoc=>{
+            let uplinePhone = uplineDoc.id;
+            let uplineData = uplineDoc.data();
+            let bonus = price * 0.10; // 10%
+            let newRefs = uplineData.referrals || [];
+            if(!newRefs.includes(phone)) newRefs.push(phone);
+
+            db.collection("users").doc(uplinePhone).update({
+              balance: (uplineData.balance || 0) + bonus,
+              totalReferralEarned: (uplineData.totalReferralEarned || 0) + bonus,
+              referrals: newRefs
+            });
+          })
+        })
+      }
+
       alert("Package Purchased Successfully!");
       loadIncomeStats();
       loadTasks();
@@ -220,7 +240,33 @@ function loadIncomeStats(){
   })
 }
 
-function loadReferralInfo(){}
+// NEW: LOAD REFERRAL CODE + LINK + HISTORY
+function loadReferralInfo(){
+  db.collection("users").doc(phone).get().then(doc=>{
+    if(doc.exists){
+      let u = doc.data();
+      let myCode = u.myReferralCode || phone.substring(3,9);
+      let myLink = `https://ykevo254.vercel.app/register.html?ref=${myCode}`;
+      let refs = u.referrals || [];
+
+      document.getElementById('myCode').value = myCode;
+      document.getElementById('myLink').value = myLink;
+      document.getElementById('userID').innerText = u.userID || myCode;
+      document.getElementById('teamCount').innerText = refs.length;
+
+      let html = "";
+      if(refs.length == 0){
+        html = "<p style='color:#888'>No team members yet</p>";
+      }else{
+        refs.forEach(refPhone=>{
+          html += `<div style="background:#1a1a1a;padding:8px;border-radius:8px;margin:5px 0;font-size:12px">${refPhone} - Joined</div>`;
+        })
+      }
+      document.getElementById('refHistory').innerHTML = html;
+    }
+  })
+}
+
 function loadAccountInfo(){}
 function openDepositModal(){ document.getElementById('depositModal').style.display='flex'; }
 function closeDepositModal(){ document.getElementById('depositModal').style.display='none'; }
@@ -229,7 +275,7 @@ function closeWithdrawModal(){ document.getElementById('withdrawModal').style.di
 function openAccountModal(){ document.getElementById('accountModal').style.display='flex'; }
 function closeAccountModal(){ document.getElementById('accountModal').style.display='none'; }
 function copyNumber(){ navigator.clipboard.writeText("0718422377"); alert("Number copied"); }
-function copyLink(){ let link = document.getElementById('myLink'); link.select(); document.execCommand('copy'); alert("Link copied"); }
+function copyLink(){ let link = document.getElementById('myLink'); link.select(); document.execCommand('copy'); alert("✅ Referral Link Copied!"); }
 function selectAmount(amt,el){ document.getElementById('withdrawAmount').value = amt; }
 function calcWithdraw(){}
 function updateAccount(){}
