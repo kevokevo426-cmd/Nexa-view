@@ -13,6 +13,10 @@ body{background:#000;color:white;font-family:Poppins;padding:12px;margin:0;font-
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
 .logout-btn{background:#ef4444;color:white;border:none;padding:6px 10px;border-radius:8px;font-weight:700;cursor:pointer;font-size:11px}
 .box{background:#111;border:1px solid #333;border-radius:10px;padding:12px;margin-bottom:12px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.stat-card{background:#1a1a1a;border:1px solid #333;border-radius:10px;padding:12px;text-align:center}
+.stat-card h4{color:#888;font-size:10px;margin:0 0 4px 0;letter-spacing:0.5px}
+.stat-card p{font-size:18px;font-weight:700;margin:0}
 .search-box{display:flex;align-items:center;background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:8px;margin-bottom:12px}
 .search-box input{flex:1;background:transparent;border:none;color:white;font-size:13px;outline:none;font-family:Poppins}
 h2{color:#fbbf24;text-align:center;margin:0;font-size:16px} h3{color:#fbbf24;margin:0 0 10px 0;font-size:14px}
@@ -34,7 +38,14 @@ input, textarea{padding:8px;background:#222;border:1px solid #444;color:white;bo
 <body>
 <div id="loginScreen"><div class="login-box"><h2>👥 USERS PANEL LOGIN</h2><div class="input-wrap" style="margin-top:10px"><input type="password" id="adminPassword" placeholder="Enter Password" style="padding-right:40px"><span class="eye" onclick="toggleAdminEye()" id="adminEye">👁️</span></div><button class="btn btn-blue" style="width:100%;padding:10px;margin-top:8px" onclick="checkLogin()">Login</button><p id="loginError" style="color:#ef4444;font-size:11px;margin-top:8px"></p></div></div>
 <div id="mainPanel" style="display:none">
-  <div class="header"><h2>👥 USERS PANEL - <span id="userCount">0</span></h2><button class="logout-btn" onclick="logout()">Logout</button></div>
+  <div class="header"><h2>👥 USERS PANEL</h2><button class="logout-btn" onclick="logout()">Logout</button></div>
+  
+  <!-- TOP DASHBOARD -->
+  <div class="stats">
+    <div class="stat-card" style="border-color:#fbbf24"><h4>👥 TOTAL USERS</h4><p id="totalUsers" style="color:#fbbf24">0</p></div>
+    <div class="stat-card" style="border-color:#22c55e"><h4>🆕 NEW TODAY</h4><p id="newUsersToday" style="color:#22c55e">0</p></div>
+  </div>
+
   <div class="box"><div class="search-box"><input type="text" id="searchInput" placeholder="Search Phone or ID..."></div><div id="userList">Loading...</div></div>
   <div id="walletModal" class="modal" onclick="closeWalletModal()"><div class="modal-content" onclick="event.stopPropagation()" style="border-color:#fbbf24"><h3>💼 Full Wallet Details</h3><p id="walletPhone" style="color:#fbbf24;font-weight:700"></p><div id="walletDetails">Loading...</div><div style="margin-top:10px"><h4 style="font-size:12px;color:#22c55e">📜 History</h4><div id="walletHistory" style="max-height:200px;overflow-y:auto;background:#0a0a0a;padding:8px;border-radius:8px"></div></div><button class="btn btn-red" style="width:100%;margin-top:10px" onclick="closeWalletModal()">Close</button></div></div>
   <div id="messageModal" class="modal" onclick="closeMessageModal()"><div class="modal-content" onclick="event.stopPropagation()"><h3>📩 Send Message</h3><p id="messageUserPhone" style="color:#fbbf24;margin-bottom:8px"></p><textarea id="userMessageInput" rows="3"></textarea><div style="display:flex;gap:6px"><button class="btn btn-purple" style="flex:1" onclick="sendUserMessage()">Send</button><button class="btn btn-red" style="flex:1" onclick="closeMessageModal()">Cancel</button></div></div></div>
@@ -50,7 +61,26 @@ function checkLogin(){ let pass=document.getElementById('adminPassword').value; 
 function showPanel(){ document.getElementById('loginScreen').style.display='none'; document.getElementById('mainPanel').style.display='block'; loadMessages(); loadUsers(); }
 function logout(){localStorage.removeItem('nexaUsersPanelLoggedIn');location.reload();}
 function loadMessages(){ db.collection("userMessages").orderBy("date","desc").limit(50).onSnapshot(s=>{ unreadCounts={}; s.forEach(d=>{ let x=d.data(); if(!x.read){ unreadCounts[x.phone]=(unreadCounts[x.phone]||0)+1; } }); renderUsers(allUsers); });}
-function loadUsers(){ db.collection("users").get().then(s=>{ allUsers=[]; s.forEach(d=>{let u=d.data();u.docId=d.id;allUsers.push(u)}); document.getElementById('userCount').innerText=allUsers.length; renderUsers(allUsers); }) }
+function loadUsers(){ 
+  db.collection("users").get().then(s=>{ 
+    allUsers=[]; 
+    let today = new Date(); today.setHours(0,0,0,0);
+    let newTodayCount = 0;
+    s.forEach(d=>{
+      let u=d.data();u.docId=d.id;allUsers.push(u);
+      // Check if user created today - supports multiple field names
+      let created = null;
+      if(u.createdAt && u.createdAt.toDate) created = u.createdAt.toDate();
+      else if(u.date && u.date.toDate) created = u.date.toDate();
+      else if(u.registerDate && u.registerDate.toDate) created = u.registerDate.toDate();
+      else if(u.created) created = new Date(u.created);
+      if(created){ created.setHours(0,0,0,0); if(created.getTime() === today.getTime()) newTodayCount++; }
+    }); 
+    document.getElementById('totalUsers').innerText = allUsers.length;
+    document.getElementById('newUsersToday').innerText = newTodayCount;
+    renderUsers(allUsers); 
+  }) 
+}
 function viewWallet(phone){
   document.getElementById('walletModal').style.display='flex'; document.getElementById('walletPhone').innerText=phone;
   db.collection("users").doc(phone).get().then(doc=>{
