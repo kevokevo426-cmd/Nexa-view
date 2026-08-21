@@ -1,20 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><title>NEXA WALLET</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXA WALLET</title>
 <style>
-body{background:#000;color:white;font-family:Poppins;padding:20px}
-.box{background:#111;padding:20px;border-radius:16px;margin:15px 0}
-.btn{width:100%;padding:14px;margin:10px 0;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:10px;font-weight:bold}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+body{background:#000;color:white;font-family:Poppins;padding:15px;margin:0}
+.box{background:#111;padding:18px;border-radius:16px;margin:15px 0;border:1px solid #222}
+.balance-card{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#000;padding:20px;border-radius:16px;text-align:center;margin-bottom:15px}
+.balance-card h1{font-size:32px;margin:5px 0}
+.btn{width:100%;padding:14px;margin:8px 0;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:10px;font-weight:700;font-size:15px;cursor:pointer}
+.btn-green{background:linear-gradient(90deg,#22c55e,#16a34a);color:white}
+.btn-orange{background:linear-gradient(90deg,#f97316,#ea580c);color:white}
+.history-item{display:flex;justify-content:space-between;padding:10px;background:#1a1a1a;border-radius:8px;margin:6px 0;font-size:12px}
+.status-pending{color:#fbbf24}.status-paid{color:#22c55e}.status-rejected{color:#ef4444}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:999;justify-content:center;align-items:center}
+.modal-content{background:#111;width:90%;max-width:400px;border-radius:16px;padding:20px;border:1px solid #333}
+input{width:100%;padding:12px;background:#1a1a1a;border:1px solid #333;color:white;border-radius:8px;margin:8px 0;box-sizing:border-box}
 </style>
 </head>
 <body>
 <h2>💰 MY WALLET</h2>
-<div class="box">
-  <h3>Balance: <span id="bal">Ksh 0</span></h3>
+
+<div class="balance-card">
+  <p style="margin:0;font-size:13px">Available Balance</p>
+  <h1>Ksh <span id="bal">0.00</span></h1>
+  <p style="margin:0;font-size:12px">Total Earned: Ksh <span id="totalEarned">0</span></p>
 </div>
-<button class="btn" onclick="alert('M-Pesa Deposit Form')">DEPOSIT</button>
-<button class="btn" onclick="alert('Withdraw Form')">WITHDRAW</button>
-<button class="btn" onclick="window.location.href='dashboard.html'" style="background:#333;color:white">BACK</button>
+
+<button class="btn btn-green" onclick="openDeposit()">📥 DEPOSIT</button>
+<button class="btn btn-orange" onclick="openWithdraw()">📤 WITHDRAW</button>
+<button class="btn" onclick="window.location.href='dashboard.html'" style="background:#333;color:white">← BACK TO DASHBOARD</button>
+
+<div class="box">
+  <h3>📜 Deposit History</h3>
+  <div id="depositHistory"><p style="color:#888">Loading...</p></div>
+</div>
+
+<div class="box">
+  <h3>💸 Withdraw History</h3>
+  <div id="withdrawHistory"><p style="color:#888">Loading...</p></div>
+</div>
+
+<!-- DEPOSIT MODAL -->
+<div id="depositModal" class="modal" onclick="closeDeposit()">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <h3>💰 Deposit Funds</h3>
+    <p style="font-size:12px">Send money to: <b style="color:#22c55e" id="mpesaNum">0718422377</b></p>
+    <input type="number" id="depAmount" placeholder="Amount KSH">
+    <input type="text" id="depCode" placeholder="M-PESA Transaction Code">
+    <button class="btn btn-green" onclick="submitDeposit()">Submit Deposit</button>
+    <button class="btn" style="background:#333" onclick="closeDeposit()">Cancel</button>
+  </div>
+</div>
+
+<!-- WITHDRAW MODAL -->
+<div id="withdrawModal" class="modal" onclick="closeWithdraw()">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <h3>📤 Withdraw Funds</h3>
+    <p style="font-size:12px">To: <b id="accNum">Not Set</b> <a href="dashboard.html" style="color:#fbbf24">Set in Account</a></p>
+    <input type="number" id="withAmount" placeholder="Amount KSH Min 200">
+    <input type="password" id="withPin" placeholder="4-Digit PIN" maxlength="4">
+    <button class="btn btn-orange" onclick="submitWithdraw()">Submit Withdraw</button>
+    <button class="btn" style="background:#333" onclick="closeWithdraw()">Cancel</button>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {apiKey:"AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",authDomain:"nexa-view.firebaseapp.com",projectId:"nexa-view"};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const phone = localStorage.getItem("nexaPhone");
+if(!phone){ window.location.href = "index.html"; }
+
+function loadWallet(){
+  db.collection("users").doc(phone).get().then(doc=>{
+    if(doc.exists){
+      let u = doc.data();
+      document.getElementById('bal').innerText = (u.balance || 0).toFixed(2);
+      document.getElementById('totalEarned').innerText = ((u.totalIncome||0)+(u.totalReferralEarned||0)).toFixed(0);
+      document.getElementById('accNum').innerText = u.accNumber || 'Not Set';
+    }
+  });
+  
+  // Load deposit history
+  db.collection("deposits").where("phone","==",phone).orderBy("date","desc").limit(5).onSnapshot(s=>{
+    let h = "";
+    s.forEach(d=>{let x=d.data();h+=`<div class="history-item"><span>Ksh ${x.amount}</span><span class="status-${x.status}">${x.status}</span></div>`});
+    document.getElementById('depositHistory').innerHTML = h || "<p style='color:#888'>No deposits yet</p>";
+  });
+  
+  // Load withdraw history
+  db.collection("withdrawals").where("phone","==",phone).orderBy("date","desc").limit(5).onSnapshot(s=>{
+    let h = "";
+    s.forEach(d=>{let x=d.data();h+=`<div class="history-item"><span>Ksh ${x.net || x.amount}</span><span class="status-${x.status}">${x.status}</span></div>`});
+    document.getElementById('withdrawHistory').innerHTML = h || "<p style='color:#888'>No withdrawals yet</p>";
+  });
+}
+
+function openDeposit(){ document.getElementById('depositModal').style.display='flex'; }
+function closeDeposit(){ document.getElementById('depositModal').style.display='none'; }
+function openWithdraw(){ document.getElementById('withdrawModal').style.display='flex'; }
+function closeWithdraw(){ document.getElementById('withdrawModal').style.display='none'; }
+
+function submitDeposit(){
+  let amount = parseFloat(document.getElementById('depAmount').value);
+  let code = document.getElementById('depCode').value;
+  if(amount < 100) return alert("Min deposit Ksh 100");
+  if(code.length < 5) return alert("Enter M-PESA code");
+  
+  db.collection("deposits").add({
+    phone, amount, code, status:"pending", date:firebase.firestore.FieldValue.serverTimestamp()
+  }).then(()=>{
+    alert("Deposit request sent. Admin will approve.");
+    closeDeposit();
+  })
+}
+
+function submitWithdraw(){
+  let amount = parseFloat(document.getElementById('withAmount').value);
+  let pin = document.getElementById('withPin').value;
+  
+  db.collection("users").doc(phone).get().then(doc=>{
+    let u = doc.data();
+    if(!u.accNumber) return alert("Set M-PESA number in dashboard ACCOUNT first");
+    if(pin != u.accPin) return alert("Wrong PIN");
+    if(amount < 200) return alert("Min withdrawal Ksh 200");
+    if(amount > u.balance) return alert("Insufficient Balance");
+    
+    db.collection("withdrawals").add({
+      phone, amount, net: amount*0.9, tax: amount*0.1, accNumber:u.accNumber, status:"pending", date:firebase.firestore.FieldValue.serverTimestamp()
+    }).then(()=>{
+      db.collection("users").doc(phone).update({balance: u.balance - amount});
+      alert("Withdrawal request sent.");
+      closeWithdraw();
+      loadWallet();
+    })
+  })
+}
+
+window.onload = loadWallet;
+</script>
 </body>
 </html>
