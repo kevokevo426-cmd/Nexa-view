@@ -1,52 +1,100 @@
-1. ACCEPTANCE OF TERMS
-By creating an account and using NEXA VIEW, you agree to be bound by these Terms & Conditions. If you do not agree, do not use the platform.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terms - NEXA VIEW</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+*{box-sizing:border-box}
+body{
+  background:#000;
+  color:white;
+  font-family:Poppins;
+  padding:20px;
+  line-height:1.8;
+  max-width:800px;
+  margin:auto
+}
+h1{
+  color:#fbbf24;
+  text-align:center;
+  margin-bottom:10px
+}
+.last-updated{
+  text-align:center;
+  color:#aaa;
+  font-size:13px;
+  margin-bottom:30px
+}
+#termsContent{
+  background:#111;
+  padding:20px;
+  border-radius:12px;
+  border:1px solid #222;
+  font-size:14px;
+  white-space:pre-line
+}
+.back-btn{
+  display:block;
+  width:100%;
+  text-align:center;
+  background:#fbbf24;
+  color:#000;
+  padding:14px;
+  border-radius:10px;
+  text-decoration:none;
+  font-weight:800;
+  margin-top:30px
+}
+.back-btn:active{transform:scale(0.97)}
+.loader{
+  text-align:center;
+  color:#aaa;
+  padding:40px
+}
+</style>
+</head>
+<body>
 
-2. ELIGIBILITY
-You must be 18 years or older to register and use NEXA VIEW. By registering, you confirm that all information provided is accurate and truthful.
+<h1>📜 NEXA VIEW - Terms & Conditions</h1>
+<p class="last-updated">Last Updated: <span id="lastUpdated">Loading...</span></p>
 
-3. ACCOUNT SECURITY
-You are responsible for keeping your phone number, password, and M-Pesa PIN secure. NEXA VIEW will never ask for your M-Pesa PIN. Any activity under your account is your responsibility.
+<div id="termsContent" class="loader">Loading Terms...</div>
 
-4. PACKAGES & INVESTMENTS
-4.1 All packages are investment products with fixed daily returns for a set number of days.
-4.2 Stake amounts are non-refundable once a package is activated.
-4.3 Daily income is credited automatically at 12:00 AM East African Time.
-4.4 NEXA VIEW reserves the right to add, remove, or modify packages at any time.
+<a href="register.html" class="back-btn">← Back to Register</a>
 
-5. DEPOSITS & WITHDRAWALS
-5.1 Minimum deposit is Ksh 300. Deposits are processed via M-Pesa.
-5.2 Minimum withdrawal is Ksh 500. Withdrawals are processed to your registered M-Pesa number within 24 hours.
-5.3 NEXA VIEW charges a 5% processing fee on all withdrawals.
-5.4 We reserve the right to delay or review withdrawals for security purposes.
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey:"AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",
+  authDomain:"nexa-view.firebaseapp.com",
+  projectId:"nexa-view"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-6. REFERRAL PROGRAM
-6.1 You earn a commission when someone registers using your referral link and buys a package.
-6.2 Fake accounts, self-referrals, and fraud will lead to account suspension and forfeiture of earnings.
-
-7. PROHIBITED ACTIVITIES
-You agree NOT to:
-- Create multiple accounts
-- Use bots, scripts, or automated tools
-- Abuse the referral system
-- Harass other users or support staff
-- Engage in money laundering or illegal activity
-
-8. RISK DISCLOSURE
-NEXA VIEW is an investment platform. Returns are not guaranteed and depend on platform operations. Invest only what you can afford to lose. Past performance does not guarantee future results.
-
-9. ACCOUNT TERMINATION
-We reserve the right to suspend or terminate any account that violates these terms without prior notice. Any remaining balance may be forfeited in cases of fraud.
-
-10. CHANGES TO TERMS
-NEXA VIEW may update these Terms at any time. The "Last Updated" date will reflect changes. Continued use means you accept the new terms.
-
-11. LIMITATION OF LIABILITY
-NEXA VIEW is not liable for any direct, indirect, or consequential losses arising from use of the platform, including technical errors, M-Pesa delays, or market changes.
-
-12. CONTACT & SUPPORT
-For support, use the WhatsApp and Telegram links in the app. Official support will never ask for your password or OTP.
-
-13. GOVERNING LAW
-These Terms are governed by the laws of the Republic of Kenya.
-
-By clicking "Register" or "I Agree", you confirm that you have read, understood, and agree to all Terms & Conditions above.
+// LOAD TERMS FROM FIREBASE
+db.collection("settings").doc("terms").get().then(doc=>{
+  if(doc.exists){
+    let data = doc.data();
+    document.getElementById('termsContent').innerText = data.content;
+    
+    if(data.updated){
+      let date = data.updated.toDate().toLocaleDateString('en-KE', {year:'numeric', month:'long', day:'numeric'});
+      document.getElementById('lastUpdated').innerText = date;
+    } else {
+      document.getElementById('lastUpdated').innerText = "August 21, 2026";
+    }
+  } else {
+    document.getElementById('termsContent').innerText = "Terms not set. Please add them in Firebase > settings > terms > content";
+    document.getElementById('lastUpdated').innerText = "Not Set";
+  }
+}).catch(err=>{
+  document.getElementById('termsContent').innerText = "Error loading terms. Please check internet connection.";
+  console.log(err);
+})
+</script>
+</body>
+</html>
