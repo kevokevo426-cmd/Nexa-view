@@ -56,7 +56,6 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
 .nav-item.active{color:#fbbf24;font-weight:700}
 .nav-item svg{width:20px;height:20px;margin-bottom:3px}
 
-/* ONLY THING I ADDED */
 .whatsapp-float{position:fixed;bottom:90px;right:15px;width:55px;height:55px;background:#25D366;border-radius:50%;display:flex;justify-content:center;align-items:center;font-size:32px;color:white;text-decoration:none;box-shadow:0 4px 15px rgba(37,211,102,0.6);z-index:999}
 </style>
 </head>
@@ -97,7 +96,42 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
   <div class="box"><h3>📜 Referral History <span style="font-size:11px;color:#fbbf24">(<span id="teamCount">0</span> Members)</span></h3><div id="refHistory"><p style="color:#888">No team members yet</p></div></div>
 </div>
 
-<div id="infoTab" style="display:none"><div class="box"><h3>ℹ️ About NEXA</h3><p style="font-size:13px;line-height:1.6">NEXA VIEW is an earning platform. Complete daily tasks and earn. Available in KE, UG, TZ.</p></div></div>
+<div id="infoTab" style="display:none">
+  <div class="box">
+    <h3>ℹ️ About NEXA</h3>
+    <p id="aboutText" style="font-size:13px;line-height:1.6">Loading...</p>
+  </div>
+
+  <div class="box">
+    <h3>📄 Legal & Support</h3>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button class="btn" onclick="showInfo('terms')" style="background:#1a1a1a;border:1px solid #333;color:white">📜 Terms & Conditions</button>
+      <button class="btn" onclick="showInfo('privacy')" style="background:#1a1a1a;border:1px solid #333;color:white">🔒 Privacy Policy</button>
+      <button class="btn" onclick="showInfo('contact')" style="background:#1a1a1a;border:1px solid #333;color:white">📞 Contact Us</button>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>🌐 Connect With Us</h3>
+    <div style="display:flex;justify-content:space-around;gap:10px">
+      <a id="whatsappLink" target="_blank" style="flex:1;text-align:center;background:#25D366;padding:12px;border-radius:10px;text-decoration:none;color:white;font-weight:700">
+        <div style="font-size:24px">💬</div>
+        <div style="font-size:11px">WhatsApp</div>
+      </a>
+      <a id="telegramLink" target="_blank" style="flex:1;text-align:center;background:#0088cc;padding:12px;border-radius:10px;text-decoration:none;color:white;font-weight:700">
+        <div style="font-size:24px">✈️</div>
+        <div style="font-size:11px">Telegram</div>
+      </a>
+      <a id="instagramLink" target="_blank" style="flex:1;text-align:center;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);padding:12px;border-radius:10px;text-decoration:none;color:white;font-weight:700">
+        <div style="font-size:24px">📷</div>
+        <div style="font-size:11px">Instagram</div>
+      </a>
+    </div>
+    <a id="downloadAppLink" target="_blank" style="display:block;margin-top:10px;text-align:center;background:#fbbf24;padding:12px;border-radius:10px;text-decoration:none;color:black;font-weight:700">
+      📲 Download The App
+    </a>
+  </div>
+</div>
 
 <div id="accountModal" class="modal" onclick="closeAccountModal()"><div class="modal-content" onclick="event.stopPropagation()"><div class="modal-header"><h3>👤 Withdrawal Account</h3><span class="modal-back" onclick="closeAccountModal()">🔙</span></div><div style="background:#1f1f1f;border-radius:12px;padding:14px"><label>Receiving account number (M-Pesa)</label><input id="accNumber" type="tel"><label>Real name</label><input id="accName" type="text"><label>Set/Change PIN (4 digits)</label><input id="accPin" type="password" maxlength="4"><button class="btn btn-orange" style="width:100%;margin-top:12px" onclick="updateAccount()">Update wallet</button></div></div></div>
 
@@ -105,7 +139,16 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
 
 <div id="withdrawModal" class="modal" onclick="closeWithdrawModal()"><div class="modal-content" onclick="event.stopPropagation()"><div class="modal-header"><div></div><span class="modal-back" onclick="closeWithdrawModal()">🔙</span></div><div style="background:#5a3d1f;border-radius:16px;padding:14px;margin-bottom:15px"><p>Available balance</p><h2 style="color:#fbbf24">KSH<span id="withdrawBalance">0.00</span></h2></div><div class="green-banner"><b>⚡ Withdrawals processed instantly</b></div><h4>Choose amount (KSH)</h4><div class="amount-btns"><div class="amount-btn" onclick="selectAmount(200,this)">200</div><div class="amount-btn" onclick="selectAmount(400,this)">400</div><div class="amount-btn" onclick="selectAmount(500,this)">500</div><div class="amount-btn" onclick="selectAmount(700,this)">700</div><div class="amount-btn" onclick="selectAmount(1000,this)">1000</div><div class="amount-btn" onclick="selectAmount(1500,this)">1500</div><div class="amount-btn" onclick="selectAmount(2500,this)">2500</div><div class="amount-btn" onclick="selectAmount(5000,this)">5000</div></div><label>Amount (KSH)</label><input id="withdrawAmount" type="number" oninput="calcWithdraw()"><div class="calc-row"><div class="calc-box">Tax: <b id="taxAmount">KSH0</b></div><div class="calc-box">You receive: <b id="netAmount">KSH0</b></div></div><label>4-digit PIN</label><input id="withdrawPin" type="password" maxlength="4"><button class="btn btn-green" style="width:100%;margin-top:10px" onclick="submitWithdraw()">Submit withdrawal</button><h4 style="margin-top:20px">💸 Withdrawal Records</h4><div id="withdrawHistory"><p style="color:#888">Loading...</p></div></div></div>
 
-<!-- ONLY THING ADDED -->
+<div id="infoModal" class="modal" onclick="closeInfoModal()">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3 id="infoModalTitle">Title</h3>
+      <span class="modal-back" onclick="closeInfoModal()">🔙</span>
+    </div>
+    <div id="infoModalContent" style="font-size:13px;line-height:1.7"></div>
+  </div>
+</div>
+
 <a href="https://chat.whatsapp.com/JmXM1kYBXuiF5dmbBU25f2?s=cl&p=a&ilr=0" target="_blank" class="whatsapp-float">💬</a>
 
 <div class="bottom-nav">
@@ -132,7 +175,7 @@ const foodPics = [
   "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400"
 ];
 
-function showTab(tab,el){document.querySelectorAll('.nav-item').forEach(t=>t.classList.remove('active'));el.classList.add('active');['home','tasks','wallet','info'].forEach(t=>document.getElementById(t+'Tab').style.display='none');document.getElementById(tab+'Tab').style.display = 'block';if(tab == 'wallet'){ loadReferralInfo(); loadIncomeStats(); loadAccountInfo(); } if(tab == 'tasks'){ loadTasks(); }}
+function showTab(tab,el){document.querySelectorAll('.nav-item').forEach(t=>t.classList.remove('active'));el.classList.add('active');['home','tasks','wallet','info'].forEach(t=>document.getElementById(t+'Tab').style.display='none');document.getElementById(tab+'Tab').style.display = 'block';if(tab == 'wallet'){ loadReferralInfo(); loadIncomeStats(); loadAccountInfo(); } if(tab == 'tasks'){ loadTasks(); } if(tab == 'info'){ loadInfoData(); }}
 
 function loadWelcome(){db.collection("users").doc(phone).get().then(doc=>{if(doc.exists){let u = doc.data();let username = u.userID || "User";let refCode = u.myReferralCode || "N/A";document.getElementById('welcomeText').innerHTML = `🎉 Welcome ${username} | Your Referral Code: ${refCode} | Earn 10% on referrals | NEXA VIEW 🎉`;}})}
 
@@ -178,7 +221,6 @@ function claimTask(key){
   })
 }
 
-// UPDATED: BUY PACKAGE + 10% REFERRAL BONUS
 function buyPackage(price, days, daily){
   db.collection("users").doc(phone).get().then(doc=>{
     let u = doc.data();
@@ -201,13 +243,12 @@ function buyPackage(price, days, daily){
       ownedPackages: owned
     }).then(()=>{
 
-      // GIVE 10% BONUS TO UPLINE
       if(u.referredBy){
         db.collection("users").where("myReferralCode","==",u.referredBy).get().then(snap=>{
           snap.forEach(uplineDoc=>{
             let uplinePhone = uplineDoc.id;
             let uplineData = uplineDoc.data();
-            let bonus = price * 0.10; // 10%
+            let bonus = price * 0.10;
             let newRefs = uplineData.referrals || [];
             if(!newRefs.includes(phone)) newRefs.push(phone);
 
@@ -240,13 +281,12 @@ function loadIncomeStats(){
   })
 }
 
-// NEW: LOAD REFERRAL CODE + LINK + HISTORY
 function loadReferralInfo(){
   db.collection("users").doc(phone).get().then(doc=>{
     if(doc.exists){
       let u = doc.data();
       let myCode = u.myReferralCode || phone.substring(3,9);
-      let myLink = `https://nexa-view.vercel.app/register.html?ref=${myCode}`; // FIXED DOMAIN
+      let myLink = `https://nexa-view.vercel.app/register.html?ref=${myCode}`;
       let refs = u.referrals || [];
 
       document.getElementById('myCode').value = myCode;
@@ -267,7 +307,6 @@ function loadReferralInfo(){
   })
 }
 
-// NEW: SHARE LINK FUNCTION
 function shareLink(){
   let link = document.getElementById('myLink').value;
   let code = document.getElementById('myCode').value;
@@ -276,22 +315,30 @@ function shareLink(){
   window.open(whatsappUrl, '_blank');
 }
 
-function loadAccountInfo(){}
-function openDepositModal(){ document.getElementById('depositModal').style.display='flex'; }
-function closeDepositModal(){ document.getElementById('depositModal').style.display='none'; }
-function openWithdrawModal(){ document.getElementById('withdrawModal').style.display='flex'; }
-function closeWithdrawModal(){ document.getElementById('withdrawModal').style.display='none'; }
-function openAccountModal(){ document.getElementById('accountModal').style.display='flex'; }
-function closeAccountModal(){ document.getElementById('accountModal').style.display='none'; }
-function copyNumber(){ navigator.clipboard.writeText("0718422377"); alert("Number copied"); }
-function copyLink(){ let link = document.getElementById('myLink'); link.select(); document.execCommand('copy'); alert("✅ Referral Link Copied!"); }
-function selectAmount(amt,el){ document.getElementById('withdrawAmount').value = amt; }
-function calcWithdraw(){}
-function updateAccount(){}
-function submitDeposit(){}
-function submitWithdraw(){}
+function loadInfoData(){
+  db.collection("settings").doc("info").get().then(doc=>{
+    if(doc.exists){
+      let data = doc.data();
+      document.getElementById('aboutText').innerText = data.about || "NEXA VIEW is an earning platform. Complete daily tasks and earn. Available in KE, UG, TZ.";
+      document.getElementById('whatsappLink').href = data.whatsapp || "https://chat.whatsapp.com/JmXM1kYBXuiF5dmbBU25f2";
+      document.getElementById('telegramLink').href = data.telegram || "https://t.me/nexaview";
+      document.getElementById('instagramLink').href = data.instagram || "https://instagram.com/nexaview";
+      document.getElementById('downloadAppLink').href = data.appDownload || "#";
+    }
+  })
+}
 
-window.onload = function(){ loadWelcome(); loadIncomeStats(); }
-</script>
-</body>
-</html>
+function showInfo(type){
+  db.collection("settings").doc("info").get().then(doc=>{
+    if(doc.exists){
+      let data = doc.data();
+      let title = "";
+      let content = "";
+
+      if(type == 'terms'){
+        title = "📜 Terms & Conditions";
+        content = data.terms || "No Terms set. Add in Firebase > settings > info > terms";
+      }
+      if(type == 'privacy'){
+        title = "🔒 Privacy Policy";
+        content =
