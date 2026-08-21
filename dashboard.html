@@ -93,7 +93,7 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
     <div class="stat-row"><span>Referral Income Total</span><b class="yellow">Ksh <span id="refIncome">0.00</span></b></div>
     <div class="btn-wrap"><button class="btn" onclick="openDepositModal()">DEPOSIT</button><button class="btn btn-orange" onclick="openAccountModal()">ACCOUNT</button><button class="btn" onclick="openWithdrawModal()">WITHDRAW</button></div>
   </div>
-  <div class="box"><h3>🎁 Referral & Earn 10%</h3><label>Your Referral Code</label><input id="myCode" readonly><label>Your Referral Link</label><input id="myLink" readonly><button class="btn btn-green" onclick="copyLink()">Copy Link</button></div>
+  <div class="box"><h3>🎁 Referral & Earn 10%</h3><label>Your Referral Code</label><input id="myCode" readonly><label>Your Referral Link</label><input id="myLink" readonly><div class="btn-wrap"><button class="btn btn-green" onclick="copyLink()">📋 Copy</button><button class="btn btn-orange" onclick="shareLink()">🔗 Share</button></div></div>
   <div class="box"><h3>📜 Referral History <span style="font-size:11px;color:#fbbf24">(<span id="teamCount">0</span> Members)</span></h3><div id="refHistory"><p style="color:#888">No team members yet</p></div></div>
 </div>
 
@@ -111,7 +111,7 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
 <div class="bottom-nav">
   <div class="nav-item active" onclick="showTab('home',this)"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>Home</div>
   <div class="nav-item" onclick="showTab('tasks',this)"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path d="M4 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h6a1 1 0 100-2H7z"/></svg>Tasks</div>
-  <div class="nav-item" onclick="showTab('wallet',this)"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4z"/></svg>Wallet</div>
+  <div class="nav-item" onclick="showTab('wallet',this)"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 0 01-2-2v-4z"/></svg>Wallet</div>
   <div class="nav-item" onclick="showTab('info',this)"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"/></svg>Info</div>
 </div>
 
@@ -246,7 +246,7 @@ function loadReferralInfo(){
     if(doc.exists){
       let u = doc.data();
       let myCode = u.myReferralCode || phone.substring(3,9);
-      let myLink = `https://ykevo254.vercel.app/register.html?ref=${myCode}`;
+      let myLink = `https://nexa-view.vercel.app/register.html?ref=${myCode}`; // FIXED DOMAIN
       let refs = u.referrals || [];
 
       document.getElementById('myCode').value = myCode;
@@ -265,6 +265,15 @@ function loadReferralInfo(){
       document.getElementById('refHistory').innerHTML = html;
     }
   })
+}
+
+// NEW: SHARE LINK FUNCTION
+function shareLink(){
+  let link = document.getElementById('myLink').value;
+  let code = document.getElementById('myCode').value;
+  let text = `🔥 Join NEXA VIEW and Earn Daily!\n\nUse my referral code: ${code}\nRegister here: ${link}\n\nEarn 10% bonus on referrals!`;
+  let whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+  window.open(whatsappUrl, '_blank');
 }
 
 function loadAccountInfo(){}
