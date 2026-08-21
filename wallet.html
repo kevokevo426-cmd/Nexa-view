@@ -17,6 +17,8 @@ body{background:#000;color:white;font-family:Poppins;padding:15px;margin:0}
 .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:999;justify-content:center;align-items:center}
 .modal-content{background:#111;width:90%;max-width:400px;border-radius:16px;padding:20px;border:1px solid #333}
 input{width:100%;padding:12px;background:#1a1a1a;border:1px solid #333;color:white;border-radius:8px;margin:8px 0;box-sizing:border-box}
+label{font-size:11px;color:#aaa}
+.calc{font-size:12px;background:#1a3d2a;padding:8px;border-radius:8px;margin:8px 0;border:1px solid #22c55e}
 </style>
 </head>
 <body>
@@ -46,9 +48,11 @@ input{width:100%;padding:12px;background:#1a1a1a;border:1px solid #333;color:whi
 <div id="depositModal" class="modal" onclick="closeDeposit()">
   <div class="modal-content" onclick="event.stopPropagation()">
     <h3>💰 Deposit Funds</h3>
-    <p style="font-size:12px">Send money to: <b style="color:#22c55e" id="mpesaNum">0718422377</b></p>
-    <input type="number" id="depAmount" placeholder="Amount KSH">
-    <input type="text" id="depCode" placeholder="M-PESA Transaction Code">
+    <p style="font-size:12px">Send money to: <b style="color:#22c55e" id="mpesaNum">0718422377</b> <button onclick="copyNum()" style="padding:3px 8px;background:#22c55e;border:none;border-radius:5px;font-size:10px">Copy</button></p>
+    <label>Amount Deposited (KSH)</label>
+    <input type="number" id="depAmount" placeholder="Min 100">
+    <label>Paste M-PESA Message / Transaction Code</label>
+    <input type="text" id="depCode" placeholder="e.g. QJ12AB34CD">
     <button class="btn btn-green" onclick="submitDeposit()">Submit Deposit</button>
     <button class="btn" style="background:#333" onclick="closeDeposit()">Cancel</button>
   </div>
@@ -58,9 +62,12 @@ input{width:100%;padding:12px;background:#1a1a1a;border:1px solid #333;color:whi
 <div id="withdrawModal" class="modal" onclick="closeWithdraw()">
   <div class="modal-content" onclick="event.stopPropagation()">
     <h3>📤 Withdraw Funds</h3>
-    <p style="font-size:12px">To: <b id="accNum">Not Set</b> <a href="dashboard.html" style="color:#fbbf24">Set in Account</a></p>
-    <input type="number" id="withAmount" placeholder="Amount KSH Min 200">
-    <input type="password" id="withPin" placeholder="4-Digit PIN" maxlength="4">
+    <p style="font-size:12px">To: <b id="accNum">Not Set</b> <a href="dashboard.html" style="color:#fbbf24">Change</a></p>
+    <label>Amount (KSH)</label>
+    <input type="number" id="withAmount" placeholder="Min 200" oninput="calcTax()">
+    <div class="calc">Tax 10%: <b id="taxShow">KSH 0</b> | You Receive: <b id="netShow">KSH 0</b></div>
+    <label>4-Digit PIN</label>
+    <input type="password" id="withPin" placeholder="****" maxlength="4">
     <button class="btn btn-orange" onclick="submitWithdraw()">Submit Withdraw</button>
     <button class="btn" style="background:#333" onclick="closeWithdraw()">Cancel</button>
   </div>
@@ -85,25 +92,39 @@ function loadWallet(){
     }
   });
   
+  // Get M-PESA number from settings
+  db.collection("settings").doc("info").get().then(doc=>{
+    if(doc.exists){ document.getElementById('mpesaNum').innerText = doc.data().mpesa || "0718422377"; }
+  })
+  
   // Load deposit history
-  db.collection("deposits").where("phone","==",phone).orderBy("date","desc").limit(5).onSnapshot(s=>{
+  db.collection("deposits").where("phone","==",phone).orderBy("date","desc").limit(10).onSnapshot(s=>{
     let h = "";
-    s.forEach(d=>{let x=d.data();h+=`<div class="history-item"><span>Ksh ${x.amount}</span><span class="status-${x.status}">${x.status}</span></div>`});
+    s.forEach(d=>{let x=d.data();let date = x.date ? new Date(x.date.seconds*1000).toLocaleDateString() : ''; h+=`<div class="history-item"><div><span>Ksh ${x.amount}</span><br><span style="font-size:10px;color:#666">${date}</span></div><span class="status-${x.status}">${x.status}</span></div>`});
     document.getElementById('depositHistory').innerHTML = h || "<p style='color:#888'>No deposits yet</p>";
   });
   
   // Load withdraw history
-  db.collection("withdrawals").where("phone","==",phone).orderBy("date","desc").limit(5).onSnapshot(s=>{
+  db.collection("withdrawals").where("phone","==",phone).orderBy("date","desc").limit(10).onSnapshot(s=>{
     let h = "";
-    s.forEach(d=>{let x=d.data();h+=`<div class="history-item"><span>Ksh ${x.net || x.amount}</span><span class="status-${x.status}">${x.status}</span></div>`});
+    s.forEach(d=>{let x=d.data();let date = x.date ? new Date(x.date.seconds*1000).toLocaleDateString() : ''; h+=`<div class="history-item"><div><span>Ksh ${x.net || x.amount}</span><br><span style="font-size:10px;color:#666">${date}</span></div><span class="status-${x.status}">${x.status}</span></div>`});
     document.getElementById('withdrawHistory').innerHTML = h || "<p style='color:#888'>No withdrawals yet</p>";
   });
 }
 
+function copyNum(){ navigator.clipboard.writeText(document.getElementById('mpesaNum').innerText); alert("Number Copied"); }
 function openDeposit(){ document.getElementById('depositModal').style.display='flex'; }
 function closeDeposit(){ document.getElementById('depositModal').style.display='none'; }
-function openWithdraw(){ document.getElementById('withdrawModal').style.display='flex'; }
+function openWithdraw(){ document.getElementById('withdrawModal').style.display='flex'; calcTax(); }
 function closeWithdraw(){ document.getElementById('withdrawModal').style.display='none'; }
+
+function calcTax(){
+  let amt = parseFloat(document.getElementById('withAmount').value) || 0;
+  let tax = amt * 0.1;
+  let net = amt * 0.9;
+  document.getElementById('taxShow').innerText = "KSH " + tax.toFixed(0);
+  document.getElementById('netShow').innerText = "KSH " + net.toFixed(0);
+}
 
 function submitDeposit(){
   let amount = parseFloat(document.getElementById('depAmount').value);
@@ -114,8 +135,10 @@ function submitDeposit(){
   db.collection("deposits").add({
     phone, amount, code, status:"pending", date:firebase.firestore.FieldValue.serverTimestamp()
   }).then(()=>{
-    alert("Deposit request sent. Admin will approve.");
+    alert("Deposit request sent. Admin will approve in 5-10 mins.");
     closeDeposit();
+    document.getElementById('depAmount').value = "";
+    document.getElementById('depCode').value = "";
   })
 }
 
@@ -130,11 +153,13 @@ function submitWithdraw(){
     if(amount < 200) return alert("Min withdrawal Ksh 200");
     if(amount > u.balance) return alert("Insufficient Balance");
     
+    let net = amount * 0.9;
+    let tax = amount * 0.1;
     db.collection("withdrawals").add({
-      phone, amount, net: amount*0.9, tax: amount*0.1, accNumber:u.accNumber, status:"pending", date:firebase.firestore.FieldValue.serverTimestamp()
+      phone, amount, net, tax, accNumber:u.accNumber, status:"pending", date:firebase.firestore.FieldValue.serverTimestamp()
     }).then(()=>{
       db.collection("users").doc(phone).update({balance: u.balance - amount});
-      alert("Withdrawal request sent.");
+      alert("Withdrawal request sent. You will receive Ksh " + net);
       closeWithdraw();
       loadWallet();
     })
