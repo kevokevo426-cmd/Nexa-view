@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXA REFERRALS</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+*{box-sizing:border-box}
+body{background:#000;color:white;font-family:Poppins;margin:0;padding:15px 15px 80px 15px}
+
+.box{margin:15px 0;padding:14px;border-radius:14px;background:#111;border:1px solid #222}
+.stat-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #222;font-size:13px}
+.stat-row:last-child{border:none}
+.stat-row b{color:#22c55e;font-size:13px}
+.stat-row.yellow{color:#fbbf24}
+
+h3{display:flex;align-items:center;gap:8px;color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
+.btn-wrap{display:flex;gap:8px;margin-top:12px}
+.btn{flex:1;padding:11px;background:linear-gradient(180deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:12px}
+.btn:active{transform:scale(0.97)}
+.btn-green{background:linear-gradient(180deg,#22c55e,#16a34a);color:white}
+.btn-orange{background:linear-gradient(180deg,#f97316,#ea580c);color:white}
+
+input{width:100%;padding:10px;background:#1a1a1a;border:1px solid #333;color:white;border-radius:8px;margin:6px 0;font-size:13px}
+label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
+
+.bottom-nav{position:fixed;bottom:0;left:0;width:100%;background:#111;border-top:1px solid #222;display:flex;justify-content:space-around;padding:8px 0;z-index:99}
+.nav-item{flex:1;text-align:center;font-size:10px;color:#888;cursor:pointer;text-decoration:none}
+.nav-item.active{color:#fbbf24;font-weight:700}
+.nav-item svg{width:20px;height:20px;margin-bottom:3px}
+</style>
+</head>
+<body>
+
+<h2>🎁 MY TEAM</h2>
+
+<div class="box">
+  <div class="stat-row"><span>Referral Income Total</span><b class="yellow">Ksh <span id="refIncome">0.00</span></b></div>
+</div>
+
+<div class="box">
+  <h3>🎁 Referral & Earn 10%</h3>
+  <p style="font-size:12px;color:#22c55e;margin-bottom:10px">Earn 10% of what your referrals invest</p>
+  <label>Your Referral Code</label>
+  <input id="myCode" readonly>
+  <label>Your Referral Link</label>
+  <input id="myLink" readonly>
+  <div class="btn-wrap">
+    <button class="btn btn-green" onclick="copyLink()">📋 Copy</button>
+    <button class="btn btn-orange" onclick="shareLink()">🔗 Share</button>
+  </div>
+</div>
+
+<div class="box">
+  <h3>📜 Referral History <span style="font-size:11px;color:#fbbf24">(<span id="teamCount">0</span> Members)</span></h3>
+  <div id="refHistory"><p style="color:#888">Loading...</p></div>
+</div>
+
+<button class="btn" onclick="window.location.href='dashboard.html'" style="width:100%;background:#333;margin-top:10px">← BACK TO DASHBOARD</button>
+
+<div class="bottom-nav">
+  <a href="dashboard.html" class="nav-item"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>Home</a>
+  <a href="tasks.html" class="nav-item"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/></svg>Tasks</a>
+  <a href="wallet.html" class="nav-item"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4z"/></svg>Wallet</a>
+  <a href="referrals.html" class="nav-item active"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Team</a>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {apiKey:"AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",authDomain:"nexa-view.firebaseapp.com",projectId:"nexa-view"};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const phone = localStorage.getItem("nexaPhone");
+if(!phone){ window.location.href = "index.html"; }
+
+function loadReferralInfo(){
+  db.collection("users").doc(phone).get().then(doc=>{
+    if(doc.exists){
+      let u = doc.data();
+      let myCode = u.myReferralCode || phone.substring(3,9);
+      let myLink = `https://nexa-view.vercel.app/register.html?ref=${myCode}`;
+      let refs = u.referrals || [];
+
+      document.getElementById('myCode').value = myCode;
+      document.getElementById('myLink').value = myLink;
+      document.getElementById('refIncome').innerText = (u.totalReferralEarned || 0).toFixed(2);
+      document.getElementById('teamCount').innerText = refs.length;
+
+      let html = "";
+      if(refs.length == 0){
+        html = "<p style='color:#888'>No team members yet</p>";
+      }else{
+        refs.forEach(refPhone=>{
+          html += `<div style="background:#1a1a1a;padding:8px;border-radius:8px;margin:5px 0;font-size:12px">${refPhone} - Joined</div>`;
+        })
+      }
+      document.getElementById('refHistory').innerHTML = html;
+    }
+  })
+}
+
+function copyLink(){ 
+  let link = document.getElementById('myLink'); 
+  link.select(); 
+  document.execCommand('copy'); 
+  alert("✅ Referral Link Copied!"); 
+}
+
+function shareLink(){
+  let link = document.getElementById('myLink').value;
+  let code = document.getElementById('myCode').value;
+  let text = `🔥 Join NEXA VIEW and Earn Daily!\n\nUse my referral code: ${code}\nRegister here: ${link}\n\nEarn 10% bonus on referrals!`;
+  let whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+  window.open(whatsappUrl, '_blank');
+}
+
+window.onload = loadReferralInfo;
+</script>
+</body>
+</html>
