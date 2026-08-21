@@ -15,7 +15,7 @@ input,select{width:100%;padding:13px;background:#1a1a1a;border:1px solid #333;co
 .phone-wrap select{width:32%;padding:13px 5px;font-size:13px}
 .phone-wrap input{width:68%;margin-bottom:0}
 button{width:100%;padding:15px;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:10px;font-weight:700;font-size:15px;cursor:pointer;margin-top:8px}
-.checkbox{display:flex;align-items:center;gap:8px;margin:12px 0 0 0;font-size:12px}
+.checkbox{display:flex;align-items:center;gap:8px;margin:12px 0 0;font-size:12px}
 .checkbox input{width:16px;height:16px;margin:0;accent-color:#fbbf24}
 .checkbox a{color:#fbbf24;text-decoration:none}
 a{color:#fbbf24;text-decoration:none}
@@ -151,9 +151,11 @@ function register(){
     db.collection("users").doc(phone).set({
       phone, username, realName: username, country: countryCode,
       userID: userID, 
-      password:pass, balance:0, ownedPackages:{}, tasksDone:0, referralBonus:0,
+      password:pass, balance:0, ownedPackages:{}, tasksDone:0, 
+      referralBonus:0, totalReferralEarned:0, // ADDED FOR WALLET
       myReferralCode: myRefCode, 
       referredBy: refBy || '', 
+      referrals: [], // ADDED TO TRACK TEAM
       referralStatus: refBy ? 'pending' : '',
       createdAt:new Date()
     }).then(()=>{
