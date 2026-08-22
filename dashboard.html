@@ -44,7 +44,6 @@ h3{color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
 .nav-item{flex:1;text-align:center;font-size:11px;color:#666;cursor:pointer;text-decoration:none;transition:0.3s}
 .nav-item svg{width:24px;height:24px;margin-bottom:4px;display:block;margin:0 auto 4px auto;transition:0.3s}
 .nav-item.active{transform:translateY(-3px) scale(1.1);font-weight:800}
-/* DIFFERENT COLORS LIGHT UP */
 .nav-item.active:nth-child(1){color:#fbbf24}
 .nav-item.active:nth-child(1) svg{filter:drop-shadow(0 0 10px #fbbf24);fill:#fbbf24}
 .nav-item:nth-child(2).active{color:#22c55e}
@@ -195,28 +194,50 @@ function confirmBuy(){
 
     let newBalance = u.balance - selectedPkg.price;
     let owned = u.ownedPackages || {};
-    // Keep owned as list to allow duplicates
     let ownedList = u.ownedPackagesList || [];
     ownedList.push({name:selectedPkg.name,price:selectedPkg.price,daily:selectedPkg.daily,days:selectedPkg.days,buyDate:new Date().toISOString()});
     owned[selectedPkg.name] = {price:selectedPkg.price,daily:selectedPkg.daily,days:selectedPkg.days};
-
     counts[selectedPkg.name] = currentCount + 1;
 
     db.collection("users").doc(phone).update({balance:newBalance,ownedPackages:owned,ownedPackagesList:ownedList,packageCounts:counts,hasPurchased:true,isActive:true,lastPurchaseDate:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{
       showToast(`Bought! ${selectedPkg.name} ${counts[selectedPkg.name]}/2`);
       closeBuyModal();
       loadProducts();
+      // REFERRAL BONUS - FIXED TO MATCH YOUR DEFINITION
       if(u.referredBy){
+        let todayISO = new Date().toISOString().split('T')[0];
         db.collection("users").where("userId","==",u.referredBy).get().then(snap=>{
           snap.forEach(uplineDoc=>{
             let lv1Bonus = selectedPkg.price * 0.10;
-            db.collection("users").doc(uplineDoc.id).update({balance: firebase.firestore.FieldValue.increment(lv1Bonus),totalReferralEarned: firebase.firestore.FieldValue.increment(lv1Bonus)});
+            db.collection("users").doc(uplineDoc.id).get().then(up=>{
+              let upData = up.data();
+              let isNewDay = upData.lastIncomeUpdate!== todayISO;
+              let newTodayRef = isNewDay? lv1Bonus : (upData.todayReferral||0)+lv1Bonus;
+              db.collection("users").doc(uplineDoc.id).update({
+                balance: firebase.firestore.FieldValue.increment(lv1Bonus),
+                totalReferralEarned: firebase.firestore.FieldValue.increment(lv1Bonus),
+                totalIncome: firebase.firestore.FieldValue.increment(lv1Bonus),
+                todayReferral: newTodayRef,
+                lastIncomeUpdate: todayISO
+              });
+            });
             let lv1Data = uplineDoc.data();
             if(lv1Data.referredBy){
               db.collection("users").where("userId","==",lv1Data.referredBy).get().then(s2=>{
                 s2.forEach(lv2Doc=>{
                   let lv2Bonus = selectedPkg.price * 0.05;
-                  db.collection("users").doc(lv2Doc.id).update({balance: firebase.firestore.FieldValue.increment(lv2Bonus),totalReferralEarned: firebase.firestore.FieldValue.increment(lv2Bonus)});
+                  db.collection("users").doc(lv2Doc.id).get().then(lv2=>{
+                    let lv2Data = lv2.data();
+                    let isNewDay2 = lv2Data.lastIncomeUpdate!== todayISO;
+                    let newTodayRef2 = isNewDay2? lv2Bonus : (lv2Data.todayReferral||0)+lv2Bonus;
+                    db.collection("users").doc(lv2Doc.id).update({
+                      balance: firebase.firestore.FieldValue.increment(lv2Bonus),
+                      totalReferralEarned: firebase.firestore.FieldValue.increment(lv2Bonus),
+                      totalIncome: firebase.firestore.FieldValue.increment(lv2Bonus),
+                      todayReferral: newTodayRef2,
+                      lastIncomeUpdate: todayISO
+                    });
+                  });
                 });
               });
             }
