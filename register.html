@@ -27,24 +27,43 @@ a{color:#fbbf24}
 #toastBox{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;width:90%;max-width:350px}
 .toast{background:#111;border:1.5px solid #22c55e;color:white;padding:14px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.9);font-size:13px;text-align:center}
 .toast.error{border-color:#ef4444}
+/* Terms Modal */
+#termsModal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:9999;justify-content:center;align-items:center;padding:15px}
+#termsModal.modal-box{background:#111;border:1.5px solid #fbbf24;border-radius:16px;padding:20px;max-width:380px;width:100%;max-height:80vh;overflow-y:auto;text-align:left}
 </style>
 </head>
 <body>
 <div id="toastBox"></div>
+
+<!-- TERMS MODAL -->
+<div id="termsModal" onclick="if(event.target==this)closeTerms()">
+  <div class="modal-box">
+    <h3 style="color:#fbbf24;text-align:center">Terms & Conditions</h3>
+    <p style="font-size:13px;color:#ccc;line-height:1.5">
+      1. Daily profits depend on active package.<br>
+      2. Fair use - No spam or fake accounts.<br>
+      3. Withdrawals processed within 24h.<br>
+      4. Referral bonus 10% LV1, 5% LV2 when they buy package.<br>
+      5. One account per phone - 07 and 7 is same account.<br>
+      6. NEXA VIEW not responsible for misuse.<br><br>
+      By registering you agree to all.
+    </p>
+    <button onclick="closeTerms()" style="background:#fbbf24;color:black">I Understand</button>
+  </div>
+</div>
+
 <div class="box">
   <img src="nexa_view_icon.webp" alt="NEXA VIEW" class="logo">
   <h2>NEXA REGISTER</h2>
   <input type="text" id="name" placeholder="Full Name">
-
   <div class="phone-row">
     <select id="countryCode">
       <option value="254">🇰🇪 KE +254</option>
       <option value="256">🇺🇬 UG +256</option>
       <option value="255">🇹🇿 TZ +255</option>
     </select>
-    <input type="tel" id="phone" placeholder="712345678 or 0712345678">
+    <input type="tel" id="phone" placeholder="712... or 0712...">
   </div>
-
   <div class="input-wrap">
     <input type="password" id="pass" placeholder="Password">
     <span class="eye" onclick="toggleEye('pass',this)">👁️</span>
@@ -57,9 +76,10 @@ a{color:#fbbf24}
   <div id="refValid" class="ref-valid">✅ Valid referral code</div>
   <div id="refInvalid" class="ref-invalid">❌ Invalid referral code</div>
 
+  <!-- TERMS CHECKBOX - RESTORED! -->
   <div class="terms">
     <input type="checkbox" id="termsCheck">
-    <label for="termsCheck">I agree to <a href="#" onclick="alert('Terms: Daily profits, Fair use, Withdraw 24h')">Terms & Conditions</a> and Privacy Policy</label>
+    <label for="termsCheck">I agree to <a href="javascript:openTerms()">Terms & Conditions</a> and Privacy Policy</label>
   </div>
 
   <button onclick="register()">REGISTER</button>
@@ -73,39 +93,22 @@ const firebaseConfig = {apiKey:"AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",authDom
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-function showToast(msg,type="error"){
-  const box=document.getElementById('toastBox');
-  const t=document.createElement('div');
-  t.className='toast '+(type=='error'?'error':'');
-  t.innerText=msg;
-  box.appendChild(t);
-  setTimeout(()=>t.remove(),3500);
-}
-function toggleEye(id,el){
-  const inp=document.getElementById(id);
-  if(inp.type==='password'){inp.type='text';el.innerText='🙈';}
-  else{inp.type='password';el.innerText='👁️';}
-}
+function openTerms(){document.getElementById('termsModal').style.display='flex'}
+function closeTerms(){document.getElementById('termsModal').style.display='none'}
+function showToast(msg,type="error"){const box=document.getElementById('toastBox');const t=document.createElement('div');t.className='toast '+(type=='error'?'error':'');t.innerText=msg;box.appendChild(t);setTimeout(()=>t.remove(),3500);}
+function toggleEye(id,el){const inp=document.getElementById(id);if(inp.type==='password'){inp.type='text';el.innerText='🙈';}else{inp.type='password';el.innerText='👁️';}}
 
-// 07 and 7 SAME + Country selector
 function formatPhone(rawPhone, countryPrefix){
-  let p=rawPhone.replace(/\D/g,''); // remove non digits
-  // remove existing country codes 254/256/255 if user typed full
-  if(p.startsWith('254')||p.startsWith('256')||p.startsWith('255')){
-    p=p.substring(3);
-  }
-  if(p.startsWith('0')) p=p.substring(1); // 0712 -> 712
-  // Now p = 712... -> add selected country
-  return countryPrefix + p; // e.g 254712...
+  let p=rawPhone.replace(/\D/g,'');
+  if(p.startsWith('254')||p.startsWith('256')||p.startsWith('255')){p=p.substring(3);}
+  if(p.startsWith('0')) p=p.substring(1);
+  return countryPrefix + p;
 }
 
-// Get ref from URL?ref=XXXX
 window.onload=function(){
   const urlParams=new URLSearchParams(window.location.search);
   const ref=urlParams.get('ref');
-  if(ref){document.getElementById('refCode').value=ref;checkRef(ref);}
-  // Save pending ref for dashboard
-  if(ref) localStorage.setItem('pendingRef',ref);
+  if(ref){document.getElementById('refCode').value=ref;checkRef(ref);localStorage.setItem('pendingRef',ref);}
 }
 function checkRef(code){
   if(!code){document.getElementById('refValid').style.display='none';document.getElementById('refInvalid').style.display='none';return;}
@@ -122,79 +125,36 @@ document.getElementById('refCode').addEventListener('input',function(){checkRef(
 function register(){
   let name=document.getElementById('name').value.trim();
   let phoneRaw=document.getElementById('phone').value.trim();
-  let countryPrefix=document.getElementById('countryCode').value; // 254/256/255
-  let phone=formatPhone(phoneRaw, countryPrefix); // 07 and 7 = SAME!
+  let countryPrefix=document.getElementById('countryCode').value;
+  let phone=formatPhone(phoneRaw, countryPrefix);
   let pass=document.getElementById('pass').value.trim();
   let cpass=document.getElementById('cpass').value.trim();
   let refCode=document.getElementById('refCode').value.trim();
   let terms=document.getElementById('termsCheck').checked;
 
   if(!name||!phoneRaw||!pass||!cpass){showToast('Fill all fields');return;}
-  if(!terms){showToast('Accept Terms & Conditions');return;}
+  if(!terms){showToast('Please accept Terms & Conditions');return;}
   if(pass!==cpass){showToast('Passwords do not match');return;}
-  if(pass.length<4){showToast('Password too short');return;}
 
   db.collection("users").doc(phone).get().then(doc=>{
-    if(doc.exists){showToast('Phone already registered - 07 and 7 are same: '+phone);return;}
-
+    if(doc.exists){showToast('Phone already registered - 07 and 7 are same account');return;}
     let userId="NEXA"+phone.slice(-6);
     let myReferralCode=userId;
-
-    let newUser={
-      name:name,phone:phone,phoneDisplay:"0"+phone.substring(3),country:countryPrefix,
-      password:pass,userId:userId,myReferralCode:myReferralCode,
-      balance:0,totalProfit:0,totalReferralEarned:0,totalIncome:0,
-      referrals:[],myReferralsLV1:[],myReferralsLV2:[],
-      referredBy: refCode||null,
-      hasPurchased:false,isActive:false,
-      ownedPackages:{},ownedPackagesList:[],packageCounts:{},
-      accNumber:"",accPin:"",date:firebase.firestore.FieldValue.serverTimestamp()
-    };
-
+    let newUser={name:name,phone:phone,phoneDisplay:"0"+phone.substring(3),country:countryPrefix,password:pass,userId:userId,myReferralCode:myReferralCode,balance:0,totalProfit:0,totalReferralEarned:0,totalIncome:0,referrals:[],myReferralsLV1:[],myReferralsLV2:[],referredBy: refCode||null,hasPurchased:false,isActive:false,ownedPackages:{},ownedPackagesList:[],packageCounts:{},accNumber:"",accPin:"",date:firebase.firestore.FieldValue.serverTimestamp()};
     db.collection("users").doc(phone).set(newUser).then(()=>{
       if(refCode){
         db.collection("users").where("userId","==",refCode).get().then(snap=>{
-          if(snap.empty){
-            db.collection("users").where("myReferralCode","==",refCode).get().then(s2=>{
-              if(!s2.empty){linkReferral(s2.docs[0].id, s2.docs[0].data(), phone, userId);}
-              else{finishReg(phone);}
-            });
-          } else {
-            linkReferral(snap.docs[0].id, snap.docs[0].data(), phone, userId);
-          }
+          if(snap.empty){db.collection("users").where("myReferralCode","==",refCode).get().then(s2=>{if(!s2.empty){linkReferral(s2.docs[0].id, s2.docs[0].data(), phone);}else{finishReg(phone);}});}else{linkReferral(snap.docs[0].id, snap.docs[0].data(), phone);}
         });
-      } else {
-        finishReg(phone);
-      }
+      }else{finishReg(phone);}
     });
   });
 }
-
-function linkReferral(uplinePhone, uplineData, newPhone, newUserId){
-  db.collection("users").doc(uplinePhone).update({
-    referrals: firebase.firestore.FieldValue.arrayUnion(newPhone),
-    myReferralsLV1: firebase.firestore.FieldValue.arrayUnion(newPhone)
-  });
-  if(uplineData.referredBy){
-    db.collection("users").where("userId","==",uplineData.referredBy).get().then(s3=>{
-      s3.forEach(gDoc=>{
-        db.collection("users").doc(gDoc.id).update({
-          myReferralsLV2: firebase.firestore.FieldValue.arrayUnion(newPhone)
-        });
-      });
-      finishReg(newPhone);
-    });
-  } else {
-    finishReg(newPhone);
-  }
+function linkReferral(uplinePhone, uplineData, newPhone){
+  db.collection("users").doc(uplinePhone).update({referrals: firebase.firestore.FieldValue.arrayUnion(newPhone),myReferralsLV1: firebase.firestore.FieldValue.arrayUnion(newPhone)});
+  if(uplineData.referredBy){db.collection("users").where("userId","==",uplineData.referredBy).get().then(s3=>{s3.forEach(gDoc=>{db.collection("users").doc(gDoc.id).update({myReferralsLV2: firebase.firestore.FieldValue.arrayUnion(newPhone)});});finishReg(newPhone);});}else{finishReg(newPhone);}
 }
-
-function finishReg(phone){
-  showToast('Registration success!','success');
-  localStorage.setItem("nexaPhone",phone);
-  setTimeout(()=>{window.location.href="dashboard.html";},800);
-}
-if('serviceWorker' in navigator){navigator.serviceWorker.register('service-worker.js');}
+function finishReg(phone){showToast('Registration success!','success');localStorage.setItem("nexaPhone",phone);setTimeout(()=>{window.location.href="dashboard.html";},800);}
 </script>
 </body>
 </html>
