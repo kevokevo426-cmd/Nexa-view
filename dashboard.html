@@ -16,8 +16,10 @@ body{background:#000;color:white;font-family:Poppins;margin:0;padding:15px 15px 
 .box{background:#111;padding:18px;border-radius:16px;margin:15px 0;border:1px solid #222}
 h3{color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
 .products-grid{display:grid;grid-template-columns:1fr;gap:12px}
-.product{border:1px solid #333;padding:16px;border-radius:14px;background:#1a1a1a;transition:0.2s}
+.product{border:1px solid #333;padding:16px;border-radius:14px;background:#1a1a1a;transition:0.2s;position:relative}
 .product:active{transform:scale(0.98)}
+.product.locked{opacity:0.5;border-color:#ef4444}
+.product.locked::after{content:"🔒 LOCKED - Max 2 purchased";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#450a0a;color:#ef4444;padding:6px 12px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid #ef4444}
 .product-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
 .product-name{font-size:15px;font-weight:700}
 .product-days{font-size:12px;color:#aaa;margin-top:4px}
@@ -29,6 +31,7 @@ h3{color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
 .income{color:#3b82f6}
 .btn{width:100%;padding:12px;background:#fbbf24;color:#000;border:none;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer}
 .btn:active{transform:scale(0.97)}
+.btn:disabled{background:#333!important;color:#666!important;cursor:not-allowed}
 .btn-outline{width:100%;padding:12px;background:#1a1a1a;border:1px solid #333;color:white;border-radius:10px;font-weight:700;font-size:14px;margin:6px 0;cursor:pointer}
 .modal{display:none;position:fixed;z-index:9999;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.8)}
 .modal-content{background:#111;margin:10% auto;padding:20px;border-radius:15px;width:90%;max-width:400px;border:1px solid #333;max-height:70vh;overflow-y:auto}
@@ -38,20 +41,32 @@ h3{color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
 .social-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;border-radius:12px;text-decoration:none;font-weight:700;font-size:12px;transition:0.2s}
 .social-btn:active{transform:scale(0.95)}
 .bottom-nav{position:fixed;bottom:0;left:0;width:100%;background:#0a0a0a;border-top:1px solid #222;display:flex;justify-content:space-around;padding:10px 0 15px 0;z-index:99}
-.nav-item{flex:1;text-align:center;font-size:11px;color:#666;cursor:pointer;text-decoration:none;transition:0.2s}
-.nav-item svg{width:24px;height:24px;margin-bottom:4px;display:block;margin:0 auto 4px auto}
-.nav-item.active{color:#fbbf24;transform:translateY(-2px)}
-.nav-item.active svg{filter:drop-shadow(0 0 8px #fbbf24)}
+.nav-item{flex:1;text-align:center;font-size:11px;color:#666;cursor:pointer;text-decoration:none;transition:0.3s}
+.nav-item svg{width:24px;height:24px;margin-bottom:4px;display:block;margin:0 auto 4px auto;transition:0.3s}
+.nav-item.active{transform:translateY(-3px) scale(1.1);font-weight:800}
+/* DIFFERENT COLORS LIGHT UP */
+.nav-item.active:nth-child(1){color:#fbbf24}
+.nav-item.active:nth-child(1) svg{filter:drop-shadow(0 0 10px #fbbf24);fill:#fbbf24}
+.nav-item:nth-child(2).active{color:#22c55e}
+.nav-item:nth-child(2).active svg{filter:drop-shadow(0 0 10px #22c55e);fill:#22c55e}
+.nav-item:nth-child(3).active{color:#3b82f6}
+.nav-item:nth-child(3).active svg{filter:drop-shadow(0 0 10px #3b82f6);fill:#3b82f6}
+.nav-item:nth-child(4).active{color:#f97316}
+.nav-item:nth-child(4).active svg{filter:drop-shadow(0 0 10px #f97316);fill:#f97316}
+#toastBox{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;width:90%;max-width:400px}
+.toast{background:#111;border:1px solid #22c55e;color:white;padding:14px;border-radius:12px;display:flex;gap:10px;box-shadow:0 10px 30px rgba(0,0,0,0.9);font-size:13px;margin-bottom:8px}
+.toast.error{border-color:#ef4444}
+.purchase-count{position:absolute;top:10px;right:10px;background:#fbbf24;color:#000;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:800}
 </style>
 </head>
 <body>
-
+<div id="toastBox"></div>
 <div class="welcome"><span id="welcomeMsg">Loading user info...</span></div>
 <div style="height:45px"></div>
 
 <div class="box">
   <h3>🛍️ PRODUCTS</h3>
-  <p style="color:#aaa;font-size:12px;margin-bottom:10px">Choose a plan and earn daily interest</p>
+  <p style="color:#aaa;font-size:12px;margin-bottom:10px">Each product max 2 times only</p>
   <div class="products-grid" id="products"></div>
 </div>
 
@@ -69,20 +84,10 @@ h3{color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
 <div class="box">
   <h3>🌐 Connect With Us</h3>
   <div class="social-grid">
-    <a id="whatsappLink" target="_blank" class="social-btn" style="background:#25D366;color:white">
-      <div style="font-size:20px">💬</div>
-      WhatsApp
-    </a>
-    <a id="telegramLink" target="_blank" class="social-btn" style="background:#0088cc;color:white">
-      <div style="font-size:20px">✈️</div>
-      Telegram
-    </a>
-    <a id="instagramLink" target="_blank" class="social-btn" style="background:#bc1888;color:white">
-      <div style="font-size:20px">📷</div>
-      Instagram
-    </a>
+    <a id="whatsappLink" target="_blank" class="social-btn" style="background:#25D366;color:white"><div style="font-size:20px">💬</div>WhatsApp</a>
+    <a id="telegramLink" target="_blank" class="social-btn" style="background:#0088cc;color:white"><div style="font-size:20px">✈️</div>Telegram</a>
+    <a id="instagramLink" target="_blank" class="social-btn" style="background:#bc1888;color:white"><div style="font-size:20px">📷</div>Instagram</a>
   </div>
-  <!-- UPDATED DOWNLOAD BUTTON -->
   <button id="downloadAppBtn" style="display:block;width:100%;text-align:center;background:#fbbf24;padding:14px;border-radius:12px;border:none;color:black;font-weight:800;font-size:14px;cursor:pointer">📲 Download The App</button>
   <p id="installHint" style="text-align:center;font-size:11px;color:#888;margin-top:8px;display:none">Tap Install when prompted</p>
 </div>
@@ -91,7 +96,8 @@ h3{color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
   <div class="modal-content" onclick="event.stopPropagation()">
     <div class="modal-header"><h3>Confirm Purchase</h3><span class="modal-back" onclick="closeBuyModal()">🔙</span></div>
     <p id="buyDetails"></p>
-    <button class="btn" onclick="confirmBuy()" style="background:#22c55e">Confirm Buy</button>
+    <p id="buyCountInfo" style="font-size:12px;color:#fbbf24"></p>
+    <button class="btn" onclick="confirmBuy()" style="background:#22c55e" id="confirmBtn">Confirm Buy</button>
   </div>
 </div>
 
@@ -103,22 +109,10 @@ h3{color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
 </div>
 
 <div class="bottom-nav">
-  <a href="dashboard.html" class="nav-item active">
-    <svg fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-    Home
-  </a>
-  <a href="tasks.html" class="nav-item">
-    <svg fill="currentColor" viewBox="0 0 24 24"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>
-    Tasks
-  </a>
-  <a href="wallet.html" class="nav-item">
-    <svg fill="currentColor" viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2.9 2 2v1h-9c-1.11 0-2.9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
-    Wallet
-  </a>
-  <a href="referrals.html" class="nav-item">
-    <svg fill="currentColor" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-    Team
-  </a>
+  <a href="dashboard.html" class="nav-item active"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Home</a>
+  <a href="tasks.html" class="nav-item"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>Tasks</a>
+  <a href="wallet.html" class="nav-item"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2.9 2 2v1h-9c-1.11 0-2.9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>Wallet</a>
+  <a href="referrals.html" class="nav-item"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>Team</a>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -142,44 +136,95 @@ const packages = [
 ];
 
 let selectedPkg = null;
-function loadProducts(){
-  let html = "";
-  packages.forEach((p,i)=>{
-    html += `<div class="product">
-      <div class="product-header">
-        <div>
-          <div class="product-name" style="color:${p.color}">${p.name}</div>
-          <div class="product-days">${p.days} Days · Ksh ${p.daily}/Day</div>
-        </div>
-      </div>
-      <div class="product-stats">
-        <div class="stat-box">
-          <div class="stat-label">STAKE</div>
-          <div class="stat-value stake">Ksh ${p.price}</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-label">TOTAL INCOME</div>
-          <div class="stat-value income">Ksh ${p.total}</div>
-        </div>
-      </div>
-      <button class="btn" onclick="openBuy(${i})" style="background:${p.color};color:white">BUY NOW</button>
-    </div>`;
-  });
-  document.getElementById('products').innerHTML = html;
+let userDataCache = null;
+
+function showToast(msg,type="success"){
+  const box=document.getElementById('toastBox');
+  const t=document.createElement('div');
+  t.className='toast '+(type=='error'?'error':'');
+  t.innerHTML=`<div>${type=='success'?'✅':'❌'}</div><div>${msg}</div>`;
+  box.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),300)},4000);
 }
 
-function openBuy(i){ selectedPkg = packages[i]; document.getElementById('buyDetails').innerHTML = `<b>${selectedPkg.name}</b><br>Stake: Ksh ${selectedPkg.price}<br>Earn: Ksh ${selectedPkg.daily}/day for ${selectedPkg.days} days`; document.getElementById('buyModal').style.display='block'; }
+function loadProducts(){
+  db.collection("users").doc(phone).get().then(doc=>{
+    userDataCache = doc.exists? doc.data() : {};
+    let counts = userDataCache.packageCounts || {};
+    let html = "";
+    packages.forEach((p,i)=>{
+      let count = counts[p.name] || 0;
+      let isLocked = count >= 2;
+      html += `<div class="product ${isLocked?'locked':''}">
+        ${count>0?`<div class="purchase-count">${count}/2 bought</div>`:''}
+        <div class="product-header">
+          <div>
+            <div class="product-name" style="color:${p.color}">${p.name}</div>
+            <div class="product-days">${p.days} Days · Ksh ${p.daily}/Day</div>
+          </div>
+        </div>
+        <div class="product-stats">
+          <div class="stat-box"><div class="stat-label">STAKE</div><div class="stat-value stake">Ksh ${p.price}</div></div>
+          <div class="stat-box"><div class="stat-label">TOTAL INCOME</div><div class="stat-value income">Ksh ${p.total}</div></div>
+        </div>
+        <button class="btn" onclick="openBuy(${i})" style="background:${isLocked?'#333':p.color};color:${isLocked?'#666':'white'}" ${isLocked?'disabled':''}>${isLocked?'🔒 LOCKED - Max 2': count==1?'BUY AGAIN (1/2)':'BUY NOW'}</button>
+      </div>`;
+    });
+    document.getElementById('products').innerHTML = html;
+  });
+}
+
+function openBuy(i){
+  selectedPkg = packages[i];
+  let counts = (userDataCache && userDataCache.packageCounts) || {};
+  let count = counts[selectedPkg.name] || 0;
+  if(count>=2){ showToast("Max 2 purchases reached for "+selectedPkg.name,"error"); return; }
+  document.getElementById('buyDetails').innerHTML = `<b>${selectedPkg.name}</b><br>Stake: Ksh ${selectedPkg.price}<br>Earn: Ksh ${selectedPkg.daily}/day for ${selectedPkg.days} days`;
+  document.getElementById('buyCountInfo').innerText = `You have bought this ${count} time(s). Max 2 allowed. After this purchase: ${count+1}/2`;
+  document.getElementById('buyModal').style.display='block';
+}
 function closeBuyModal(){ document.getElementById('buyModal').style.display='none'; }
 
 function confirmBuy(){
   db.collection("users").doc(phone).get().then(doc=>{
     let u = doc.data();
-    if(u.balance < selectedPkg.price){ alert("Insufficient balance"); return; }
+    let counts = u.packageCounts || {};
+    let currentCount = counts[selectedPkg.name] || 0;
+    if(currentCount>=2){ showToast("Already bought 2 times - Locked!","error"); closeBuyModal(); return; }
+    if(u.balance < selectedPkg.price){ showToast("Insufficient balance - Deposit first","error"); return; }
+
     let newBalance = u.balance - selectedPkg.price;
     let owned = u.ownedPackages || {};
+    // Keep owned as list to allow duplicates
+    let ownedList = u.ownedPackagesList || [];
+    ownedList.push({name:selectedPkg.name,price:selectedPkg.price,daily:selectedPkg.daily,days:selectedPkg.days,buyDate:new Date().toISOString()});
     owned[selectedPkg.name] = {price:selectedPkg.price,daily:selectedPkg.daily,days:selectedPkg.days};
-    db.collection("users").doc(phone).update({balance:newBalance,ownedPackages:owned}).then(()=>{ alert("Package bought!"); closeBuyModal(); })
-  })
+
+    counts[selectedPkg.name] = currentCount + 1;
+
+    db.collection("users").doc(phone).update({balance:newBalance,ownedPackages:owned,ownedPackagesList:ownedList,packageCounts:counts,hasPurchased:true,isActive:true,lastPurchaseDate:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{
+      showToast(`Bought! ${selectedPkg.name} ${counts[selectedPkg.name]}/2`);
+      closeBuyModal();
+      loadProducts();
+      if(u.referredBy){
+        db.collection("users").where("userId","==",u.referredBy).get().then(snap=>{
+          snap.forEach(uplineDoc=>{
+            let lv1Bonus = selectedPkg.price * 0.10;
+            db.collection("users").doc(uplineDoc.id).update({balance: firebase.firestore.FieldValue.increment(lv1Bonus),totalReferralEarned: firebase.firestore.FieldValue.increment(lv1Bonus)});
+            let lv1Data = uplineDoc.data();
+            if(lv1Data.referredBy){
+              db.collection("users").where("userId","==",lv1Data.referredBy).get().then(s2=>{
+                s2.forEach(lv2Doc=>{
+                  let lv2Bonus = selectedPkg.price * 0.05;
+                  db.collection("users").doc(lv2Doc.id).update({balance: firebase.firestore.FieldValue.increment(lv2Bonus),totalReferralEarned: firebase.firestore.FieldValue.increment(lv2Bonus)});
+                });
+              });
+            }
+          });
+        });
+      }
+    });
+  });
 }
 
 function loadWelcome(){
@@ -187,13 +232,11 @@ function loadWelcome(){
     if(doc.exists){
       let u = doc.data();
       let name = u.name || "User";
-      let refCode = u.referralCode || phone;
-      document.getElementById('welcomeMsg').innerText =
-      `Welcome ${name}! | ID: ${phone} | Referral: ${refCode} | How it works: 1.Buy Package 2.Complete Daily Tasks 3.Earn Daily Income 4.Withdraw to M-Pesa`;
+      let refCode = u.myReferralCode || u.userId || phone;
+      document.getElementById('welcomeMsg').innerText = `Welcome ${name}! | ID: ${u.userId||phone} | Referral: ${refCode} | How it works: 1.Buy Package 2.Complete Daily Tasks 3.Earn Daily Income 4.Withdraw to M-Pesa`;
     }
   })
 }
-
 function loadInfoData(){
   db.collection("settings").doc("info").get().then(doc=>{
     if(doc.exists){
@@ -205,65 +248,29 @@ function loadInfoData(){
     }
   })
 }
-
 function showInfo(type){
-  let docName = type;
-  let field = 'content';
-  db.collection("settings").doc(docName).get().then(doc=>{
+  db.collection("settings").doc(type).get().then(doc=>{
     if(doc.exists){
-      let data = doc.data();
-      let title = type=='terms'?'Terms & Conditions':'Privacy Policy';
-      document.getElementById('infoModalTitle').innerText = title;
-      document.getElementById('infoModalContent').innerText = data[field] || "No data found.";
+      document.getElementById('infoModalTitle').innerText = type=='terms'?'Terms & Conditions':'Privacy Policy';
+      document.getElementById('infoModalContent').innerText = doc.data().content || "No data";
     } else {
       document.getElementById('infoModalTitle').innerText = "Error";
-      document.getElementById('infoModalContent').innerText = "Please add " + type + " in Firebase > settings > " + type + " > content";
+      document.getElementById('infoModalContent').innerText = "Please add " + type + " in Firebase";
     }
     document.getElementById('infoModal').style.display = 'block';
   })
 }
 function closeInfoModal(){ document.getElementById('infoModal').style.display = 'none'; }
 
-// --- PWA DOWNLOAD LOGIC ---
 let deferredPrompt;
 const downloadBtn = document.getElementById('downloadAppBtn');
 const installHint = document.getElementById('installHint');
-
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  downloadBtn.innerHTML = '📲 Download The App - Tap to Install';
-  installHint.style.display = 'block';
-  installHint.innerText = 'Ready to install! Tap the button';
-});
-
+window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; downloadBtn.innerHTML = '📲 Download The App - Tap to Install'; installHint.style.display = 'block'; });
 downloadBtn.addEventListener('click', async () => {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-      downloadBtn.innerHTML = '✅ Installed! Check Home Screen';
-      installHint.innerText = 'App added to your phone';
-    }
-    deferredPrompt = null;
-  } else {
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      alert('✅ NEXA VIEW is already installed!');
-    } else {
-      alert('To install NEXA VIEW:\n\n1. Tap the 3 dots ⋮ top-right in Chrome\n2. Tap "Install app" or "Add to Home screen"\n3. NEXA icon will appear on your home screen!');
-    }
-  }
+  if (deferredPrompt) { deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; if (outcome === 'accepted') { downloadBtn.innerHTML = '✅ Installed! Check Home Screen'; } deferredPrompt = null; }
+  else { showToast(window.matchMedia('(display-mode: standalone)').matches? 'Already installed!' : 'Tap 3 dots ⋮ → Install app'); }
 });
-
-window.addEventListener('appinstalled', () => {
-  downloadBtn.innerHTML = '✅ App Installed!';
-  installHint.style.display = 'none';
-});
-
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('service-worker.js');
-}
-
+if ('serviceWorker' in navigator) { navigator.serviceWorker.register('service-worker.js'); }
 window.onload = function(){ loadProducts(); loadWelcome(); loadInfoData(); }
 </script>
 </body>
