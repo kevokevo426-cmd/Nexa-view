@@ -14,15 +14,24 @@ input,button{width:100%;padding:14px;margin:10px 0;background:#222;border:1px so
 button{background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;font-weight:bold;cursor:pointer}
 h2{color:#fbbf24;text-align:center;margin:0 0 10px 0}
 a{color:#fbbf24}
+.input-wrap{position:relative;width:100%}
+.input-wrap input{padding-right:45px}
+.eye{position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;user-select:none}
+#toastBox{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;width:90%;max-width:350px}
+.toast{background:#111;border:1.5px solid #22c55e;color:white;padding:14px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.9);font-size:13px;text-align:center}
+.toast.error{border-color:#ef4444}
 </style>
 </head>
 <body>
+<div id="toastBox"></div>
 <div class="box">
   <img src="nexa_view_icon.webp" alt="NEXA VIEW" class="logo">
-  
   <h2>NEXA LOGIN</h2>
   <input type="tel" id="phone" placeholder="Phone: 0712345678">
-  <input type="password" id="pass" placeholder="Password">
+  <div class="input-wrap">
+    <input type="password" id="pass" placeholder="Password">
+    <span class="eye" onclick="toggleEye('pass',this)">👁️</span>
+  </div>
   <button onclick="login()">LOGIN</button>
   <p style="text-align:center">No account? <a href="register.html">Register here</a></p>
 </div>
@@ -34,31 +43,37 @@ const firebaseConfig = {apiKey:"AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",authDom
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+function showToast(msg,type="error"){
+  const box=document.getElementById('toastBox');
+  const t=document.createElement('div');
+  t.className='toast '+(type=='error'?'error':'');
+  t.innerText=msg;
+  box.appendChild(t);
+  setTimeout(()=>t.remove(),3500);
+}
+function toggleEye(id,el){
+  const inp=document.getElementById(id);
+  if(inp.type==='password'){inp.type='text';el.innerText='🙈';}
+  else{inp.type='password';el.innerText='👁️';}
+}
 function formatPhone(p){
-  p = p.replace(/\D/g,'');
-  if(p.startsWith('0')) return '254' + p.substring(1);
-  if(p.startsWith('7')) return '254' + p;
+  p=p.replace(/\D/g,'');
+  if(p.startsWith('0')) return '254'+p.substring(1);
+  if(p.startsWith('7')) return '254'+p;
   return p;
 }
-
 function login(){
-  let phone = formatPhone(document.getElementById('phone').value.trim());
-  let pass = document.getElementById('pass').value.trim();
-  if(!phone || !pass){ alert('Fill all'); return; }
-  
+  let phone=formatPhone(document.getElementById('phone').value.trim());
+  let pass=document.getElementById('pass').value.trim();
+  if(!phone||!pass){showToast('Fill all fields');return;}
   db.collection("users").doc(phone).get().then(doc=>{
-    if(!doc.exists){ alert('❌ Account not found'); return; }
-    if(doc.data().password !== pass){ alert('❌ Wrong Password'); return; }
-    localStorage.setItem("nexaPhone", phone);
-    window.location.href = "dashboard.html";
+    if(!doc.exists){showToast('Account not found');return;}
+    if(doc.data().password!==pass){showToast('Wrong Password');return;}
+    localStorage.setItem("nexaPhone",phone);
+    window.location.href="dashboard.html";
   });
 }
-</script>
-
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('service-worker.js');
-}
+if('serviceWorker' in navigator){navigator.serviceWorker.register('service-worker.js');}
 </script>
 </body>
 </html>
