@@ -6,32 +6,40 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 *{box-sizing:border-box}
-body{background:#000;color:white;font-family:Poppins;margin:0;padding:15px 15px 80px 15px}
-
+body{background:#000;color:white;font-family:Poppins;margin:0;padding:15px 15px 90px 15px}
 .box{background:#111;padding:18px;border-radius:16px;margin:15px 0;border:1px solid #222}
 h3{color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
-.product-img{width:100%;height:140px;object-fit:cover;border-radius:12px;margin-bottom:12px;border:1px solid #333;background:#1a1a1a}
-
-.btn{flex:1;padding:12px;background:linear-gradient(180deg,#22c55e,#16a34a);color:white;border:none;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer}
+.product-img{width:100%;height:140px;object-fit:cover;border-radius:12px;margin-bottom:12px;border:1px solid #333;background:#0a0a0a;display:block}
+.btn{flex:1;padding:14px;background:#22c55e;color:white;border:none;border-radius:12px;font-weight:800;font-size:15px;cursor:pointer}
 .btn:disabled{background:#444;color:#888;cursor:not-allowed}
-
-.profit-box{flex:1;background:#1a3d2a;border:1px solid #22c55e;border-radius:10px;padding:10px;text-align:center;display:none}
-.profit-box.show{display:block;animation:pop 0.4s ease}
-@keyframes pop{0%{transform:scale(0.8)}100%{transform:scale(1)}}
-
-/* LOADING BAR */
-.loading-bar{display:none;width:100%;height:6px;background:#222;border-radius:10px;margin-bottom:12px;overflow:hidden}
-.loading-fill{height:100%;width:0;background:linear-gradient(90deg,#fbbf24,#f59e0b);border-radius:10px;transition:width 0.3s}
-.loading-text{text-align:center;font-size:11px;color:#fbbf24;margin-bottom:8px;display:none}
-
-.bottom-nav{position:fixed;bottom:0;left:0;width:100%;background:#111;border-top:1px solid #222;display:flex;justify-content:space-around;padding:8px 0;z-index:99}
-.nav-item{flex:1;text-align:center;font-size:10px;color:#888;cursor:pointer;text-decoration:none}
-.nav-item.active{color:#fbbf24;font-weight:700}
-.nav-item svg{width:20px;height:20px;margin-bottom:3px}
+.profit-box{flex:1;background:#052e16;border:1.5px solid #22c55e;border-radius:12px;padding:12px;text-align:center;display:none}
+.profit-box.show{display:block;animation:pop 0.5s ease}
+@keyframes pop{0%{transform:scale(0.5);opacity:0}100%{transform:scale(1);opacity:1}}
+/* THICKER SCAN BAR ON TOP */
+.scan-wrap{width:100%;margin-bottom:14px;display:none}
+.scan-label{text-align:center;font-size:12px;color:#fbbf24;font-weight:700;margin-bottom:6px;letter-spacing:1px}
+.scan-bar{width:100%;height:12px;background:#222;border-radius:20px;overflow:hidden;border:1px solid #333;position:relative}
+.scan-fill{height:100%;width:0%;background:linear-gradient(90deg,#22c55e,#fbbf24,#22c55e);border-radius:20px;transition:width 0.3s ease;position:relative}
+.scan-fill::after{content:"";position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent);animation:shine 1.2s infinite}
+@keyframes shine{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.bottom-nav{position:fixed;bottom:0;left:0;width:100%;background:#0a0a0a;border-top:1px solid #222;display:flex;justify-content:space-around;padding:10px 0 15px 0;z-index:99}
+.nav-item{flex:1;text-align:center;font-size:11px;color:#666;cursor:pointer;text-decoration:none;transition:0.3s}
+.nav-item svg{width:24px;height:24px;margin-bottom:4px;display:block;margin:0 auto 4px auto;transition:0.3s}
+.nav-item.active{transform:translateY(-3px) scale(1.1);font-weight:800}
+.nav-item.active:nth-child(1){color:#fbbf24}
+.nav-item.active:nth-child(1) svg{filter:drop-shadow(0 0 10px #fbbf24);fill:#fbbf24}
+.nav-item:nth-child(2).active{color:#22c55e}
+.nav-item:nth-child(2).active svg{filter:drop-shadow(0 0 10px #22c55e);fill:#22c55e}
+.nav-item:nth-child(3).active{color:#3b82f6}
+.nav-item:nth-child(3).active svg{filter:drop-shadow(0 0 10px #3b82f6);fill:#3b82f6}
+.nav-item:nth-child(4).active{color:#f97316}
+.nav-item:nth-child(4).active svg{filter:drop-shadow(0 0 10px #f97316);fill:#f97316}
+#toastBox{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;width:90%;max-width:350px}
+.toast{background:#111;border:1.5px solid #22c55e;color:white;padding:14px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,0.9);font-size:13px;text-align:center;font-weight:600}
 </style>
 </head>
 <body>
-
+<div id="toastBox"></div>
 <h2>✅ DAILY TASKS</h2>
 <p style="color:#aaa;margin-bottom:15px">Complete tasks to earn daily profit</p>
 
@@ -42,10 +50,10 @@ h3{color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
 <button class="btn" onclick="window.location.href='dashboard.html'" style="width:100%;background:#333;margin-top:10px">← BACK TO DASHBOARD</button>
 
 <div class="bottom-nav">
-  <a href="dashboard.html" class="nav-item"><svg fill="currentColor" viewBox="0 0 20 20" width="20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>Home</a>
-  <a href="tasks.html" class="nav-item active"><svg fill="currentColor" viewBox="0 0 20 20" width="20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/></svg>Tasks</a>
-  <a href="wallet.html" class="nav-item"><svg fill="currentColor" viewBox="0 0 20 20" width="20"><path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4z"/></svg>Wallet</a>
-  <a href="referrals.html" class="nav-item"><svg fill="currentColor" viewBox="0 0 20 20" width="20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Team</a>
+  <a href="dashboard.html" class="nav-item"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Home</a>
+  <a href="tasks.html" class="nav-item active"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>Tasks</a>
+  <a href="wallet.html" class="nav-item"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2.9 2 2v1h-9c-1.11 0-2.9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>Wallet</a>
+  <a href="referrals.html" class="nav-item"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>Team</a>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -57,70 +65,31 @@ const db = firebase.firestore();
 const phone = localStorage.getItem("nexaPhone");
 if(!phone){ window.location.href = "index.html"; }
 
-// Product images based on package type. Auto changes daily at 0000hrs
+function showToast(msg){
+  const box=document.getElementById('toastBox');
+  const t=document.createElement('div');
+  t.className='toast';
+  t.innerText=msg;
+  box.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),300)},3500);
+}
+
 const productImages = {
   "Service": ["https://images.unsplash.com/photo-1556740738-b6a63e27c4df?w=400","https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400"],
   "Food Stuffs": ["https://images.unsplash.com/photo-1542838132-92c53300491e?w=400","https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400"],
-  "By products": ["https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=400","https://images.unsplash.com/photo-1618164439484-1e3e29e3d6b5?w=400"],
-  "House Hold": ["https://images.unsplash.com/photo-1554995207-c18c203602cb?w=400","https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400"],
-  "Beauty": ["https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=400","https://images.unsplash.com/photo-1556228720-195a672e8a03?w=400"],
-  "Stationaries": ["https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?w=400","https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400"],
-  "Sporting": ["https://images.unsplash.com/photo-1571019613454-1cb2f99cf2be?w=400","https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=400"],
-  "Appliances": ["https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400","https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=400"]
+  "By products": ["https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=400"],
+  "House Hold": ["https://images.unsplash.com/photo-1554995207-c18c203602cb?w=400"],
+  "Beauty": ["https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=400"],
+  "Stationaries": ["https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?w=400"],
+  "Sporting": ["https://images.unsplash.com/photo-1571019613454-1cb2f99cf2be?w=400"],
+  "Appliances": ["https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400"]
 };
 
-function getProductImage(productName){
-  let day = new Date().getDate(); // changes at 0000hrs
-  let images = productImages[productName] || productImages["Service"];
-  return images[day % images.length];
+function getProductImage(name){
+  let day=new Date().getDate();
+  let imgs=productImages[name]||productImages["Service"];
+  return imgs[day % imgs.length];
 }
-
-function loadTasks(){
-  db.collection("users").doc(phone).get().then(doc=>{
-    if(doc.exists){
-      let u = doc.data();
-      let owned = u.ownedPackages || {};
-      let html = "";
-      let keys = Object.keys(owned);
-      if(keys.length == 0){
-        html = "<p style='color:#888'>No active package. Buy one from Home page.</p>";
-      } else {
-        keys.forEach(key=>{
-          let p = owned[key];
-          let productName = getProductNameByPrice(p.price);
-          let today = new Date().toDateString();
-          let lastClaim = u.lastClaim || {};
-          let canClaim = lastClaim[key]!= today;
-          let pic = getProductImage(productName);
-          let statusText = canClaim? "Sell your Product & Earn" : "Already Sold Today";
-          let statusColor = canClaim? "#22c55e" : "#ef4444";
-          let btnColor = canClaim? "linear-gradient(180deg,#22c55e,#16a34a)" : "#444";
-          let btnText = canClaim? "SELL" : "SOLD";
-
-          html += `<div style="background:#111;padding:16px;border-radius:14px;margin-bottom:15px;border:1px solid #333">
-            <div style="background:${statusColor};color:#000;padding:6px 10px;border-radius:20px;font-size:11px;font-weight:700;text-align:center;margin-bottom:10px">${statusText}</div>
-            <h3 style="margin:0 0 10px 0;color:#22c55e">${productName} - Ksh ${p.price}</h3>
-            <img src="${pic}" class="product-img">
-
-            <div id="loading-${key}" class="loading-text">Processing...</div>
-            <div id="loadingBar-${key}" class="loading-bar"><div id="fill-${key}" class="loading-fill"></div></div>
-
-            <div style="display:flex;gap:10px;margin-bottom:12px">
-              <button id="btn-${key}" onclick="claimTask('${key}', '${productName}', ${p.daily})" style="flex:1;padding:12px;background:${btnColor};color:white;border:none;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer" ${canClaim?'':'disabled'}>${btnText}</button>
-              <div id="profit-${key}" class="profit-box">
-                <div style="font-size:10px;color:#aaa">PROFIT</div>
-                <b style="color:#22c55e;font-size:16px">Ksh ${p.daily}</b>
-              </div>
-            </div>
-            <p style="font-size:11px;color:#aaa;margin:0">Tap <b>SELL</b> every day. Image updates at 12:00AM</p>
-          </div>`;
-        });
-      }
-      document.getElementById('taskList').innerHTML = html;
-    }
-  })
-}
-
 function getProductNameByPrice(price){
   if(price==300) return "Service";
   if(price==700) return "Food Stuffs";
@@ -133,52 +102,104 @@ function getProductNameByPrice(price){
   return "Service";
 }
 
-function claimTask(key, productName, daily){
-  let btn = document.getElementById('btn-'+key);
-  let loadingBar = document.getElementById('loadingBar-'+key);
-  let loadingText = document.getElementById('loading-'+key);
-  let fill = document.getElementById('fill-'+key);
-  let profitBox = document.getElementById('profit-'+key);
+function loadTasks(){
+  db.collection("users").doc(phone).get().then(doc=>{
+    if(!doc.exists) return;
+    let u=doc.data();
+    let ownedList = u.ownedPackagesList || [];
+    let owned = u.ownedPackages || {};
+    let html="";
+    let tasksToShow = ownedList.length>0? ownedList.map((p,i)=>({...p,key:p.name+"_"+i,idx:i})) : Object.keys(owned).map(k=>({...owned[k],key:k,name:k,idx:0}));
 
-  btn.disabled = true;
-  loadingBar.style.display = 'block';
-  loadingText.style.display = 'block';
-  let progress = 0;
+    if(tasksToShow.length==0){
+      html="<p style='color:#888'>No active package. Buy one from Home page.</p>";
+    } else {
+      tasksToShow.forEach(item=>{
+        let productName=getProductNameByPrice(item.price);
+        let today=new Date().toDateString();
+        let lastClaim=u.lastClaim||{};
+        let canClaim=lastClaim[item.key]!=today;
+        let pic=getProductImage(productName);
+        let statusColor=canClaim?"#ef4444":"#22c55e";
+        let statusText=canClaim?"Ready to Sell":"Sold Today";
+        html+=`<div style="background:#111;padding:16px;border-radius:14px;margin-bottom:15px;border:1px solid #333">
+          <div style="background:${statusColor};color:${canClaim?'white':'#000'};padding:5px 10px;border-radius:20px;font-size:11px;font-weight:700;text-align:center;margin-bottom:10px">${statusText} - ${item.name} ${item.idx? '#'+(item.idx+1):''}</div>
+          <h3 style="margin:0 0 10px 0;color:#22c55e">${productName} - Ksh ${item.price}</h3>
+          <img src="${pic}" class="product-img" onerror="this.src='https://via.placeholder.com/400x200/111/22c55e?text=NEXA+${productName}'">
 
-  let interval = setInterval(()=>{
-    progress += 33;
-    fill.style.width = progress + '%';
-    if(progress <= 33) loadingText.innerText = "Processing...";
-    if(progress <= 66 && progress > 33) loadingText.innerText = "Selling...";
-    if(progress > 66) loadingText.innerText = "Sold!";
+          <div id="scanWrap-${item.key}" class="scan-wrap">
+            <div id="scanLabel-${item.key}" class="scan-label">Processing...</div>
+            <div class="scan-bar"><div id="scanFill-${item.key}" class="scan-fill"></div></div>
+          </div>
 
-    if(progress >= 100){
+          <div style="display:flex;gap:10px;margin-bottom:10px">
+            <button id="btn-${item.key}" onclick="startSell('${item.key}', ${item.daily})" style="flex:1;padding:14px;background:${canClaim?'#22c55e':'#444'};color:white;border:none;border-radius:12px;font-weight:800;font-size:15px" ${canClaim?'':'disabled'}>${canClaim?'SELL':'SOLD'}</button>
+            <div id="profit-${item.key}" class="profit-box">
+              <div style="font-size:10px;color:#aaa">PROFIT</div>
+              <b style="color:#22c55e;font-size:16px">Ksh ${item.daily}</b>
+            </div>
+          </div>
+          <p style="font-size:12px;color:#aaa;margin:0">Tap <b style="color:white">SELL</b> every day.<br>Color changes: <span style="color:#ef4444">Red</span> → <span style="color:#22c55e">Green</span> after you sell.</p>
+        </div>`;
+      });
+    }
+    document.getElementById('taskList').innerHTML=html;
+  });
+}
+
+function startSell(key, daily){
+  let btn=document.getElementById('btn-'+key);
+  let wrap=document.getElementById('scanWrap-'+key);
+  let label=document.getElementById('scanLabel-'+key);
+  let fill=document.getElementById('scanFill-'+key);
+  let profitBox=document.getElementById('profit-'+key);
+
+  btn.disabled=true;
+  wrap.style.display='block';
+  profitBox.style.display='none';
+  profitBox.classList.remove('show');
+
+  let progress=0;
+  label.innerText="Processing...";
+  fill.style.width="0%";
+
+  let interval=setInterval(()=>{
+    progress+=2; // SLOW scan - left to right
+    if(progress>100) progress=100;
+    fill.style.width=progress+"%";
+
+    if(progress<30) label.innerText="Processing...";
+    else if(progress<70) label.innerText="Selling...";
+    else if(progress<100) label.innerText="Sold!";
+    else label.innerText="Completed!";
+
+    if(progress>=100){
       clearInterval(interval);
       setTimeout(()=>{
-        loadingBar.style.display = 'none';
-        loadingText.style.display = 'none';
+        wrap.style.display='none';
+        profitBox.style.display='block';
         profitBox.classList.add('show');
         saveProfit(key, daily);
-      }, 300)
+      },400);
     }
-  }, 400)
+  },80); // slow speed - total ~4 seconds
 }
 
 function saveProfit(key, daily){
-  let today = new Date().toDateString();
+  let today=new Date().toDateString();
   db.collection("users").doc(phone).get().then(doc=>{
-    let u = doc.data();
-    let newBalance = (u.balance || 0) + daily;
-    let newTotal = (u.totalIncome || 0) + daily;
-    let lastClaim = u.lastClaim || {};
-    lastClaim[key] = today;
-    db.collection("users").doc(phone).update({balance:newBalance,totalIncome:newTotal,lastClaim:lastClaim}).then(()=>{
-      alert("Earned Ksh "+daily);
-    })
-  })
+    let u=doc.data();
+    let newBalance=(u.balance||0)+daily;
+    let lastClaim=u.lastClaim||{};
+    lastClaim[key]=today;
+    db.collection("users").doc(phone).update({balance:newBalance,totalIncome:(u.totalIncome||0)+daily,lastClaim:lastClaim,lastIncomeUpdate:new Date().toISOString().split('T')[0]}).then(()=>{
+      showToast("Ksh "+daily+" profit added!");
+      loadTasks();
+    });
+  });
 }
 
-window.onload = loadTasks;
+window.onload=loadTasks;
 </script>
 </body>
 </html>
