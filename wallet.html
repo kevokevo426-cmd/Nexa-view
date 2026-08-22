@@ -18,7 +18,8 @@ body{background:#000;color:white;font-family:Poppins;padding:12px;margin:0;paddi
 .btn-withdraw{background:linear-gradient(90deg,#22c55e,#16a34a);color:white}
 .btn-withdraw:active{transform:scale(0.95)}
 .box{background:#111;padding:16px;border-radius:16px;margin:15px 0;border:1px solid #222}
-.history-item{display:flex;justify-content:space-between;align-items:center;padding:12px;background:#1a1a1a;border-radius:10px;margin:8px 0}
+.history-item{display:flex;justify-content:space-between;align-items:center;padding:12px;background:#1a1a1a;border-radius:10px;margin:8px 0;user-select:none;transition:0.2s}
+.history-item:active{transform:scale(0.97);background:#222}
 .badge{padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;text-transform:uppercase}
 .badge-pending{background:#422006;color:#fbbf24}
 .badge-approved{background:#052e16;color:#22c55e}
@@ -49,13 +50,19 @@ label{font-size:11px;color:#aaa}
 .wa-name{font-weight:700;font-size:14px}
 .wa-status{font-size:11px;opacity:0.9}
 .wa-body{flex:1;background:#0b141a;background-image:url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');background-size:cover;overflow-y:auto;padding:12px;display:flex;flex-direction:column}
-.wa-msg{padding:8px 12px;border-radius:8px;margin:6px 0;max-width:75%;font-size:13px;position:relative;box-shadow:0 1px 0.5px rgba(0,0,0,0.3);word-wrap:break-word}
+.wa-msg{padding:8px 12px;border-radius:8px;margin:6px 0;max-width:75%;font-size:13px;position:relative;box-shadow:0 1px 0.5px rgba(0,0,0,0.3);word-wrap:break-word;user-select:none;cursor:pointer}
+.wa-msg:active{transform:scale(0.97)}
 .wa-user{background:#dcf8c6;color:#000;margin-left:auto;border-top-right-radius:0;align-self:flex-end}
 .wa-admin{background:white;color:#000;margin-right:auto;border-top-left-radius:0;align-self:flex-start}
 .wa-time{font-size:9px;color:#667781;margin-top:4px;text-align:right;display:block}
 .wa-input-area{background:#f0f2f5;padding:10px;display:flex;gap:8px;align-items:center;flex-shrink:0;position:sticky;bottom:0}
 .wa-input{flex:1;background:white;border:none;border-radius:25px;padding:12px 18px;font-size:14px;outline:none;color:#000}
 .wa-send{background:#25d366;border:none;width:46px;height:46px;border-radius:50%;display:flex;justify-content:center;align-items:center;cursor:pointer;font-size:20px;color:white;flex-shrink:0}
+/* Context Menu */
+.context-menu{position:fixed;background:#222;border:1px solid #444;border-radius:10px;padding:6px;z-index:100000;display:none;min-width:180px;box-shadow:0 10px 30px rgba(0,0,0,0.9)}
+.context-menu button{display:block;width:100%;padding:10px 12px;background:#1a1a1a;border:none;color:white;text-align:left;border-radius:6px;margin:3px 0;font-size:12px;font-family:Poppins}
+.context-menu button:hover{background:#333}
+.context-menu button.delete{color:#ef4444}
 </style>
 </head>
 <body>
@@ -81,13 +88,15 @@ label{font-size:11px;color:#aaa}
 </div>
 
 <div class="box">
-  <h3 style="margin:0 0 12px 0;font-size:15px">📜 Transaction History</h3>
-  <div style="display:flex;gap:6px;margin-bottom:12px">
+  <h3 style="margin:0 0 12px 0;font-size:15px">📜 Transaction History - Long Press to Delete</h3>
+  <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap">
     <button onclick="filterHist('all')" id="fAll" style="padding:6px 12px;border-radius:6px;border:1px solid #333;background:#fbbf24;color:#000;font-size:11px;font-weight:700">All</button>
     <button onclick="filterHist('pending')" id="fPending" style="padding:6px 12px;border-radius:6px;border:1px solid #333;background:#222;color:#aaa;font-size:11px">Pending</button>
     <button onclick="filterHist('approved')" id="fApproved" style="padding:6px 12px;border-radius:6px;border:1px solid #333;background:#222;color:#aaa;font-size:11px">Approved</button>
     <button onclick="filterHist('rejected')" id="fRejected" style="padding:6px 12px;border-radius:6px;border:1px solid #333;background:#222;color:#aaa;font-size:11px">Rejected</button>
+    <button onclick="deleteAllWalletHistory()" style="padding:6px 12px;border-radius:6px;border:1px solid #ef4444;background:#450a0a;color:#ef4444;font-size:11px;margin-left:auto">🗑️ Delete All</button>
   </div>
+  <p style="font-size:10px;color:#888;margin:0 0 8px">💡 Long press any record to delete for me and receiver</p>
   <div id="allHistory"><p style="color:#666;font-size:12px">Loading...</p></div>
 </div>
 
@@ -97,7 +106,13 @@ label{font-size:11px;color:#aaa}
 
 <div id="withdrawModal" class="modal" onclick="closeWithdraw()"><div class="modal-content" onclick="event.stopPropagation()"><h3>📤 Withdraw</h3><p style="font-size:12px">To: <b id="accNum" style="color:#22c55e">Not Set</b></p><p style="font-size:12px">Available: <b id="availBal" style="color:#22c55e">Ksh 0.00</b></p><div class="time-note">⏰ Withdrawal Time: 9:30 AM - 5:30 PM Only</div><label>Select Amount - Tap to Select (No typing)</label><div class="quick-amounts"><button class="quick-btn" onclick="selectAmount(200)">200</button><button class="quick-btn" onclick="selectAmount(500)">500</button><button class="quick-btn" onclick="selectAmount(700)">700</button><button class="quick-btn" onclick="selectAmount(1000)">1000</button><button class="quick-btn" onclick="selectAmount(1500)">1500</button><button class="quick-btn" onclick="selectAmount(2000)">2000</button></div><div style="background:#1a1a1a;padding:12px;border-radius:10px;border:1px dashed #333;margin:10px 0;text-align:center"><span style="font-size:12px;color:#aaa">Selected Amount:</span><br><b id="selectedAmountDisplay" style="font-size:22px;color:#22c55e">Ksh 0</b></div><div class="calc">Tax 10%: <b id="taxShow">KSH 0</b> | You Get: <b id="netShow">KSH 0</b></div><label>PIN</label><div class="input-wrap"><input type="password" id="withPin" placeholder="****" maxlength="4"><span class="eye" onclick="toggleEye('withPin', this)">👁️</span></div><p style="text-align:center;margin:5px 0"><span onclick="forgotOption1();closeWithdraw()" style="color:#fbbf24;font-size:11px;text-decoration:underline;cursor:pointer">Forgot PIN?</span></p><button class="btn btn-withdraw" id="submitWithdrawBtn" onclick="submitWithdraw()">Submit Withdraw</button><button class="btn" style="background:#333;color:white" onclick="closeWithdraw()">Cancel</button></div></div>
 
-<div id="chatModal" class="modal" onclick="closeAdminChat()"><div class="wa-modal-content" onclick="event.stopPropagation()"><div class="wa-header"><div class="wa-avatar">🛡️</div><div><div class="wa-name">NEXA ADMIN</div><div class="wa-status">Online • Replies within minutes</div></div><div style="margin-left:auto;cursor:pointer;font-size:22px" onclick="closeAdminChat()">✕</div></div><div class="wa-body" id="chatMessages"><p style="color:#667781;font-size:11px;text-align:center;margin-top:40px">🔒 Messages kept forever<br>Start chat with Admin</p></div><div class="wa-input-area"><input type="text" id="chatInput" class="wa-input" placeholder="Type a message" autocomplete="off"><button type="button" class="wa-send" id="waSendBtn" onclick="sendChat()">➤</button></div></div></div>
+<div id="chatModal" class="modal" onclick="closeAdminChat()"><div class="wa-modal-content" onclick="event.stopPropagation()"><div class="wa-header"><div class="wa-avatar">🛡️</div><div><div class="wa-name">NEXA ADMIN</div><div class="wa-status">Online • Long press msg to delete both</div></div><div style="margin-left:auto;display:flex;gap:10px;align-items:center"><button onclick="deleteAllMyChats()" style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.3);color:white;padding:5px 10px;border-radius:15px;font-size:10px">🗑️ Delete All</button><div style="cursor:pointer;font-size:22px" onclick="closeAdminChat()">✕</div></div></div><div class="wa-body" id="chatMessages"><p style="color:#667781;font-size:11px;text-align:center;margin-top:40px">🔒 Messages kept forever<br>Long press any message to delete for both</p></div><div class="wa-input-area"><input type="text" id="chatInput" class="wa-input" placeholder="Type a message" autocomplete="off"><button type="button" class="wa-send" id="waSendBtn" onclick="sendChat()">➤</button></div></div></div>
+
+<!-- Long Press Menu for Both Chat and Wallet -->
+<div id="contextMenu" class="context-menu">
+<button class="delete" id="ctxDeleteBtn" onclick="handleContextDelete()">🗑️ Delete for me and receiver</button>
+<button onclick="hideContextMenu()" style="color:#888">Cancel</button>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
@@ -108,10 +123,12 @@ const db = firebase.firestore();
 const phone = localStorage.getItem("nexaPhone");
 if(!phone) window.location.href="index.html";
 let allTransactions=[]; let currentFilter='all'; let chatUnsubscribe=null; let selectedWithdrawAmount=0;
+let pressTimer=null; let selectedDeleteId=null; let selectedDeleteType=null; // chat or wallet
+
 function showToast(msg,type="success"){const box=document.getElementById('toastBox');const toast=document.createElement('div');toast.className=`toast ${type}`;toast.innerHTML=`<div>${type=='success'?'✅':'❌'}</div><div style="flex:1;font-size:13px">${msg}</div>`;box.appendChild(toast);setTimeout(()=>{ toast.style.opacity='0'; setTimeout(()=>toast.remove(),300) },4500);}
 function toggleEye(id,el){const input=document.getElementById(id);if(input.type==='password'){ input.type='text'; el.innerText='🙈'; } else { input.type='password'; el.innerText='👁️'; }}
-function formatDateTime(ts){if(!ts) return 'Just now';let d=ts.seconds ? new Date(ts.seconds*1000) : new Date(ts);return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});}
-function formatDateFull(ts){if(!ts) return '';let d=ts.seconds ? new Date(ts.seconds*1000) : new Date(ts);return d.toLocaleDateString()+' '+d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});}
+function formatDateTime(ts){if(!ts) return 'Just now';let d=ts.seconds? new Date(ts.seconds*1000) : new Date(ts);return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});}
+function formatDateFull(ts){if(!ts) return '';let d=ts.seconds? new Date(ts.seconds*1000) : new Date(ts);return d.toLocaleDateString()+' '+d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});}
 function goBack(){ window.location.href='dashboard.html'; }
 function handleLogout(){ if(confirm("Log out from NEXA VIEW?")){ localStorage.removeItem("nexaPhone"); window.location.href='index.html'; }}
 function isWithdrawalTimeAllowed(){const now = new Date();const totalMinutes = now.getHours()*60 + now.getMinutes();return totalMinutes >= 570 && totalMinutes <= 1050;}
@@ -134,15 +151,37 @@ async function loadWallet(){
       const todayStr = new Date().toISOString().split('T')[0];
       let todayProfit = u.todayProfit || 0;
       let todayReferral = u.todayReferral || 0;
-      if(u.lastIncomeUpdate !== todayStr){ todayProfit=0; todayReferral=0; }
+      if(u.lastIncomeUpdate!== todayStr){ todayProfit=0; todayReferral=0; }
       document.getElementById('todayIncome').innerText = 'Ksh '+(todayProfit+todayReferral).toFixed(2);
     }
   });
-  db.collection("settings").doc("info").get().then(doc=>{ if(doc.exists) document.getElementById('mpesaNum').innerText = doc.data().mpesa || "0718422377"; });
+  db.collection("settings").doc("deposit").get().then(doc=>{ if(doc.exists) document.getElementById('mpesaNum').innerText = doc.data().mpesaNumber || doc.data().mpesa || "0718422377"; });
+  db.collection("settings").doc("info").get().then(doc=>{ if(doc.exists && doc.data().mpesa) document.getElementById('mpesaNum').innerText = doc.data().mpesa; });
   loadAllHistory();
 }
-function loadAllHistory(){allTransactions=[];db.collection("deposits").where("phone","==",phone).get().then(snap=>{snap.forEach(d=>{let x=d.data(); x.type='DEPOSIT'; allTransactions.push(x);});db.collection("withdrawals").where("phone","==",phone).get().then(snap2=>{snap2.forEach(d=>{let x=d.data(); x.type='WITHDRAW'; allTransactions.push(x);});allTransactions.sort((a,b)=> (b.date?.seconds||0)-(a.date?.seconds||0));renderHistory();});});}
-function renderHistory(){let html=""; let filtered=currentFilter==='all'?allTransactions:allTransactions.filter(t=> (t.status||'pending').toLowerCase()===currentFilter);if(filtered.length===0){ document.getElementById('allHistory').innerHTML=`<p style="color:#666;font-size:12px">No ${currentFilter}</p>`; return; }filtered.forEach(x=>{let status=(x.status||'pending').toLowerCase();let badgeClass=status==='pending'?'badge-pending':status==='rejected'?'badge-rejected':'badge-approved';let amount=x.net||x.amount;let sign=x.type==='DEPOSIT'?'+':'-';html+=`<div class="history-item"><div><b>${x.type}</b><br><span style="font-size:11px;color:#888">${formatDateFull(x.date)}</span><br><span style="font-size:12px;color:${x.type==='DEPOSIT'?'#22c55e':'#fbbf24'}">${sign} Ksh ${amount}</span></div><div><span class="badge ${badgeClass}">${status}</span></div></div>`;});document.getElementById('allHistory').innerHTML=html;}
+function loadAllHistory(){
+  allTransactions=[];
+  db.collection("deposits").where("phone","==",phone).get().then(snap=>{
+    snap.forEach(d=>{let x=d.data(); x.id=d.id; x.type='DEPOSIT'; x.coll='deposits'; allTransactions.push(x);});
+    db.collection("withdrawals").where("phone","==",phone).get().then(snap2=>{
+      snap2.forEach(d=>{let x=d.data(); x.id=d.id; x.type='WITHDRAW'; x.coll='withdrawals'; allTransactions.push(x);});
+      allTransactions.sort((a,b)=> (b.date?.seconds||0)-(a.date?.seconds||0));
+      renderHistory();
+    });
+  });
+}
+function renderHistory(){
+  let html=""; let filtered=currentFilter==='all'?allTransactions:allTransactions.filter(t=> (t.status||'pending').toLowerCase()===currentFilter);
+  if(filtered.length===0){ document.getElementById('allHistory').innerHTML=`<p style="color:#666;font-size:12px">No ${currentFilter}</p>`; return; }
+  filtered.forEach(x=>{
+    let status=(x.status||'pending').toLowerCase();
+    let badgeClass=status==='pending'?'badge-pending':status==='rejected'?'badge-rejected':'badge-approved';
+    let amount=x.net||x.amount;
+    let sign=x.type==='DEPOSIT'?'+':'-';
+    html+=`<div class="history-item" data-id="${x.id}" data-coll="${x.coll}" onmousedown="startPressWallet('${x.id}','${x.coll}',event)" onmouseup="endPress()" onmouseleave="endPress()" ontouchstart="startPressWallet('${x.id}','${x.coll}',event)" ontouchend="endPress()"><div><b>${x.type}</b><br><span style="font-size:11px;color:#888">${formatDateFull(x.date)}</span><br><span style="font-size:12px;color:${x.type==='DEPOSIT'?'#22c55e':'#fbbf24'}">${sign} Ksh ${amount}</span></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span class="badge ${badgeClass}">${status}</span><span style="font-size:8px;color:#666">Long press to delete</span></div></div>`;
+  });
+  document.getElementById('allHistory').innerHTML=html;
+}
 function filterHist(type){currentFilter=type;['all','pending','approved','rejected'].forEach(t=>{let el=document.getElementById('f'+t.charAt(0).toUpperCase()+t.slice(1));el.style.background=t===type?'#fbbf24':'#222'; el.style.color=t===type?'#000':'#aaa';});renderHistory();}
 function copyNum(){ navigator.clipboard.writeText(document.getElementById('mpesaNum').innerText); showToast("Copied","success"); }
 function openAccount(){ document.getElementById('accountModal').style.display='flex'; }
@@ -151,119 +190,147 @@ function openDeposit(){ document.getElementById('depositModal').style.display='f
 function closeDeposit(){ document.getElementById('depositModal').style.display='none'; }
 function openWithdraw(){ db.collection("users").doc(phone).get().then(doc=>{let u=doc.data();if(!u.accNumber||!u.accPin){ showToast("Set ACCOUNT first","error"); openAccount(); return; }if(!isWithdrawalTimeAllowed()){showToast("⛔ Withdrawal 9:30 AM - 5:30 PM only","error");return;}document.getElementById('availBal').innerText='Ksh '+(u.balance||0).toFixed(2);selectedWithdrawAmount=0;document.getElementById('selectedAmountDisplay').innerText='Ksh 0';document.getElementById('taxShow').innerText='KSH 0';document.getElementById('netShow').innerText='KSH 0';document.querySelectorAll('.quick-btn').forEach(b=>b.classList.remove('active'));document.getElementById('withdrawModal').style.display='flex';});}
 function closeWithdraw(){ document.getElementById('withdrawModal').style.display='none'; selectedWithdrawAmount=0; }
-function selectAmount(amt){selectedWithdrawAmount=amt;document.getElementById('selectedAmountDisplay').innerText='Ksh '+amt;document.getElementById('taxShow').innerText="KSH "+(amt*0.1).toFixed(0);document.getElementById('netShow').innerText="KSH "+(amt*0.9).toFixed(0);document.querySelectorAll('.quick-btn').forEach(b=>{b.classList.toggle('active', parseInt(b.innerText)==amt);});}
-function calcTax(){}
-function saveAccount(){let acc=document.getElementById('setupAccNumber').value.trim();let pin=document.getElementById('setupPin').value.trim();let pinConfirm=document.getElementById('setupPinConfirm').value.trim();if(!acc||acc.length<10){ showToast("Enter valid M-PESA","error"); return; }if(!pin||pin.length!=4||isNaN(pin)){ showToast("PIN 4 digits","error"); return; }if(pin!==pinConfirm){ showToast("PINs don't match","error"); return; }db.collection("users").doc(phone).update({accNumber:acc, accPin:pin}).then(()=>{showToast(`Saved: ${acc}`,"success"); closeAccount();});}
-function forgotOption1(){ closeAccount(); closeWithdraw(); document.getElementById('forgotModal1').style.display='flex'; }
-function closeForgot1(){ document.getElementById('forgotModal1').style.display='none'; document.getElementById('newPinArea').style.display='none'; }
-function verifyAndReset(){let verifyNum=document.getElementById('verifyMpesa').value.trim();db.collection("users").doc(phone).get().then(doc=>{let u=doc.data();if(verifyNum !== u.accNumber && verifyNum.replace(/\D/g,'').slice(-9) !== u.accNumber.replace(/\D/g,'').slice(-9)){showToast("Number mismatch","error"); return;}document.getElementById('newPinArea').style.display='block';showToast("Verified! Set new PIN","success");});}
-function saveNewPin(){let p1=document.getElementById('newPin1').value.trim();let p2=document.getElementById('newPin2').value.trim();if(p1.length!=4||p1!==p2){ showToast("PINs don't match","error"); return; }db.collection("users").doc(phone).update({accPin:p1}).then(()=>{showToast("New PIN saved","success");closeForgot1();});}
-function forgotOption2(){if(!confirm("Request Admin reset to 0000?")) return;db.collection("pinResetRequests").add({phone, userId:document.getElementById('userId').innerText, status:"pending", date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{showToast("Request sent to Admin","success");db.collection("chats").add({phone, message:"🔐 PIN RESET REQUEST - Please reset my PIN to 0000", from:"user", date:firebase.firestore.FieldValue.serverTimestamp()});});}
-function submitDeposit(){let amount=parseFloat(document.getElementById('depAmount').value);let code=document.getElementById('depCode').value;if(amount<100||code.length<5){ showToast("Check amount/code","error"); return; }db.collection("deposits").add({phone, amount, code, status:"pending", date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{showToast(`Deposit Ksh ${amount} sent`,"success"); closeDeposit(); loadAllHistory();});}
+function selectAmount(amt){ selectedWithdrawAmount=amt; document.getElementById('selectedAmountDisplay').innerText='Ksh '+amt; let tax=amt*0.1; document.getElementById('taxShow').innerText='KSH '+tax; document.getElementById('netShow').innerText='KSH '+(amt-tax); document.querySelectorAll('.quick-btn').forEach(b=>{b.classList.remove('active'); if(parseInt(b.innerText)===amt) b.classList.add('active');});}
+function submitDeposit(){
+  let amt=parseFloat(document.getElementById('depAmount').value);
+  let code=document.getElementById('depCode').value.trim();
+  if(!amt||amt<100){showToast("Min 100","error");return;}
+  if(!code){showToast("Enter M-PESA code","error");return;}
+  db.collection("deposits").add({phone,amount:amt,code,status:"pending",date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{showToast("Deposit submitted","success");closeDeposit();loadAllHistory();});
+}
 function submitWithdraw(){
-  const btn = document.getElementById('submitWithdrawBtn');
-  if(selectedWithdrawAmount===0){ showToast("Please tap to select amount","error"); return; }
-  btn.innerText = "Processing..."; btn.disabled = true;
-  if(!isWithdrawalTimeAllowed()){showToast("⛔ Closed! 9:30 AM - 5:30 PM only","error");btn.innerText = "Submit Withdraw"; btn.disabled = false; return;}
-  let amount=selectedWithdrawAmount;
-  let pin=document.getElementById('withPin').value.trim();
-  if(!pin || pin.length!=4){ showToast("Enter 4-digit PIN","error"); btn.innerText="Submit Withdraw"; btn.disabled=false; return; }
+  let pin=document.getElementById('withPin').value;
+  if(selectedWithdrawAmount===0){showToast("Select amount","error");return;}
+  if(!pin||pin.length!==4){showToast("Enter 4-digit PIN","error");return;}
   db.collection("users").doc(phone).get().then(doc=>{
     let u=doc.data();
-    if(pin!=u.accPin){ showToast("Wrong PIN","error"); btn.innerText="Submit Withdraw"; btn.disabled=false; return; }
-    if(amount>u.balance){ showToast("Insufficient balance! Available: Ksh "+u.balance,"error"); btn.innerText="Submit Withdraw"; btn.disabled=false; return; }
-    let net=amount*0.9;
-    db.collection("withdrawals").add({phone, amount, net, tax:amount*0.1, accNumber:u.accNumber, status:"pending", date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{
-      db.collection("users").doc(phone).update({balance:firebase.firestore.FieldValue.increment(-amount)}).then(()=>{
-        showToast(`✅ Withdraw Ksh ${amount} requested! You get Ksh ${net}. Deducted!`,"success");
-        document.getElementById('withPin').value=""; selectedWithdrawAmount=0;
-        document.getElementById('selectedAmountDisplay').innerText='Ksh 0';
-        btn.innerText="Submit Withdraw"; btn.disabled=false;
-        closeWithdraw(); loadAllHistory();
-      });
+    if(u.accPin!==pin){showToast("Wrong PIN","error");return;}
+    if((u.balance||0)<selectedWithdrawAmount){showToast("Insufficient balance","error");return;}
+    let tax=selectedWithdrawAmount*0.1; let net=selectedWithdrawAmount-tax;
+    db.collection("withdrawals").add({phone,amount:selectedWithdrawAmount,tax,net,status:"pending",date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{
+      db.collection("users").doc(phone).update({balance:firebase.firestore.FieldValue.increment(-selectedWithdrawAmount)});
+      showToast("Withdraw request sent - Tax 10% deducted","success");closeWithdraw();loadAllHistory();
     });
   });
 }
+function saveAccount(){
+  let num=document.getElementById('setupAccNumber').value.trim();
+  let pin=document.getElementById('setupPin').value.trim();
+  let confirmPin=document.getElementById('setupPinConfirm').value.trim();
+  if(!num||num.length<10){showToast("Enter valid M-PESA","error");return;}
+  if(pin.length!==4||confirmPin.length!==4){showToast("PIN must be 4 digits","error");return;}
+  if(pin!==confirmPin){showToast("PINs don't match","error");return;}
+  db.collection("users").doc(phone).update({accNumber:num,accPin:pin}).then(()=>{showToast("Account saved","success");closeAccount();});
+}
+function forgotOption1(){ document.getElementById('accountModal').style.display='none'; document.getElementById('forgotModal1').style.display='flex'; }
+function closeForgot1(){ document.getElementById('forgotModal1').style.display='none'; document.getElementById('newPinArea').style.display='none'; }
+function verifyAndReset(){
+  let mpesa=document.getElementById('verifyMpesa').value.trim();
+  if(!mpesa){showToast("Enter M-PESA","error");return;}
+  db.collection("users").doc(phone).get().then(doc=>{
+    if(doc.data().accNumber===mpesa){document.getElementById('newPinArea').style.display='block';showToast("Verified - Set new PIN","success");}
+    else{showToast("M-PESA not match registered","error");}
+  });
+}
+function saveNewPin(){
+  let p1=document.getElementById('newPin1').value.trim();
+  let p2=document.getElementById('newPin2').value.trim();
+  if(p1.length!==4||p2.length!==4){showToast("4 digits","error");return;}
+  if(p1!==p2){showToast("PINs don't match","error");return;}
+  db.collection("users").doc(phone).update({accPin:p1}).then(()=>{showToast("New PIN saved","success");closeForgot1();});
+}
+function forgotOption2(){
+  db.collection("pinResetRequests").add({phone,userId:document.getElementById('userId').innerText,status:"pending",date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{showToast("Request sent to Admin - PIN will be reset to 0000 after approval","success");closeAccount();});
+}
 
-// === FIXED CHAT - TOP RIGHT + KEEP FOREVER ===
-function openAdminChat(){ document.getElementById('chatModal').style.display='flex'; setTimeout(()=>{document.getElementById('chatInput').focus();},200); loadChat(); }
-function closeAdminChat(){ document.getElementById('chatModal').style.display='none'; if(chatUnsubscribe) chatUnsubscribe(); }
-
-function loadChat(){
+// CHAT WITH LONG PRESS DELETE
+function openAdminChat(){
+  document.getElementById('chatModal').style.display='flex';
+  loadChats();
+}
+function closeAdminChat(){
+  document.getElementById('chatModal').style.display='none';
   if(chatUnsubscribe) chatUnsubscribe();
-  // FIXED: No orderBy - avoids Firebase Index error that caused empty screen
+  hideContextMenu();
+}
+function loadChats(){
+  if(chatUnsubscribe) chatUnsubscribe();
   chatUnsubscribe = db.collection("chats").where("phone","==",phone).onSnapshot(snap=>{
-    let msgs = [];
-    snap.forEach(doc=>{ let m=doc.data(); msgs.push(m); });
-    // Sort manually oldest first
-    msgs.sort((a,b)=>{ return (a.date?.seconds||0) - (b.date?.seconds||0); });
-    
+    let msgs=[]; snap.forEach(d=>{let m=d.data(); m.id=d.id; msgs.push(m);});
+    msgs.sort((a,b)=>(a.date?.seconds||0)-(b.date?.seconds||0));
     let html="";
+    if(msgs.length===0) html=`<p style="color:#667781;font-size:11px;text-align:center;margin-top:40px">🔒 Messages kept forever<br>Long press any message to delete for both</p>`;
     msgs.forEach(m=>{
-      let cls = m.from==='user' ? 'wa-user' : 'wa-admin';
-      html+=`<div class="wa-msg ${cls}">${m.message}<span class="wa-time">${formatDateTime(m.date)} ✓✓</span></div>`;
+      let cls=m.from==='user'?'wa-user':'wa-admin';
+      html+=`<div class="wa-msg ${cls}" data-id="${m.id}" onmousedown="startPressChat('${m.id}',event)" onmouseup="endPress()" onmouseleave="endPress()" ontouchstart="startPressChat('${m.id}',event)" ontouchend="endPress()">${m.message}<span class="wa-time">${formatDateTime(m.date)} ${m.from==='user'?'✓✓':''}</span></div>`;
     });
-    
-    if(msgs.length===0){
-      html = '<p style="color:#667781;font-size:11px;text-align:center;margin-top:40px">🔒 Messages kept forever<br>Start chat with Admin 👋</p>';
-    }
-    
-    document.getElementById('chatMessages').innerHTML = html;
-    const box = document.getElementById('chatMessages'); 
-    box.scrollTop = box.scrollHeight;
-  }, err=>{
-    console.error(err);
-    showToast("Chat error: "+err.message,"error");
+    document.getElementById('chatMessages').innerHTML=html;
+    let body=document.getElementById('chatMessages'); body.scrollTop=body.scrollHeight;
   });
 }
-
 function sendChat(){
-  let input = document.getElementById('chatInput');
-  let msg = input.value.trim();
-  if(!msg) return;
-  
-  let btn = document.getElementById('waSendBtn');
-  btn.disabled = true; 
-  btn.innerText = "⏳";
-  
-  // Show immediately TOP RIGHT green bubble
-  let chatBox = document.getElementById('chatMessages');
-  if(chatBox.innerHTML.includes('Start chat with Admin')){
-    chatBox.innerHTML = '';
-  }
-  let tempDiv = document.createElement('div');
-  tempDiv.className = 'wa-msg wa-user';
-  tempDiv.innerHTML = `${msg}<span class="wa-time">sending...</span>`;
-  chatBox.appendChild(tempDiv);
-  chatBox.scrollTop = chatBox.scrollHeight;
-  input.value = "";
+  let input=document.getElementById('chatInput');
+  let msg=input.value.trim(); if(!msg) return;
+  db.collection("chats").add({phone,message:msg,from:"user",date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{input.value="";});
+}
 
-  db.collection("chats").add({
-    phone: phone, 
-    message: msg, 
-    from: "user", 
-    userId: document.getElementById('userId').innerText, 
-    date: firebase.firestore.FieldValue.serverTimestamp(), 
-    read: false
-  }).then(()=>{
-    btn.innerText="➤"; 
-    btn.disabled=false; 
-    input.focus();
-    // Real message will appear via snapshot, remove temp
-    setTimeout(()=>{ if(tempDiv.parentNode) tempDiv.remove(); }, 500);
-  }).catch(e=>{
-    showToast("Failed: "+e.message,"error"); 
-    input.value=msg; 
-    if(tempDiv.parentNode) tempDiv.remove();
-    btn.innerText="➤"; 
-    btn.disabled=false;
+// LONG PRESS LOGIC
+function startPressChat(id,e){
+  selectedDeleteId=id; selectedDeleteType='chat';
+  if(e) e.preventDefault();
+  pressTimer=setTimeout(()=>{let t=e.touches?e.touches[0]:e; showContextMenu(t.clientX||100,t.clientY||100);},600);
+}
+function startPressWallet(id,coll,e){
+  selectedDeleteId=id; selectedDeleteType=coll;
+  if(e) e.preventDefault();
+  pressTimer=setTimeout(()=>{let t=e.touches?e.touches[0]:e; showContextMenu(t.clientX||100,t.clientY||100);},600);
+}
+function endPress(){clearTimeout(pressTimer);}
+function showContextMenu(x,y){
+  let menu=document.getElementById('contextMenu');
+  menu.style.left=(x>window.innerWidth-200?window.innerWidth-200:x)+'px';
+  menu.style.top=(y>window.innerHeight-150?window.innerHeight-150:y)+'px';
+  menu.style.display='block';
+}
+function hideContextMenu(){document.getElementById('contextMenu').style.display='none'; selectedDeleteId=null; selectedDeleteType=null;}
+function handleContextDelete(){
+  if(!selectedDeleteId){hideContextMenu();return;}
+  if(selectedDeleteType==='chat'){
+    if(!confirm("Delete this message for me and receiver? Both sides will lose it!")){hideContextMenu();return;}
+    db.collection("chats").doc(selectedDeleteId).delete().then(()=>{showToast("Deleted for both sides","success");hideContextMenu();});
+  } else {
+    if(!confirm("Delete this wallet record for me and receiver? Both will lose it!")){hideContextMenu();return;}
+    db.collection(selectedDeleteType).doc(selectedDeleteId).delete().then(()=>{showToast("Wallet record deleted for both","success");hideContextMenu();loadAllHistory();});
+  }
+}
+function deleteAllMyChats(){
+  if(!confirm("Delete ALL your chats? Both you and admin will lose all chats!"))return;
+  if(!confirm("REALLY delete all? Cannot be undone!"))return;
+  db.collection("chats").where("phone","==",phone).get().then(s=>{
+    s.forEach(d=>db.collection("chats").doc(d.id).delete());
+    showToast("All chats deleted for both","success");
+  });
+}
+function deleteAllWalletHistory(){
+  if(!confirm("Delete ALL your wallet history? Both sides?"))return;
+  if(!confirm("REALLY delete all?"))return;
+  db.collection("deposits").where("phone","==",phone).get().then(s=>{s.forEach(d=>db.collection("deposits").doc(d.id).delete());});
+  db.collection("withdrawals").where("phone","==",phone).get().then(s=>{
+    s.forEach(d=>{
+      // Only delete pending/rejected to avoid losing paid
+      let st=d.data().status;
+      if(st!=='paid') db.collection("withdrawals").doc(d.id).delete();
+    });
+    showToast("Wallet history cleared for both","success");
+    loadAllHistory();
   });
 }
 
-window.onload=()=>{
-  loadWallet();
-  document.getElementById('chatInput').addEventListener('keypress', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); sendChat(); } });
-};
+document.addEventListener('click',function(e){
+  if(!e.target.closest('#contextMenu') &&!e.target.closest('.wa-msg') &&!e.target.closest('.history-item')) hideContextMenu();
+});
+
+loadWallet();
 </script>
 </body>
 </html>
