@@ -42,12 +42,10 @@ input, textarea{padding:8px;background:#222;border:1px solid #444;color:white;bo
   <div class="box"><h3>💰 Deposit Settings</h3><div style="display:flex;gap:8px;align-items:center;margin-bottom:10px"><input type="text" id="mpesaNumber" value="0718422377"><button class="btn btn-green btn-small" onclick="saveMpesa()">Save</button></div></div>
   <div class="stats"><div class="stat-card"><h4>Total Invested</h4><p id="totalInvested" style="color:#22c55e">+Ksh 0</p></div><div class="stat-card"><h4>Today Invested</h4><p id="todayInvested" style="color:#22c55e">+Ksh 0</p></div><div class="stat-card"><h4>Today Withdraw</h4><p id="todayWithdrawals" style="color:#ef4444">-Ksh 0</p></div><div class="stat-card"><h4>Total Withdraw</h4><p id="totalWithdrawals" style="color:#ef4444">-Ksh 0</p></div></div>
   
-  <!-- NEW: PENDING DEPOSITS -->
   <div class="box" style="border-color:#22c55e"><h3>💵 Pending Deposits</h3><div id="depositList">Loading...</div></div>
-
   <div class="box" style="border-color:#fbbf24"><h3>🔐 PIN Reset Requests</h3><div id="pinResetList">Loading...</div></div>
   <div class="box" style="border-color:#22c55e"><h3>💬 Internal Chats</h3><div id="internalChatList">Loading...</div></div>
-  <div class="box"><h3>💸 Pending Withdrawals</h3><div id="withdrawList">Loading...</div></div>
+  <div class="box"><h3>💸 Pending Withdrawals - Fixed Amounts Only [200,500,700,1000,1500,2000]</h3><div id="withdrawList">Loading...</div></div>
   <div class="box"><h3>🎁 Pending Referral</h3><div id="referralList">Loading...</div></div>
   <div id="messagesModal" class="modal" onclick="closeMessagesModal()"><div class="modal-content" onclick="event.stopPropagation()"><h3>📩 All Messages</h3><div id="messagesList">Loading...</div><button class="btn btn-red" style="width:100%;margin-top:8px" onclick="closeMessagesModal()">Close</button></div></div>
   <div id="messageModal" class="modal" onclick="closeMessageModal()"><div class="modal-content" onclick="event.stopPropagation()"><h3>📩 Send Message</h3><p id="messageUserPhone" style="color:#fbbf24;margin-bottom:8px"></p><textarea id="userMessageInput" rows="3"></textarea><div style="display:flex;gap:6px"><button class="btn btn-purple" style="flex:1" onclick="sendUserMessage()">Send</button><button class="btn btn-red" style="flex:1" onclick="closeMessageModal()">Cancel</button></div></div></div>
@@ -56,6 +54,7 @@ input, textarea{padding:8px;background:#222;border:1px solid #444;color:white;bo
 const firebaseConfig = {apiKey:"AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",authDomain:"nexa-view.firebaseapp.com",projectId:"nexa-view"};
 firebase.initializeApp(firebaseConfig); const db = firebase.firestore(); const ADMIN_PASSWORD = "admin123";
 let selectedUserPhone = ""; let totalUnread = 0;
+const ALLOWED_WITHDRAW_AMOUNTS = [200,500,700,1000,1500,2000];
 function toggleAdminEye(){ const input=document.getElementById('adminPassword'); const eye=document.getElementById('adminEye'); if(input.type==='password'){ input.type='text'; eye.innerText='🙈'; } else { input.type='password'; eye.innerText='👁️'; } }
 function checkLogin(){ let pass=document.getElementById('adminPassword').value; if(pass===ADMIN_PASSWORD){ localStorage.setItem('nexaAdminLoggedIn','true'); showPanel(); }else{ document.getElementById('loginError').innerText="❌ Wrong Password"; } }
 function showPanel(){ document.getElementById('loginScreen').style.display='none'; document.getElementById('mainPanel').style.display='block'; loadMpesaNumber(); loadMessages(); loadDeposits(); loadWithdrawals(); loadReferralRequests(); loadStats(); loadPinResets(); loadInternalChats(); }
@@ -70,8 +69,6 @@ function loadInternalChats(){ db.collection("chats").orderBy("date","desc").limi
 function openChatReply(phone){ selectedUserPhone=phone; document.getElementById('messageUserPhone').innerText="Reply to: "+phone; document.getElementById('messageModal').style.display='flex'; }
 function openMessagesModal(){document.getElementById('messagesModal').style.display='flex';} function closeMessagesModal(){document.getElementById('messagesModal').style.display='none';}
 function loadStats(){ let today = new Date(); today.setHours(0,0,0); let totalInvested = 0; let todayInvested = 0; let totalWithdrawals = 0; let todayWithdrawals = 0; db.collection("users").get().then(s=>{ s.forEach(d=>{let u = d.data();totalInvested += u.totalInvested || 0; if(u.lastPurchaseDate && u.lastPurchaseDate.toDate() >= today){todayInvested += u.lastPurchaseAmount || 0;} }); document.getElementById('totalInvested').innerText = `+Ksh ${totalInvested.toFixed(0)}`; document.getElementById('todayInvested').innerText = `+Ksh ${todayInvested.toFixed(0)}`; }); Promise.all([ db.collection("withdrawals").where("status","==","paid").get(), db.collection("referralRequests").where("status","==","paid").get() ]).then(([wSnap, rSnap])=>{ wSnap.forEach(d=>{let w = d.data(); totalWithdrawals += w.amount || 0; if(w.date && w.date.toDate() >= today){ todayWithdrawals += w.amount || 0; }}); rSnap.forEach(d=>{let r = d.data(); totalWithdrawals += r.amount || 0; if(r.date && r.date.toDate() >= today){ todayWithdrawals += r.amount || 0; }}); document.getElementById('totalWithdrawals').innerText = `-Ksh ${totalWithdrawals.toFixed(0)}`; document.getElementById('todayWithdrawals').innerText = `-Ksh ${todayWithdrawals.toFixed(0)}`; });}
-
-// DEPOSITS LOGIC
 function loadDeposits(){
   db.collection("deposits").where("status","==","pending").onSnapshot(s=>{
     let h=""; if(s.empty) h="<p style='color:#888'>No pending deposits</p>";
@@ -88,7 +85,6 @@ function approveDeposit(id, phone, amount){
   if(!confirm(`Approve Ksh ${amount} for ${phone}?`)) return;
   db.collection("users").doc(phone).get().then(doc=>{
     if(!doc.exists) { alert("User not found"); return; }
-    // Add to balance and invested
     db.collection("users").doc(phone).update({
       balance: firebase.firestore.FieldValue.increment(amount),
       totalInvested: firebase.firestore.FieldValue.increment(amount),
@@ -106,14 +102,47 @@ function rejectDeposit(id){
   if(!confirm("Reject this deposit?")) return;
   db.collection("deposits").doc(id).update({status:"rejected"}).then(()=>{ alert("Rejected"); });
 }
-
 function openMessageModal(phone){ selectedUserPhone = phone; document.getElementById('messageUserPhone').innerText = "To: " + phone; document.getElementById('messageModal').style.display='flex'; }
 function closeMessageModal(){document.getElementById('messageModal').style.display='none';}
 function sendUserMessage(){ let msg=document.getElementById('userMessageInput').value; if(!msg)return; db.collection("userMessages").add({phone:selectedUserPhone,message:msg,date:firebase.firestore.FieldValue.serverTimestamp(),read:false}); db.collection("chats").add({phone:selectedUserPhone,message:msg,from:"admin",date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{alert("✅ Sent");closeMessageModal();document.getElementById('userMessageInput').value="";}) }
-function loadWithdrawals(){db.collection("withdrawals").where("status","==","pending").onSnapshot(s=>{let h="";if(s.empty)h="<p style='color:#888'>No pending</p>";s.forEach(d=>{let x=d.data();h+=`<div class="req-card"><div><b>${x.phone}</b><br>Ksh ${x.amount} to ${x.accNumber||''}</div><div><button class="btn btn-green btn-small" onclick="approveWithdraw('${d.id}')">Approve</button><button class="btn btn-red btn-small" onclick="rejectWithdraw('${d.id}')">Reject</button></div></div>`;});document.getElementById('withdrawList').innerHTML=h;})}
+
+function loadWithdrawals(){
+  db.collection("withdrawals").where("status","==","pending").onSnapshot(s=>{
+    let h=""; if(s.empty) h="<p style='color:#888'>No pending</p>";
+    s.forEach(d=>{
+      let x=d.data();
+      let isAllowed = ALLOWED_WITHDRAW_AMOUNTS.includes(x.amount);
+      let badge = isAllowed ? "" : `<span style="background:#450a0a;color:#ef4444;padding:2px 5px;border-radius:4px;font-size:9px;margin-left:5px">INVALID AMOUNT</span>`;
+      let balInfo = "";
+      // Fetch user balance for display (async but we show)
+      h+=`<div class="req-card"><div><b>${x.phone}</b> ${badge}<br>Ksh ${x.amount} (You pay ${x.net||x.amount*0.9}) to ${x.accNumber||''}<br><small style="color:#22c55e">Deducted from balance at request time</small></div><div><button class="btn btn-green btn-small" onclick="approveWithdraw('${d.id}')">Approve</button><button class="btn btn-red btn-small" onclick="rejectWithdraw('${d.id}')">Reject</button></div></div>`;
+    });
+    document.getElementById('withdrawList').innerHTML=h;
+  });
+}
 function loadReferralRequests(){db.collection("referralRequests").where("status","==","pending").onSnapshot(s=>{let h="";if(s.empty)h="<p style='color:#888'>No pending</p>";s.forEach(d=>{let x=d.data();h+=`<div class="req-card"><div><b>${x.phone}</b><br>Ksh ${x.amount}</div><div><button class="btn btn-green btn-small" onclick="approveReferral('${d.id}')">Approve</button><button class="btn btn-red btn-small" onclick="rejectReferral('${d.id}')">Reject</button></div></div>`;});document.getElementById('referralList').innerHTML=h;})}
-function approveWithdraw(id){db.collection("withdrawals").doc(id).update({status:"paid",date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{loadWithdrawals();loadStats();});}
-function rejectWithdraw(id){db.collection("withdrawals").doc(id).update({status:"rejected"}).then(()=>loadWithdrawals());}
+function approveWithdraw(id){
+  db.collection("withdrawals").doc(id).get().then(d=>{
+    let x=d.data();
+    if(!ALLOWED_WITHDRAW_AMOUNTS.includes(x.amount)){
+      if(!confirm(`⚠️ Amount Ksh ${x.amount} is NOT in allowed list [200,500,700,1000,1500,2000]. Approve anyway?`)) return;
+    }
+    // Amount already deducted when user requested, so only mark as paid
+    db.collection("withdrawals").doc(id).update({status:"paid",date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{
+      db.collection("chats").add({phone:x.phone, message:`✅ Withdraw Ksh ${x.amount} Approved! You will receive Ksh ${x.net||x.amount*0.9}`, from:"admin", date:firebase.firestore.FieldValue.serverTimestamp()});
+      loadWithdrawals();loadStats();
+    });
+  });
+}
+function rejectWithdraw(id){
+  if(!confirm("Reject? Amount will be REFUNDED to user balance since it was auto-deducted!")) return;
+  db.collection("withdrawals").doc(id).get().then(d=>{
+    let x=d.data();
+    db.collection("users").doc(x.phone).update({balance: firebase.firestore.FieldValue.increment(x.amount)}).then(()=>{
+      db.collection("withdrawals").doc(id).update({status:"rejected"}).then(()=>{ loadWithdrawals(); alert("Rejected & Refunded Ksh "+x.amount+" to user"); });
+    });
+  });
+}
 function approveReferral(id){db.collection("referralRequests").doc(id).get().then(d=>{let x=d.data();db.collection("users").doc(x.phone).update({balance:firebase.firestore.FieldValue.increment(x.amount)});db.collection("referralRequests").doc(id).update({status:"paid",date:firebase.firestore.FieldValue.serverTimestamp()});loadReferralRequests();loadStats();})}
 function rejectReferral(id){db.collection("referralRequests").doc(id).update({status:"rejected"}).then(()=>loadReferralRequests());}
 window.onload=function(){if(localStorage.getItem('nexaAdminLoggedIn')==='true'){showPanel();}}
