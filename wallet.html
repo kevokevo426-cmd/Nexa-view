@@ -6,7 +6,7 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 body{background:#000;color:white;font-family:Poppins;padding:12px;margin:0;padding-bottom:110px}
-.main-card{background:#111;padding:20px;border-radius:18px;border:1px solid #222;margin-bottom:15px;position:relative}
+.main-card{background:#111;padding:20px;border-radius:18px;border:1px solid #222;margin-bottom:15px}
 .row{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid #1f1f1f}
 .row:last-child{border:none}
 .label{color:#ccc;font-size:14px}
@@ -16,6 +16,7 @@ body{background:#000;color:white;font-family:Poppins;padding:12px;margin:0;paddi
 .btn-deposit{background:linear-gradient(90deg,#fbbf24,#f59e0b);color:#000}
 .btn-account{background:linear-gradient(90deg,#f97316,#ea580c);color:white}
 .btn-withdraw{background:linear-gradient(90deg,#22c55e,#16a34a);color:white}
+.btn-withdraw:active{transform:scale(0.95)}
 .box{background:#111;padding:16px;border-radius:16px;margin:15px 0;border:1px solid #222}
 .history-item{display:flex;justify-content:space-between;align-items:center;padding:12px;background:#1a1a1a;border-radius:10px;margin:8px 0}
 .badge{padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;text-transform:uppercase}
@@ -34,16 +35,7 @@ label{font-size:11px;color:#aaa}
 .toast.error{border-color:#ef4444}
 @keyframes slideDown{from{transform:translateY(-30px);opacity:0}to{transform:translateY(0);opacity:1}}
 .top-back-wrap{display:flex;justify-content:flex-end;margin-bottom:10px}
-.top-back-btn{border:1.5px solid rgba(255,255,255,0.3);background:#111;color:white;padding:7px 18px;border-radius:25px;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px}
-.chat-float{position:fixed;bottom:85px;right:15px;z-index:998;background:linear-gradient(135deg,#22c55e,#16a34a);width:60px;height:60px;border-radius:50%;display:flex;justify-content:center;align-items:center;box-shadow:0 5px 20px rgba(34,197,94,0.4);cursor:pointer;animation:pulse 2s infinite}
-.chat-float span{font-size:28px}
-.chat-badge{position:absolute;top:-5px;right:-5px;background:#ef4444;color:white;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;display:none}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(34,197,94,0.7)}70%{box-shadow:0 0 0 12px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
-.chat-label{position:fixed;bottom:90px;right:85px;z-index:998;background:#111;border:1px solid #22c55e;color:white;padding:6px 10px;border-radius:8px;font-size:11px}
-.chat-messages{height:250px;overflow-y:auto;background:#0a0a0a;border-radius:10px;padding:10px;margin:10px 0;border:1px solid #222}
-.msg{padding:8px 10px;border-radius:10px;margin:6px 0;max-width:80%;font-size:12px}
-.msg-user{background:#22c55e;color:white;margin-left:auto;text-align:right}
-.msg-admin{background:#222;color:white;border:1px solid #333}
+.top-back-btn{border:1.5px solid rgba(255,255,255,0.3);background:#111;color:white;padding:7px 18px;border-radius:25px;font-weight:700;font-size:13px;cursor:pointer}
 .quick-amounts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
 .quick-btn{padding:10px;background:#1a1a1a;border:1px solid #333;color:#22c55e;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer}
 .quick-btn.active{background:#22c55e;color:white;border-color:#22c55e}
@@ -51,13 +43,26 @@ label{font-size:11px;color:#aaa}
 .bottom-bar{display:flex;gap:10px;margin-top:15px}
 .btn-logout{flex:1;padding:13px;border:none;border-radius:10px;font-weight:800;font-size:13px;cursor:pointer;background:linear-gradient(90deg,#ef4444,#dc2626);color:white}
 .btn-admin{flex:1;padding:13px;border:none;border-radius:10px;font-weight:800;font-size:13px;cursor:pointer;background:linear-gradient(90deg,#1e3a5f,#2a435a);color:white;border:1px solid #3a5a7a}
+/* WHATSAPP STYLE CHAT */
+.wa-modal-content{background:#111;width:95%;max-width:400px;height:85vh;border-radius:18px;padding:0;border:1px solid #333;display:flex;flex-direction:column;overflow:hidden}
+.wa-header{background:linear-gradient(90deg,#075e54,#128c7e);padding:12px 16px;display:flex;align-items:center;gap:10px;color:white}
+.wa-avatar{width:38px;height:38px;background:white;border-radius:50%;display:flex;justify-content:center;align-items:center;font-size:20px}
+.wa-name{font-weight:700;font-size:14px}
+.wa-status{font-size:11px;opacity:0.9}
+.wa-body{flex:1;background:#0b141a;background-image:url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');background-size:cover;overflow-y:auto;padding:12px}
+.wa-msg{padding:8px 12px;border-radius:8px;margin:6px 0;max-width:75%;font-size:13px;position:relative;box-shadow:0 1px 0.5px rgba(0,0,0,0.3)}
+.wa-user{background:#dcf8c6;color:#000;margin-left:auto;border-top-right-radius:0}
+.wa-admin{background:white;color:#000;margin-right:auto;border-top-left-radius:0}
+.wa-time{font-size:9px;color:#667781;margin-top:4px;text-align:right;display:block}
+.wa-input-area{background:#f0f2f5;padding:8px;display:flex;gap:8px;align-items:center}
+.wa-input{flex:1;background:white;border:none;border-radius:20px;padding:10px 16px;font-size:13px;outline:none;color:#000}
+.wa-send{background:#25d366;border:none;width:40px;height:40px;border-radius:50%;display:flex;justify-content:center;align-items:center;cursor:pointer;font-size:18px}
 </style>
 </head>
 <body>
 <div id="toastBox"></div>
 <div class="top-back-wrap"><button class="top-back-btn" onclick="goBack()">← BACK</button></div>
-<div class="chat-label">ADMIN</div>
-<div class="chat-float" onclick="openAdminChat()"><span>💬</span><div class="chat-badge" id="chatBadge">1</div></div>
+
 <div class="main-card">
   <div class="row"><span class="label">User ID</span><span class="value" id="userId">NEXA...</span></div>
   <div class="row"><span class="label">Total Income (Profits + Referral)</span><span class="value" id="totalIncome">Ksh 0.00</span></div>
@@ -67,7 +72,7 @@ label{font-size:11px;color:#aaa}
   <div class="btn-row">
     <button class="btn btn-deposit" onclick="openDeposit()">DEPOSIT</button>
     <button class="btn btn-account" onclick="openAccount()">ACCOUNT</button>
-    <button class="btn btn-withdraw" onclick="openWithdraw()">WITHDRAW</button>
+    <button class="btn btn-withdraw" onclick="openWithdraw()" id="withdrawBtnMain">WITHDRAW</button>
   </div>
 </div>
 <div class="box">
@@ -84,11 +89,18 @@ label{font-size:11px;color:#aaa}
   <button class="btn-logout" onclick="handleLogout()">↪ LOG OUT</button>
   <button class="btn-admin" onclick="openAdminChat()">🛡️ ADMIN</button>
 </div>
+
+<!-- MODALS SAME AS BEFORE -->
 <div id="accountModal" class="modal" onclick="closeAccount()"><div class="modal-content" onclick="event.stopPropagation()"><h3>⚙️ My Receiving Account</h3><p style="font-size:11px;color:#aaa">Current: <b id="currentAcc" style="color:#22c55e">Not Set</b></p><label>M-PESA Number</label><input type="tel" id="setupAccNumber" placeholder="07xxxxxxxx"><label>Set 4-Digit PIN</label><div class="input-wrap"><input type="password" id="setupPin" placeholder="****" maxlength="4"><span class="eye" onclick="toggleEye('setupPin', this)">👁️</span></div><label>Confirm PIN</label><div class="input-wrap"><input type="password" id="setupPinConfirm" placeholder="****" maxlength="4"><span class="eye" onclick="toggleEye('setupPinConfirm', this)">👁️</span></div><button class="btn btn-withdraw" onclick="saveAccount()">💾 Save Account & PIN</button><div style="margin-top:15px;padding-top:12px;border-top:1px solid #222"><p style="font-size:12px;color:#fbbf24;text-align:center">Forgot PIN? Use options below:</p><button class="btn" style="background:#333;color:white;border:1px solid #444" onclick="forgotOption1()">Option 1: Verify M-PESA to Reset</button><button class="btn" style="background:#222;color:#fbbf24;border:1px dashed #fbbf24" onclick="forgotOption2()">Option 2: Quick Reset (Admin Approval)</button></div><button class="btn" style="background:#111;color:#aaa;margin-top:10px" onclick="closeAccount()">Close</button></div></div>
-<div id="forgotModal1" class="modal" onclick="closeForgot1()"><div class="modal-content" onclick="event.stopPropagation()" style="border-color:#fbbf24"><h3>🔐 Reset PIN - Verify Account</h3><p style="font-size:11px;color:#aaa">Enter your registered M-PESA number to verify it's you</p><label>Enter Registered M-PESA Number</label><input type="tel" id="verifyMpesa" placeholder="07xxxxxxxx"><button class="btn btn-deposit" onclick="verifyAndReset()">Verify & Continue</button><div id="newPinArea" style="display:none;margin-top:15px"><label>New 4-Digit PIN</label><div class="input-wrap"><input type="password" id="newPin1" placeholder="****" maxlength="4"><span class="eye" onclick="toggleEye('newPin1', this)">👁️</span></div><label>Confirm New PIN</label><div class="input-wrap"><input type="password" id="newPin2" placeholder="****" maxlength="4"><span class="eye" onclick="toggleEye('newPin2', this)">👁️</span></div><button class="btn btn-withdraw" onclick="saveNewPin()">✅ Save New PIN</button></div><button class="btn" style="background:#333;color:white" onclick="closeForgot1()">Cancel</button></div></div>
+<div id="forgotModal1" class="modal" onclick="closeForgot1()"><div class="modal-content" onclick="event.stopPropagation()" style="border-color:#fbbf24"><h3>🔐 Reset PIN - Verify Account</h3><p style="font-size:11px;color:#aaa">Enter your registered M-PESA number</p><label>Enter Registered M-PESA Number</label><input type="tel" id="verifyMpesa" placeholder="07xxxxxxxx"><button class="btn btn-deposit" onclick="verifyAndReset()">Verify & Continue</button><div id="newPinArea" style="display:none;margin-top:15px"><label>New 4-Digit PIN</label><div class="input-wrap"><input type="password" id="newPin1" placeholder="****" maxlength="4"><span class="eye" onclick="toggleEye('newPin1', this)">👁️</span></div><label>Confirm New PIN</label><div class="input-wrap"><input type="password" id="newPin2" placeholder="****" maxlength="4"><span class="eye" onclick="toggleEye('newPin2', this)">👁️</span></div><button class="btn btn-withdraw" onclick="saveNewPin()">✅ Save New PIN</button></div><button class="btn" style="background:#333;color:white" onclick="closeForgot1()">Cancel</button></div></div>
 <div id="depositModal" class="modal" onclick="closeDeposit()"><div class="modal-content" onclick="event.stopPropagation()"><h3>💰 Deposit</h3><p style="font-size:12px">Send to: <b style="color:#22c55e" id="mpesaNum">0718422377</b> <button onclick="copyNum()" style="padding:3px 8px;background:#22c55e;border:none;border-radius:5px;font-size:10px">Copy</button></p><label>Amount</label><input type="number" id="depAmount" placeholder="Min 100"><label>M-PESA Code</label><input type="text" id="depCode" placeholder="QJ12AB34CD"><button class="btn btn-deposit" onclick="submitDeposit()">Submit</button><button class="btn" style="background:#333;color:white" onclick="closeDeposit()">Cancel</button></div></div>
-<div id="withdrawModal" class="modal" onclick="closeWithdraw()"><div class="modal-content" onclick="event.stopPropagation()"><h3>📤 Withdraw</h3><p style="font-size:12px">To: <b id="accNum" style="color:#22c55e">Not Set</b></p><div class="time-note">⏰ Withdrawal Time: 9:30 AM - 5:30 PM Only</div><label>Quick Select Amount</label><div class="quick-amounts"><button class="quick-btn" onclick="selectAmount(200)">200</button><button class="quick-btn" onclick="selectAmount(500)">500</button><button class="quick-btn" onclick="selectAmount(700)">700</button><button class="quick-btn" onclick="selectAmount(1000)">1000</button><button class="quick-btn" onclick="selectAmount(1500)">1500</button><button class="quick-btn" onclick="selectAmount(2000)">2000</button></div><label>Amount</label><input type="number" id="withAmount" placeholder="Min 200" oninput="calcTax();highlightQuick()"><div class="calc">Tax 10%: <b id="taxShow">KSH 0</b> | You Get: <b id="netShow">KSH 0</b></div><label>PIN</label><div class="input-wrap"><input type="password" id="withPin" placeholder="****" maxlength="4"><span class="eye" onclick="toggleEye('withPin', this)">👁️</span></div><p style="text-align:center;margin:5px 0"><span onclick="forgotOption1();closeWithdraw()" style="color:#fbbf24;font-size:11px;text-decoration:underline;cursor:pointer">Forgot PIN?</span></p><button class="btn btn-withdraw" onclick="submitWithdraw()">Submit Withdraw</button><button class="btn" style="background:#333;color:white" onclick="closeWithdraw()">Cancel</button></div></div>
-<div id="chatModal" class="modal" onclick="closeAdminChat()"><div class="modal-content" onclick="event.stopPropagation()" style="border-color:#22c55e;max-width:420px"><h3>💬 ADMIN Chat</h3><p style="font-size:11px;color:#aaa">Messages auto-delete after 24hrs</p><div class="chat-messages" id="chatMessages"><p style="color:#666;font-size:11px">Loading messages...</p></div><div style="display:flex;gap:6px"><input type="text" id="chatInput" placeholder="Type message to admin..." style="flex:1" onkeypress="if(event.key==='Enter') sendChat()"><button class="btn btn-withdraw" style="flex:0 0 70px" onclick="sendChat()">Send</button></div><button class="btn" style="background:#333;color:white;margin-top:8px" onclick="closeAdminChat()">Close</button></div></div>
+
+<!-- FIXED WITHDRAW MODAL - BUTTON RESPONDS NOW -->
+<div id="withdrawModal" class="modal" onclick="closeWithdraw()"><div class="modal-content" onclick="event.stopPropagation()"><h3>📤 Withdraw</h3><p style="font-size:12px">To: <b id="accNum" style="color:#22c55e">Not Set</b></p><div class="time-note">⏰ Withdrawal Time: 9:30 AM - 5:30 PM Only</div><label>Quick Select Amount</label><div class="quick-amounts"><button class="quick-btn" onclick="selectAmount(200)">200</button><button class="quick-btn" onclick="selectAmount(500)">500</button><button class="quick-btn" onclick="selectAmount(700)">700</button><button class="quick-btn" onclick="selectAmount(1000)">1000</button><button class="quick-btn" onclick="selectAmount(1500)">1500</button><button class="quick-btn" onclick="selectAmount(2000)">2000</button></div><label>Amount</label><input type="number" id="withAmount" placeholder="Min 200" oninput="calcTax();highlightQuick()"><div class="calc">Tax 10%: <b id="taxShow">KSH 0</b> | You Get: <b id="netShow">KSH 0</b></div><label>PIN</label><div class="input-wrap"><input type="password" id="withPin" placeholder="****" maxlength="4"><span class="eye" onclick="toggleEye('withPin', this)">👁️</span></div><p style="text-align:center;margin:5px 0"><span onclick="forgotOption1();closeWithdraw()" style="color:#fbbf24;font-size:11px;text-decoration:underline;cursor:pointer">Forgot PIN?</span></p><button class="btn btn-withdraw" id="submitWithdrawBtn" onclick="submitWithdraw()">Submit Withdraw</button><button class="btn" style="background:#333;color:white" onclick="closeWithdraw()">Cancel</button></div></div>
+
+<!-- NEW WHATSAPP STYLE ADMIN CHAT - NO FLOATING -->
+<div id="chatModal" class="modal" onclick="closeAdminChat()"><div class="wa-modal-content" onclick="event.stopPropagation()"><div class="wa-header"><div class="wa-avatar">🛡️</div><div><div class="wa-name">NEXA ADMIN</div><div class="wa-status">Online • Replies within minutes</div></div><div style="margin-left:auto;cursor:pointer" onclick="closeAdminChat()">✕</div></div><div class="wa-body" id="chatMessages"><p style="color:#667781;font-size:11px;text-align:center;margin-top:20px">Messages auto-delete after 24hrs<br>Start chat with Admin</p></div><div class="wa-input-area"><input type="text" id="chatInput" class="wa-input" placeholder="Type a message" onkeypress="if(event.key==='Enter') sendChat()"><button class="wa-send" onclick="sendChat()">➤</button></div></div></div>
+
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <script>
@@ -100,36 +112,87 @@ if(!phone) window.location.href="index.html";
 let allTransactions=[]; let currentFilter='all';
 function showToast(msg,type="success"){const box=document.getElementById('toastBox');const toast=document.createElement('div');toast.className=`toast ${type}`;toast.innerHTML=`<div>${type=='success'?'✅':'❌'}</div><div style="flex:1;font-size:13px">${msg}</div>`;box.appendChild(toast);setTimeout(()=>{ toast.style.opacity='0'; setTimeout(()=>toast.remove(),300) },4500);}
 function toggleEye(id,el){const input=document.getElementById(id);if(input.type==='password'){ input.type='text'; el.innerText='🙈'; } else { input.type='password'; el.innerText='👁️'; }}
-function formatDateTime(ts){if(!ts) return 'Just now';let d=ts.seconds ? new Date(ts.seconds*1000) : new Date(ts);return d.toLocaleDateString()+' '+d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});}
+function formatDateTime(ts){if(!ts) return 'Just now';let d=ts.seconds ? new Date(ts.seconds*1000) : new Date(ts);return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});}
+function formatDateFull(ts){if(!ts) return '';let d=ts.seconds ? new Date(ts.seconds*1000) : new Date(ts);return d.toLocaleDateString()+' '+d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});}
 function goBack(){ window.location.href='dashboard.html'; }
 function handleLogout(){ if(confirm("Log out from NEXA VIEW?")){ localStorage.removeItem("nexaPhone"); window.location.href='index.html'; }}
 function selectAmount(amt){document.getElementById('withAmount').value=amt;calcTax();highlightQuick();}
 function highlightQuick(){let val=document.getElementById('withAmount').value;document.querySelectorAll('.quick-btn').forEach(b=>{b.classList.toggle('active', b.innerText==val);});}
-function isWithdrawalTimeAllowed(){const now = new Date();const hour = now.getHours();const minute = now.getMinutes();const totalMinutes = hour*60 + minute;const start = 9*60+30;const end = 17*60+30;return totalMinutes >= start && totalMinutes <= end;}
-async function loadWallet(){db.collection("users").doc(phone).get().then(async doc=>{if(doc.exists){let u=doc.data();document.getElementById('userId').innerText = u.userId || 'NEXA'+phone.slice(-4);document.getElementById('totalIncome').innerText = 'Ksh '+((u.totalIncome||0)+(u.totalReferralEarned||0)).toFixed(2);document.getElementById('referralIncome').innerText = 'Ksh '+(u.totalReferralEarned||0).toFixed(2);document.getElementById('bal').innerText = 'Ksh '+(u.balance||0).toFixed(2);document.getElementById('accNum').innerText = u.accNumber||'Not Set';document.getElementById('currentAcc').innerText = u.accNumber||'Not Set';document.getElementById('setupAccNumber').value = u.accNumber||'';const todayStr = new Date().toISOString().split('T')[0];let todayProfit = 0;let todayReferral = 0;try{const profitSnap = await db.collection("users").doc(phone).collection("dailyEarnings").where("dateStr","==",todayStr).get();profitSnap.forEach(d=>{ todayProfit += (d.data().amount||0); });const refSnap = await db.collection("referralEarnings").where("toPhone","==",phone).where("dateStr","==",todayStr).get();refSnap.forEach(d=>{ todayReferral += (d.data().amount||0); });if(profitSnap.empty && refSnap.empty){if(u.lastIncomeUpdate === todayStr){todayProfit = u.todayProfit || 0;todayReferral = u.todayReferral || 0;} else {todayProfit = 0; todayReferral = 0;db.collection("users").doc(phone).update({todayIncome:0, todayProfit:0, todayReferral:0, lastIncomeUpdate:todayStr});}}}catch(e){ todayProfit = u.todayProfit||0; todayReferral = u.todayReferral||0; }const todayTotal = todayProfit + todayReferral;document.getElementById('todayIncome').innerText = 'Ksh '+todayTotal.toFixed(2);}});db.collection("settings").doc("info").get().then(doc=>{ if(doc.exists) document.getElementById('mpesaNum').innerText = doc.data().mpesa || "0718422377"; });loadAllHistory(); loadChat();}
+function isWithdrawalTimeAllowed(){const now = new Date();const totalMinutes = now.getHours()*60 + now.getMinutes();return totalMinutes >= 570 && totalMinutes <= 1050;}
+async function loadWallet(){db.collection("users").doc(phone).get().then(async doc=>{if(doc.exists){let u=doc.data();document.getElementById('userId').innerText = u.userId || 'NEXA'+phone.slice(-4);document.getElementById('totalIncome').innerText = 'Ksh '+((u.totalIncome||0)+(u.totalReferralEarned||0)).toFixed(2);document.getElementById('referralIncome').innerText = 'Ksh '+(u.totalReferralEarned||0).toFixed(2);document.getElementById('bal').innerText = 'Ksh '+(u.balance||0).toFixed(2);document.getElementById('accNum').innerText = u.accNumber||'Not Set';document.getElementById('currentAcc').innerText = u.accNumber||'Not Set';document.getElementById('setupAccNumber').value = u.accNumber||'';const todayStr = new Date().toISOString().split('T')[0];let todayProfit = 0;let todayReferral = 0;try{const profitSnap = await db.collection("users").doc(phone).collection("dailyEarnings").where("dateStr","==",todayStr).get();profitSnap.forEach(d=>{ todayProfit += (d.data().amount||0); });const refSnap = await db.collection("referralEarnings").where("toPhone","==",phone).where("dateStr","==",todayStr).get();refSnap.forEach(d=>{ todayReferral += (d.data().amount||0); });if(profitSnap.empty && refSnap.empty){if(u.lastIncomeUpdate === todayStr){todayProfit = u.todayProfit || 0;todayReferral = u.todayReferral || 0;} else {todayProfit = 0; todayReferral = 0;db.collection("users").doc(phone).update({todayIncome:0, todayProfit:0, todayReferral:0, lastIncomeUpdate:todayStr});}}}catch(e){ todayProfit = u.todayProfit||0; todayReferral = u.todayReferral||0; }document.getElementById('todayIncome').innerText = 'Ksh '+(todayProfit+todayReferral).toFixed(2);}});db.collection("settings").doc("info").get().then(doc=>{ if(doc.exists) document.getElementById('mpesaNum').innerText = doc.data().mpesa || "0718422377"; });loadAllHistory();}
 function loadAllHistory(){allTransactions=[];db.collection("deposits").where("phone","==",phone).get().then(snap=>{snap.forEach(d=>{let x=d.data(); x.type='DEPOSIT'; allTransactions.push(x);});db.collection("withdrawals").where("phone","==",phone).get().then(snap2=>{snap2.forEach(d=>{let x=d.data(); x.type='WITHDRAW'; allTransactions.push(x);});allTransactions.sort((a,b)=> (b.date?.seconds||0)-(a.date?.seconds||0));renderHistory();});});}
-function renderHistory(){let html=""; let filtered=currentFilter==='all'?allTransactions:allTransactions.filter(t=> (t.status||'pending').toLowerCase()===currentFilter);if(filtered.length===0){ document.getElementById('allHistory').innerHTML=`<p style="color:#666;font-size:12px">No ${currentFilter}</p>`; return; }filtered.forEach(x=>{let status=(x.status||'pending').toLowerCase();let badgeClass=status==='pending'?'badge-pending':status==='rejected'?'badge-rejected':'badge-approved';let amount=x.net||x.amount;let sign=x.type==='DEPOSIT'?'+':'-';html+=`<div class="history-item"><div><b>${x.type}</b><br><span style="font-size:11px;color:#888">${formatDateTime(x.date)}</span><br><span style="font-size:12px;color:${x.type==='DEPOSIT'?'#22c55e':'#fbbf24'}">${sign} Ksh ${amount}</span></div><div><span class="badge ${badgeClass}">${status}</span></div></div>`;});document.getElementById('allHistory').innerHTML=html;}
+function renderHistory(){let html=""; let filtered=currentFilter==='all'?allTransactions:allTransactions.filter(t=> (t.status||'pending').toLowerCase()===currentFilter);if(filtered.length===0){ document.getElementById('allHistory').innerHTML=`<p style="color:#666;font-size:12px">No ${currentFilter}</p>`; return; }filtered.forEach(x=>{let status=(x.status||'pending').toLowerCase();let badgeClass=status==='pending'?'badge-pending':status==='rejected'?'badge-rejected':'badge-approved';let amount=x.net||x.amount;let sign=x.type==='DEPOSIT'?'+':'-';html+=`<div class="history-item"><div><b>${x.type}</b><br><span style="font-size:11px;color:#888">${formatDateFull(x.date)}</span><br><span style="font-size:12px;color:${x.type==='DEPOSIT'?'#22c55e':'#fbbf24'}">${sign} Ksh ${amount}</span></div><div><span class="badge ${badgeClass}">${status}</span></div></div>`;});document.getElementById('allHistory').innerHTML=html;}
 function filterHist(type){currentFilter=type;['all','pending','approved','rejected'].forEach(t=>{let el=document.getElementById('f'+t.charAt(0).toUpperCase()+t.slice(1));el.style.background=t===type?'#fbbf24':'#222'; el.style.color=t===type?'#000':'#aaa';});renderHistory();}
-function copyNum(){ navigator.clipboard.writeText(document.getElementById('mpesaNum').innerText); showToast("Copied: "+document.getElementById('mpesaNum').innerText,"success"); }
+function copyNum(){ navigator.clipboard.writeText(document.getElementById('mpesaNum').innerText); showToast("Copied","success"); }
 function openAccount(){ document.getElementById('accountModal').style.display='flex'; }
 function closeAccount(){ document.getElementById('accountModal').style.display='none'; }
 function openDeposit(){ document.getElementById('depositModal').style.display='flex'; }
 function closeDeposit(){ document.getElementById('depositModal').style.display='none'; }
-function openWithdraw(){ db.collection("users").doc(phone).get().then(doc=>{let u=doc.data();if(!u.accNumber||!u.accPin){ showToast("Set ACCOUNT first","error"); openAccount(); return; }if(!isWithdrawalTimeAllowed()){showToast("⛔ Withdrawal allowed only 9:30 AM to 5:30 PM","error");return;}document.getElementById('withdrawModal').style.display='flex'; calcTax();});}
+function openWithdraw(){ db.collection("users").doc(phone).get().then(doc=>{let u=doc.data();if(!u.accNumber||!u.accPin){ showToast("Set ACCOUNT first","error"); openAccount(); return; }if(!isWithdrawalTimeAllowed()){showToast("⛔ Withdrawal 9:30 AM - 5:30 PM only","error");return;}document.getElementById('withdrawModal').style.display='flex'; calcTax();});}
 function closeWithdraw(){ document.getElementById('withdrawModal').style.display='none'; }
 function calcTax(){ let amt=parseFloat(document.getElementById('withAmount').value)||0; document.getElementById('taxShow').innerText="KSH "+(amt*0.1).toFixed(0); document.getElementById('netShow').innerText="KSH "+(amt*0.9).toFixed(0); }
-function saveAccount(){let acc=document.getElementById('setupAccNumber').value.trim();let pin=document.getElementById('setupPin').value.trim();let pinConfirm=document.getElementById('setupPinConfirm').value.trim();if(!acc||acc.length<10){ showToast("Enter valid M-PESA","error"); return; }if(!pin||pin.length!=4||isNaN(pin)){ showToast("PIN 4 digits","error"); return; }if(pin!==pinConfirm){ showToast("PINs don't match","error"); return; }db.collection("users").doc(phone).update({accNumber:acc, accPin:pin}).then(()=>{showToast(`✅ Saved: ${acc}`,"success"); closeAccount(); loadWallet();document.getElementById('setupPin').value=""; document.getElementById('setupPinConfirm').value="";});}
+function saveAccount(){let acc=document.getElementById('setupAccNumber').value.trim();let pin=document.getElementById('setupPin').value.trim();let pinConfirm=document.getElementById('setupPinConfirm').value.trim();if(!acc||acc.length<10){ showToast("Enter valid M-PESA","error"); return; }if(!pin||pin.length!=4||isNaN(pin)){ showToast("PIN 4 digits","error"); return; }if(pin!==pinConfirm){ showToast("PINs don't match","error"); return; }db.collection("users").doc(phone).update({accNumber:acc, accPin:pin}).then(()=>{showToast(`Saved: ${acc}`,"success"); closeAccount(); loadWallet();});}
 function forgotOption1(){ closeAccount(); closeWithdraw(); document.getElementById('forgotModal1').style.display='flex'; }
-function closeForgot1(){ document.getElementById('forgotModal1').style.display='none'; document.getElementById('newPinArea').style.display='none'; document.getElementById('verifyMpesa').value=""; }
-function verifyAndReset(){let verifyNum=document.getElementById('verifyMpesa').value.trim();db.collection("users").doc(phone).get().then(doc=>{let u=doc.data();if(!u.accNumber){ showToast("No account set yet","error"); return; }if(verifyNum !== u.accNumber && verifyNum.replace(/\D/g,'').slice(-9) !== u.accNumber.replace(/\D/g,'').slice(-9)){showToast("❌ Number doesn't match registered M-PESA","error"); return;}showToast("✅ Verified! Set new PIN below","success");document.getElementById('newPinArea').style.display='block';});}
-function saveNewPin(){let p1=document.getElementById('newPin1').value.trim();let p2=document.getElementById('newPin2').value.trim();if(!p1||p1.length!=4||isNaN(p1)){ showToast("PIN must be 4 digits","error"); return; }if(p1!==p2){ showToast("PINs don't match","error"); return; }db.collection("users").doc(phone).update({accPin:p1}).then(()=>{showToast("✅ New PIN saved! Use it to withdraw","success");closeForgot1();document.getElementById('newPin1').value=""; document.getElementById('newPin2').value="";});}
-function forgotOption2(){if(!confirm("Request Admin to reset your PIN? Admin will reset to 0000, then you set new PIN.")) return;db.collection("pinResetRequests").add({phone, userId:document.getElementById('userId').innerText, status:"pending", date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{showToast("✅ Reset request sent to Admin!<br>Admin will reset PIN to 0000. Check back in 5 mins","success");db.collection("chats").add({phone, message:"🔐 PIN RESET REQUEST - Please reset my PIN to 0000", from:"user", date:firebase.firestore.FieldValue.serverTimestamp(), expireAt: firebase.firestore.Timestamp.fromDate(new Date(Date.now()+86400000))});});}
-function submitDeposit(){let amount=parseFloat(document.getElementById('depAmount').value);let code=document.getElementById('depCode').value;if(amount<100){ showToast("Min Ksh 100","error"); return; }if(code.length<5){ showToast("Enter code","error"); return; }db.collection("deposits").add({phone, amount, code, status:"pending", date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{showToast(`✅ Deposit Ksh ${amount} sent`,"success"); closeDeposit(); loadAllHistory();});}
-function submitWithdraw(){if(!isWithdrawalTimeAllowed()){showToast("⛔ Withdrawal closed! Open 9:30 AM - 5:30 PM only","error");return;}let amount=parseFloat(document.getElementById('withAmount').value);let pin=document.getElementById('withPin').value;db.collection("users").doc(phone).get().then(doc=>{let u=doc.data();if(pin!=u.accPin){ showToast("Wrong PIN - Use Forgot PIN?","error"); return; }if(amount<200){ showToast("Min Ksh 200","error"); return; }if(amount>u.balance){ showToast("Insufficient","error"); return; }let net=amount*0.9; let tax=amount*0.1;db.collection("withdrawals").add({phone, amount, net, tax, accNumber:u.accNumber, status:"pending", date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{db.collection("users").doc(phone).update({balance:u.balance-amount});showToast(`✅ Withdraw Ksh ${amount} -> You get ${net}`,"success"); closeWithdraw(); loadWallet();});});}
+function closeForgot1(){ document.getElementById('forgotModal1').style.display='none'; document.getElementById('newPinArea').style.display='none'; }
+function verifyAndReset(){let verifyNum=document.getElementById('verifyMpesa').value.trim();db.collection("users").doc(phone).get().then(doc=>{let u=doc.data();if(verifyNum !== u.accNumber && verifyNum.replace(/\D/g,'').slice(-9) !== u.accNumber.replace(/\D/g,'').slice(-9)){showToast("Number mismatch","error"); return;}document.getElementById('newPinArea').style.display='block';showToast("Verified! Set new PIN","success");});}
+function saveNewPin(){let p1=document.getElementById('newPin1').value.trim();let p2=document.getElementById('newPin2').value.trim();if(p1.length!=4||p1!==p2){ showToast("PINs don't match","error"); return; }db.collection("users").doc(phone).update({accPin:p1}).then(()=>{showToast("New PIN saved","success");closeForgot1();});}
+function forgotOption2(){if(!confirm("Request Admin reset to 0000?")) return;db.collection("pinResetRequests").add({phone, userId:document.getElementById('userId').innerText, status:"pending", date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{showToast("Request sent to Admin","success");db.collection("chats").add({phone, message:"🔐 PIN RESET REQUEST - Please reset my PIN to 0000", from:"user", date:firebase.firestore.FieldValue.serverTimestamp(), expireAt: firebase.firestore.Timestamp.fromDate(new Date(Date.now()+86400000))});});}
+function submitDeposit(){let amount=parseFloat(document.getElementById('depAmount').value);let code=document.getElementById('depCode').value;if(amount<100||code.length<5){ showToast("Check amount/code","error"); return; }db.collection("deposits").add({phone, amount, code, status:"pending", date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{showToast(`Deposit Ksh ${amount} sent`,"success"); closeDeposit(); loadAllHistory();});}
+
+// FIXED WITHDRAWAL - NOW RESPONDS
+function submitWithdraw(){
+  const btn = document.getElementById('submitWithdrawBtn');
+  btn.innerText = "Processing..."; btn.disabled = true;
+
+  if(!isWithdrawalTimeAllowed()){
+    showToast("⛔ Closed! 9:30 AM - 5:30 PM only","error");
+    btn.innerText = "Submit Withdraw"; btn.disabled = false; return;
+  }
+  let amount=parseFloat(document.getElementById('withAmount').value);
+  let pin=document.getElementById('withPin').value.trim();
+  if(!amount || amount<200){ showToast("Min Ksh 200","error"); btn.innerText="Submit Withdraw"; btn.disabled=false; return; }
+  if(!pin || pin.length!=4){ showToast("Enter 4-digit PIN","error"); btn.innerText="Submit Withdraw"; btn.disabled=false; return; }
+
+  db.collection("users").doc(phone).get().then(doc=>{
+    let u=doc.data();
+    if(pin!=u.accPin){ showToast("Wrong PIN","error"); btn.innerText="Submit Withdraw"; btn.disabled=false; return; }
+    if(amount>u.balance){ showToast("Insufficient balance","error"); btn.innerText="Submit Withdraw"; btn.disabled=false; return; }
+    let net=amount*0.9; let tax=amount*0.1;
+    db.collection("withdrawals").add({phone, amount, net, tax, accNumber:u.accNumber, status:"pending", date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{
+      db.collection("users").doc(phone).update({balance:firebase.firestore.FieldValue.increment(-amount)}).then(()=>{
+        showToast(`✅ Withdraw Ksh ${amount} requested! You get Ksh ${net}`,"success");
+        document.getElementById('withAmount').value=""; document.getElementById('withPin').value="";
+        calcTax(); btn.innerText="Submit Withdraw"; btn.disabled=false;
+        closeWithdraw(); loadWallet(); loadAllHistory();
+      });
+    }).catch(()=>{ showToast("Failed, try again","error"); btn.innerText="Submit Withdraw"; btn.disabled=false; });
+  }).catch(()=>{ showToast("Error loading account","error"); btn.innerText="Submit Withdraw"; btn.disabled=false; });
+}
+
+// WHATSAPP STYLE CHAT WITH 24HRS DELETE
 function openAdminChat(){ document.getElementById('chatModal').style.display='flex'; loadChat(); }
 function closeAdminChat(){ document.getElementById('chatModal').style.display='none'; }
-function loadChat(){const cutoff = new Date(Date.now() - 24*60*60*1000);db.collection("chats").where("phone","==",phone).orderBy("date","asc").onSnapshot(snap=>{let html=""; let hasUnread=false;snap.forEach(doc=>{let m=doc.data(); let msgDate = m.date?.seconds ? new Date(m.date.seconds*1000) : new Date(m.date);if(msgDate < cutoff){db.collection("chats").doc(doc.id).delete();return;}let cls=m.from==='user'?'msg-user':'msg-admin';html+=`<div class="msg ${cls}"><b style="font-size:10px">${m.from==='user'?'You':'Admin'}:</b><br>${m.message}<br><span style="font-size:9px;color:#aaa">${formatDateTime(m.date)}</span></div>`;if(m.from==='admin' && !m.read) hasUnread=true;});document.getElementById('chatMessages').innerHTML = html || '<p style="color:#666;font-size:11px">No messages yet. Say hi to admin!</p>';document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;document.getElementById('chatBadge').style.display = hasUnread ? 'block' : 'none';});}
-function sendChat(){let msg=document.getElementById('chatInput').value.trim();if(!msg){ showToast("Type message","error"); return; }db.collection("chats").add({phone, message:msg, from:"user", userId:document.getElementById('userId').innerText, date:firebase.firestore.FieldValue.serverTimestamp(),expireAt: firebase.firestore.Timestamp.fromDate(new Date(Date.now()+86400000)),read:false}).then(()=>{document.getElementById('chatInput').value="";showToast("✅ Message sent to ADMIN","success");});}
+function loadChat(){
+  const cutoff = new Date(Date.now() - 24*60*60*1000);
+  db.collection("chats").where("phone","==",phone).orderBy("date","asc").onSnapshot(snap=>{
+    let html=""; 
+    snap.forEach(doc=>{
+      let m=doc.data(); let msgDate = m.date?.seconds ? new Date(m.date.seconds*1000) : new Date(m.date);
+      if(msgDate < cutoff){ db.collection("chats").doc(doc.id).delete(); return; }
+      let cls = m.from==='user' ? 'wa-user' : 'wa-admin';
+      let tick = m.from==='user' ? '✓✓' : '';
+      html+=`<div class="wa-msg ${cls}">${m.message}<span class="wa-time">${formatDateTime(m.date)} ${tick}</span></div>`;
+    });
+    document.getElementById('chatMessages').innerHTML = html || '<p style="color:#667781;font-size:11px;text-align:center;margin-top:40px">🔒 Messages are end-to-end encrypted<br>Auto-delete after 24hrs<br><br>Say Hi to Admin 👋</p>';
+    const box = document.getElementById('chatMessages'); box.scrollTop = box.scrollHeight;
+  });
+}
+function sendChat(){
+  let msg=document.getElementById('chatInput').value.trim();
+  if(!msg){ return; }
+  document.getElementById('chatInput').value="";
+  db.collection("chats").add({phone, message:msg, from:"user", userId:document.getElementById('userId').innerText, date:firebase.firestore.FieldValue.serverTimestamp(), expireAt: firebase.firestore.Timestamp.fromDate(new Date(Date.now()+86400000)), read:false}).then(()=>{ loadChat(); });
+}
 window.onload=loadWallet;
 </script>
 </body>
