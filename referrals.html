@@ -7,40 +7,42 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 *{box-sizing:border-box}
 body{background:#000;color:white;font-family:Poppins;margin:0;padding:15px 15px 80px 15px}
-
 .box{margin:15px 0;padding:14px;border-radius:14px;background:#111;border:1px solid #222}
 .stat-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #222;font-size:13px}
 .stat-row:last-child{border:none}
 .stat-row b{color:#22c55e;font-size:13px}
 .stat-row.yellow{color:#fbbf24}
-
 h3{display:flex;align-items:center;gap:8px;color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
 .btn-wrap{display:flex;gap:8px;margin-top:12px}
 .btn{flex:1;padding:11px;background:linear-gradient(180deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:12px}
 .btn:active{transform:scale(0.97)}
 .btn-green{background:linear-gradient(180deg,#22c55e,#16a34a);color:white}
 .btn-orange{background:linear-gradient(180deg,#f97316,#ea580c);color:white}
-
 input{width:100%;padding:10px;background:#1a1a1a;border:1px solid #333;color:white;border-radius:8px;margin:6px 0;font-size:13px}
 label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
-
 .bottom-nav{position:fixed;bottom:0;left:0;width:100%;background:#111;border-top:1px solid #222;display:flex;justify-content:space-around;padding:8px 0;z-index:99}
 .nav-item{flex:1;text-align:center;font-size:10px;color:#888;cursor:pointer;text-decoration:none}
 .nav-item.active{color:#fbbf24;font-weight:700}
 .nav-item svg{width:20px;height:20px;margin-bottom:3px}
+.badge-active{background:#052e16;color:#22c55e;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700}
+.badge-inactive{background:#422006;color:#fbbf24;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700}
+#toastBox{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;width:90%;max-width:350px}
+.toast{background:#111;border:1px solid #22c55e;color:white;padding:12px;border-radius:12px;font-size:12px;margin-bottom:8px;box-shadow:0 10px 30px rgba(0,0,0,0.8)}
 </style>
 </head>
 <body>
-
+<div id="toastBox"></div>
 <h2>🎁 MY TEAM</h2>
 
 <div class="box">
   <div class="stat-row"><span>Referral Income Total</span><b class="yellow">Ksh <span id="refIncome">0.00</span></b></div>
+  <div class="stat-row"><span>LV1 Direct</span><b id="lv1Count">0</b></div>
+  <div class="stat-row"><span>LV2 Team</span><b id="lv2Count">0</b></div>
 </div>
 
 <div class="box">
   <h3>🎁 Referral & Earn 10%</h3>
-  <p style="font-size:12px;color:#22c55e;margin-bottom:10px">Earn 10% of what your referrals invest</p>
+  <p style="font-size:12px;color:#22c55e;margin-bottom:10px">Earn 10% LV1 + 5% LV2 when they buy product</p>
   <label>Your Referral Code</label>
   <input id="myCode" readonly>
   <label>Your Referral Link</label>
@@ -74,43 +76,121 @@ const db = firebase.firestore();
 const phone = localStorage.getItem("nexaPhone");
 if(!phone){ window.location.href = "index.html"; }
 
+function showToast(msg){
+  const box=document.getElementById('toastBox');
+  const t=document.createElement('div');
+  t.className='toast'; t.innerText="✅ "+msg;
+  box.appendChild(t); setTimeout(()=>t.remove(),3500);
+}
+
 function loadReferralInfo(){
-  db.collection("users").doc(phone).get().then(doc=>{
-    if(doc.exists){
-      let u = doc.data();
-      let myCode = u.myReferralCode || phone.substring(3,9);
-      let myLink = `https://nexa-view.vercel.app/register.html?ref=${myCode}`;
-      let refs = u.referrals || [];
+  db.collection("users").doc(phone).onSnapshot(doc=>{
+    if(!doc.exists) return;
+    let u = doc.data();
+    let myCode = u.myReferralCode || u.userId || phone.substring(3,9);
+    let myLink = `https://kevokevo426-cmd.github.io/nexa-view/index.html?ref=${myCode}`;
 
-      document.getElementById('myCode').value = myCode;
-      document.getElementById('myLink').value = myLink;
-      document.getElementById('refIncome').innerText = (u.totalReferralEarned || 0).toFixed(2);
-      document.getElementById('teamCount').innerText = refs.length;
+    document.getElementById('myCode').value = myCode;
+    document.getElementById('myLink').value = myLink;
+    document.getElementById('refIncome').innerText = (u.totalReferralEarned || 0).toFixed(2);
 
-      let html = "";
-      if(refs.length == 0){
-        html = "<p style='color:#888'>No team members yet</p>";
-      }else{
-        refs.forEach(refPhone=>{
-          html += `<div style="background:#1a1a1a;padding:8px;border-radius:8px;margin:5px 0;font-size:12px">${refPhone} - Joined</div>`;
-        })
-      }
+    // NEW: LV1 and LV2 from enhanced system + old referrals fallback
+    let lv1Phones = u.myReferralsLV1 || u.referrals || [];
+    let lv2Phones = u.myReferralsLV2 || [];
+    
+    document.getElementById('lv1Count').innerText = lv1Phones.length;
+    document.getElementById('lv2Count').innerText = lv2Phones.length;
+    document.getElementById('teamCount').innerText = lv1Phones.length + lv2Phones.length;
+
+    let html = "";
+    if(lv1Phones.length==0 && lv2Phones.length==0){
+      html = "<p style='color:#888'>No team members yet - Share your link!</p>";
       document.getElementById('refHistory').innerHTML = html;
+      return;
     }
-  })
+
+    html += `<p style="font-size:12px;color:#fbbf24;font-weight:700;margin:10px 0 6px">👤 LV1 - Direct (10% Bonus)</p>`;
+    if(lv1Phones.length==0){
+      html += `<p style='color:#555;font-size:11px'>No LV1 yet</p>`;
+    } else {
+      // Load each LV1 user
+      lv1Phones.forEach(refPhone=>{
+        db.collection("users").doc(refPhone).get().then(snap=>{
+          if(!snap.exists){
+            // Try find by userId
+            db.collection("users").where("userId","==",refPhone).get().then(s2=>{
+              s2.forEach(d=>renderUser(d.data(), d.id, "LV1", 10));
+            });
+            return;
+          }
+          renderUser(snap.data(), refPhone, "LV1", 10);
+        });
+      });
+    }
+
+    html += `<div id="lv1Container"></div>`;
+    html += `<p style="font-size:12px;color:#22c55e;font-weight:700;margin:15px 0 6px">👥👥 LV2 - Team of LV1 (5% Bonus)</p><div id="lv2Container"></div>`;
+    document.getElementById('refHistory').innerHTML = html;
+
+    // Render helpers after container exists
+    setTimeout(()=>{
+      if(lv1Phones.length>0){
+        document.getElementById('lv1Container').innerHTML="";
+        lv1Phones.forEach(p=>{
+          db.collection("users").doc(p).get().then(snap=>{
+            let user = snap.exists ? snap.data() : null;
+            if(!user){
+              db.collection("users").where("userId","==",p).get().then(s2=>{
+                s2.forEach(d=>appendRef(d.data(), "lv1Container", "LV1"));
+              });
+              return;
+            }
+            appendRef(user, "lv1Container", "LV1");
+          });
+        });
+      }
+      if(lv2Phones.length>0){
+        document.getElementById('lv2Container').innerHTML="";
+        lv2Phones.forEach(p=>{
+          db.collection("users").doc(p).get().then(snap=>{
+            let user = snap.exists ? snap.data() : null;
+            if(!user) return;
+            appendRef(user, "lv2Container", "LV2");
+          });
+        });
+      } else {
+        if(document.getElementById('lv2Container')) document.getElementById('lv2Container').innerHTML="<p style='color:#555;font-size:11px'>No LV2 yet - When LV1 invites, they become your LV2</p>";
+      }
+    },300);
+
+  });
+}
+
+function appendRef(user, containerId, level){
+  let el=document.getElementById(containerId);
+  if(!el) return;
+  let isActive = user.hasPurchased || user.isActive;
+  let statusBadge = isActive ? `<span class="badge-active">ACTIVE</span>` : `<span class="badge-inactive">INACTIVE</span>`;
+  let statusText = isActive ? "Bought Product" : "No purchase yet";
+  el.innerHTML += `<div style="background:#1a1a1a;padding:10px;border-radius:10px;margin:6px 0;display:flex;justify-content:space-between;align-items:center;border:1px solid #222">
+    <div><b style="font-size:13px">${user.userId||'N/A'}</b><br><span style="font-size:11px;color:#aaa">${user.phone||''}</span><br><span style="font-size:10px;color:#666">${level} - ${statusText}</span></div>
+    <div>${statusBadge}</div>
+  </div>`;
+}
+
+function renderUser(user, phoneKey, level, percent){
+  // used for fallback - not needed with appendRef
 }
 
 function copyLink(){ 
-  let link = document.getElementById('myLink'); 
-  link.select(); 
-  document.execCommand('copy'); 
-  alert("✅ Referral Link Copied!"); 
+  let link = document.getElementById('myLink').value; 
+  navigator.clipboard.writeText(link).then(()=>showToast("Referral Link Copied!"));
 }
 
 function shareLink(){
   let link = document.getElementById('myLink').value;
   let code = document.getElementById('myCode').value;
-  let text = `🔥 Join NEXA VIEW and Earn Daily!\n\nUse my referral code: ${code}\nRegister here: ${link}\n\nEarn 10% bonus on referrals!`;
+  let text = `🔥 Join NEXA VIEW and Earn Daily!\n\nUse my referral code: ${code}\nRegister here: ${link}\n\nEarn 10% LV1 + 5% LV2 bonus!`;
   let whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
   window.open(whatsappUrl, '_blank');
 }
