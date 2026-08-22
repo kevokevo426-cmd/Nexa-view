@@ -64,6 +64,14 @@ label{font-size:11px;color:#aaa}
 .confirm-box{background:#1a1a1a;border:2px solid #ef4444;border-radius:16px;padding:22px;width:90%;max-width:360px;text-align:center;box-shadow:0 15px 40px rgba(0,0,0,0.9)}
 .copy-tab{padding:3px 8px;background:#fbbf24;color:#000;border-radius:6px;font-size:10px;font-weight:800;cursor:pointer;border:none}
 .transparency-box{background:#0f2a1a;border:1px dashed #22c55e;border-radius:10px;padding:10px;margin:10px 0}
+.bottom-nav{position:fixed;bottom:0;left:0;width:100%;background:#0a0a0a;border-top:1px solid #222;display:flex;justify-content:space-around;padding:10px 0 15px 0;z-index:99}
+.nav-item{flex:1;text-align:center;font-size:11px;color:#666;cursor:pointer;text-decoration:none;transition:0.3s}
+.nav-item svg{width:24px;height:24px;margin-bottom:4px;display:block;margin:0 auto 4px auto;transition:0.3s}
+.nav-item.active{transform:translateY(-3px) scale(1.1);font-weight:800}
+.nav-item.active:nth-child(1){color:#fbbf24}.nav-item.active:nth-child(1) svg{filter:drop-shadow(0 0 10px #fbbf24);fill:#fbbf24}
+.nav-item:nth-child(2).active{color:#22c55e}.nav-item:nth-child(2).active svg{filter:drop-shadow(0 0 10px #22c55e);fill:#22c55e}
+.nav-item:nth-child(3).active{color:#3b82f6}.nav-item:nth-child(3).active svg{filter:drop-shadow(0 0 10px #3b82f6);fill:#3b82f6}
+.nav-item:nth-child(4).active{color:#f97316}.nav-item:nth-child(4).active svg{filter:drop-shadow(0 0 10px #f97316);fill:#f97316}
 </style>
 </head>
 <body>
@@ -117,6 +125,13 @@ label{font-size:11px;color:#aaa}
 
 <div id="confirmModal" class="notify-modal"><div class="confirm-box"><div style="font-size:40px;margin-bottom:12px">🗑️</div><p id="confirmText" style="font-size:14px;margin:0 0 18px 0;color:white;line-height:1.4"></p><div style="display:flex;gap:12px"><button class="btn" style="flex:1;background:#222;color:#aaa;border:1px solid #444;padding:14px" onclick="closeConfirm()">Cancel</button><button class="btn" id="confirmOkBtn" style="flex:1;background:#ef4444;color:white;padding:14px">OK Delete</button></div></div></div>
 
+<div class="bottom-nav">
+  <a href="dashboard.html" class="nav-item"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Home</a>
+  <a href="tasks.html" class="nav-item"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>Tasks</a>
+  <a href="wallet.html" class="nav-item active"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2.9 2 2v1h-9c-1.11 0-2.9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>Wallet</a>
+  <a href="referrals.html" class="nav-item"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>Team</a>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <script>
@@ -154,17 +169,29 @@ async function loadWallet(){
     if(doc.exists){
       let u=doc.data();
       document.getElementById('userId').innerText=u.userId||'NEXA'+phone.slice(-4);
-      document.getElementById('totalIncome').innerText='Ksh '+((u.totalProfit||0)+(u.totalReferralEarned||0)).toFixed(2);
-      document.getElementById('referralIncome').innerText='Ksh '+(u.totalReferralEarned||0).toFixed(2);
+
+      // FINAL LOGIC AS YOU DEFINED
+      let totalProfit = u.totalProfit || u.totalIncome || 0;
+      let totalRef = u.totalReferralEarned || 0;
+      let totalIncome = totalProfit + totalRef; // Overall since first purchase + referrals
+
+      document.getElementById('totalIncome').innerText='Ksh '+totalIncome.toFixed(2);
+      document.getElementById('referralIncome').innerText='Ksh '+totalRef.toFixed(2);
       document.getElementById('bal').innerText='Ksh '+(u.balance||0).toFixed(2);
       document.getElementById('accNum').innerText=u.accNumber||'Not Set';
       document.getElementById('currentAcc').innerText=u.accNumber||'Not Set';
       document.getElementById('setupAccNumber').value=u.accNumber||'';
       document.getElementById('availBal').innerText='Ksh '+(u.balance||0).toFixed(2);
-      let todayStr=new Date().toISOString().split('T')[0];
-      let tp=u.todayProfit||0; let tr=u.todayReferral||0;
-      if(u.lastIncomeUpdate!==todayStr){tp=0;tr=0;}
-      document.getElementById('todayIncome').innerText='Ksh '+(tp+tr).toFixed(2);
+
+      // Today's Income - profit + referral, clears at 0000hrs
+      let todayISO = new Date().toISOString().split('T')[0];
+      if(u.lastIncomeUpdate === todayISO){
+        let tp = u.todayProfit||0;
+        let tr = u.todayReferral||0;
+        document.getElementById('todayIncome').innerText='Ksh '+(tp+tr).toFixed(2);
+      } else {
+        document.getElementById('todayIncome').innerText='Ksh 0.00';
+      }
     }
   });
   db.collection("settings").doc("deposit").get().then(doc=>{if(doc.exists)document.getElementById('mpesaNum').innerText=doc.data().mpesaNumber||doc.data().mpesa||"0718422377";});
@@ -257,8 +284,6 @@ function saveNewPin(){
   db.collection("users").doc(phone).update({accPin:p1}).then(()=>{showNotify("New PIN saved!","✅");closeForgot1();});
 }
 function forgotOption2(){db.collection("pinResetRequests").add({phone,userId:document.getElementById('userId').innerText,status:"pending",date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{showNotify("Request sent to Admin - PIN will be reset to 0000 after approval","✅");closeAccount();});}
-
-// CHAT - FIXED DELETE LOGIC
 function openAdminChat(){document.getElementById('chatModal').style.display='flex';loadChats();}
 function closeAdminChat(){document.getElementById('chatModal').style.display='none';if(chatUnsubscribe)chatUnsubscribe();hideContextMenu();}
 function loadChats(){
@@ -276,7 +301,6 @@ function loadChats(){
   });
 }
 function sendChat(){let input=document.getElementById('chatInput');let msg=input.value.trim();if(!msg)return;db.collection("chats").add({phone,message:msg,from:"user",date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{input.value="";});}
-
 function startPress(id,e){
   if(e) e.preventDefault();
   pendingDeleteId=id;
@@ -297,8 +321,6 @@ function showContextMenu(x,y){
   menu.style.display='block';
 }
 function hideContextMenu(){document.getElementById('contextMenu').style.display='none';}
-
-// FIXED: Save ID before hiding menu
 document.getElementById('deleteOneBtn').onclick=function(){
   let idToDelete = pendingDeleteId || selectedChatId;
   hideContextMenu();
@@ -310,7 +332,6 @@ document.getElementById('deleteOneBtn').onclick=function(){
     }).catch(()=>{showNotify("Delete failed - Try again","❌");});
   });
 };
-
 function openDeleteAllConfirm(){
   showConfirm("Delete ALL your chats? Both you and admin will lose all chats! This cannot be undone!",()=>{
     db.collection("chats").where("phone","==",phone).get().then(snap=>{
@@ -323,11 +344,9 @@ function openDeleteAllConfirm(){
     });
   });
 }
-
 document.addEventListener('click',function(e){
   if(!e.target.closest('#contextMenu') &&!e.target.closest('.wa-msg')) hideContextMenu();
 });
-
 loadWallet();
 </script>
 </body>
