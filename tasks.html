@@ -15,7 +15,6 @@ h3{color:white;margin:0 0 12px 0;font-size:16px;font-weight:700}
 .profit-box{flex:1;background:#052e16;border:1.5px solid #22c55e;border-radius:12px;padding:12px;text-align:center;display:none}
 .profit-box.show{display:block;animation:pop 0.5s ease}
 @keyframes pop{0%{transform:scale(0.5);opacity:0}100%{transform:scale(1);opacity:1}}
-/* THICKER SCAN BAR ON TOP */
 .scan-wrap{width:100%;margin-bottom:14px;display:none}
 .scan-label{text-align:center;font-size:12px;color:#fbbf24;font-weight:700;margin-bottom:6px;letter-spacing:1px}
 .scan-bar{width:100%;height:12px;background:#222;border-radius:20px;overflow:hidden;border:1px solid #333;position:relative}
@@ -164,7 +163,7 @@ function startSell(key, daily){
   fill.style.width="0%";
 
   let interval=setInterval(()=>{
-    progress+=2; // SLOW scan - left to right
+    progress+=2;
     if(progress>100) progress=100;
     fill.style.width=progress+"%";
 
@@ -182,18 +181,30 @@ function startSell(key, daily){
         saveProfit(key, daily);
       },400);
     }
-  },80); // slow speed - total ~4 seconds
+  },80);
 }
 
 function saveProfit(key, daily){
-  let today=new Date().toDateString();
+  let todayStr=new Date().toDateString();
+  let todayISO=new Date().toISOString().split('T')[0];
   db.collection("users").doc(phone).get().then(doc=>{
     let u=doc.data();
-    let newBalance=(u.balance||0)+daily;
     let lastClaim=u.lastClaim||{};
-    lastClaim[key]=today;
-    db.collection("users").doc(phone).update({balance:newBalance,totalIncome:(u.totalIncome||0)+daily,lastClaim:lastClaim,lastIncomeUpdate:new Date().toISOString().split('T')[0]}).then(()=>{
-      showToast("Ksh "+daily+" profit added!");
+    lastClaim[key]=todayStr;
+
+    // FIXED - YOUR DEFINITION: Total Income = profit + referral since start, Today's = profit+referral today clears 00:00
+    let isNewDay = u.lastIncomeUpdate!== todayISO;
+    let newTodayProfit = isNewDay? daily : (u.todayProfit||0)+daily;
+
+    db.collection("users").doc(phone).update({
+      balance: firebase.firestore.FieldValue.increment(daily),
+      totalProfit: firebase.firestore.FieldValue.increment(daily),
+      totalIncome: firebase.firestore.FieldValue.increment(daily),
+      todayProfit: newTodayProfit,
+      lastClaim: lastClaim,
+      lastIncomeUpdate: todayISO
+    }).then(()=>{
+      showToast("Ksh "+daily+" profit added to wallet!");
       loadTasks();
     });
   });
