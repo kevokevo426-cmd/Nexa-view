@@ -24,7 +24,7 @@ body{background:#000;color:white;font-family:Poppins;padding:12px;margin:0;paddi
 .badge-rejected{background:#450a0a;color:#ef4444}
 .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);z-index:999;justify-content:center;align-items:center}
 .modal-content{background:#111;width:92%;max-width:400px;border-radius:16px;padding:20px;border:1px solid #333;max-height:90vh;overflow-y:auto}
-input{width:100%;padding:12px;background:#1a1a1a;border:1px solid #333;color:white;border-radius:8px;margin:8px 0;box-sizing:border-box}
+input,textarea{width:100%;padding:12px;background:#1a1a1a;border:1px solid #333;color:white;border-radius:8px;margin:8px 0;box-sizing:border-box;font-family:Poppins}
 label{font-size:11px;color:#aaa}
 .calc{font-size:12px;background:#1a3d2a;padding:8px;border-radius:8px;margin:8px 0;border:1px solid #22c55e}
 .input-wrap{position:relative}
@@ -47,23 +47,23 @@ label{font-size:11px;color:#aaa}
 .wa-avatar{width:38px;height:38px;background:white;border-radius:50%;display:flex;justify-content:center;align-items:center;font-size:20px}
 .wa-name{font-weight:700;font-size:14px}
 .wa-status{font-size:11px;opacity:0.9}
-.wa-body{flex:1;background:#0b141a;background-image:url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');background-size:cover;overflow-y:auto;padding:12px;display:flex;flex-direction:column}
-.wa-msg{padding:8px 12px;border-radius:8px;margin:6px 0;max-width:75%;font-size:13px;position:relative;box-shadow:0 1px 0.5px rgba(0,0,0,0.3);word-wrap:break-word;user-select:none;cursor:pointer}
-.wa-msg:active{transform:scale(0.97)}
+.wa-body{flex:1;background:#0b141a;overflow-y:auto;padding:12px;display:flex;flex-direction:column}
+.wa-msg{padding:8px 12px;border-radius:8px;margin:6px 0;max-width:75%;font-size:13px;position:relative;box-shadow:0 1px 0.5px rgba(0,0,0,0.3);word-wrap:break-word;user-select:none;cursor:pointer;transition:0.15s}
+.wa-msg:active{transform:scale(0.95);background:#c6e8b5!important}
 .wa-user{background:#dcf8c6;color:#000;margin-left:auto;border-top-right-radius:0;align-self:flex-end}
 .wa-admin{background:white;color:#000;margin-right:auto;border-top-left-radius:0;align-self:flex-start}
 .wa-time{font-size:9px;color:#667781;margin-top:4px;text-align:right;display:block}
 .wa-input-area{background:#f0f2f5;padding:10px;display:flex;gap:8px;align-items:center;flex-shrink:0}
 .wa-input{flex:1;background:white;border:none;border-radius:25px;padding:12px 18px;font-size:14px;outline:none;color:#000}
 .wa-send{background:#25d366;border:none;width:46px;height:46px;border-radius:50%;display:flex;justify-content:center;align-items:center;cursor:pointer;font-size:20px;color:white;flex-shrink:0}
-.context-menu{position:fixed;background:#222;border:1px solid #444;border-radius:10px;padding:6px;z-index:100000;display:none;min-width:180px;box-shadow:0 10px 30px rgba(0,0,0,0.9)}
-.context-menu button{display:block;width:100%;padding:10px 12px;background:#1a1a1a;border:none;color:white;text-align:left;border-radius:6px;margin:3px 0;font-size:12px;font-family:Poppins}
-.context-menu button.delete{color:#ef4444}
+.context-menu{position:fixed;background:#222;border:1px solid #555;border-radius:12px;padding:8px;z-index:100000;display:none;min-width:200px;box-shadow:0 15px 40px rgba(0,0,0,0.9)}
+.context-menu button{display:block;width:100%;padding:12px 14px;background:#1a1a1a;border:none;color:white;text-align:left;border-radius:8px;margin:4px 0;font-size:13px;font-family:Poppins;font-weight:600}
+.context-menu button.delete{background:#450a0a;color:#ff6b6b;border:1px solid #ef4444}
 .notify-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:100001;justify-content:center;align-items:center}
 .notify-box{background:#111;border:1.5px solid #fbbf24;border-radius:16px;padding:20px;width:85%;max-width:350px;text-align:center}
-.confirm-box{background:#111;border:1.5px solid #ef4444;border-radius:16px;padding:20px;width:85%;max-width:350px;text-align:center}
+.confirm-box{background:#1a1a1a;border:2px solid #ef4444;border-radius:16px;padding:22px;width:90%;max-width:360px;text-align:center;box-shadow:0 15px 40px rgba(0,0,0,0.9)}
 .copy-tab{padding:3px 8px;background:#fbbf24;color:#000;border-radius:6px;font-size:10px;font-weight:800;cursor:pointer;border:none}
-.copy-tab:active{transform:scale(0.9)}
+.transparency-box{background:#0f2a1a;border:1px dashed #22c55e;border-radius:10px;padding:10px;margin:10px 0}
 </style>
 </head>
 <body>
@@ -99,21 +99,23 @@ label{font-size:11px;color:#aaa}
   <div id="allHistory"><p style="color:#666;font-size:12px">Loading...</p></div>
 </div>
 
-<div id="accountModal" class="modal" onclick="closeAccount()"><div class="modal-content" onclick="event.stopPropagation()"><h3>⚙️ My Receiving Account</h3><p style="font-size:11px;color:#aaa">Current: <b id="currentAcc" style="color:#22c55e">Not Set</b></p><label>M-PESA Number</label><input type="tel" id="setupAccNumber" placeholder="07xxxxxxxx"><label>Set 4-Digit PIN</label><div class="input-wrap"><input type="password" id="setupPin" placeholder="****" maxlength="4"><span class="eye" onclick="toggleEye('setupPin', this)">👁️</span></div><label>Confirm PIN</label><div class="input-wrap"><input type="password" id="setupPinConfirm" placeholder="****" maxlength="4"><span class="eye" onclick="toggleEye('setupPinConfirm', this)">👁️</span></div><button class="btn btn-withdraw" onclick="saveAccount()">💾 Save Account & PIN</button><div style="margin-top:15px;padding-top:12px;border-top:1px solid #222"><p style="font-size:12px;color:#fbbf24;text-align:center">Forgot PIN? Use options below:</p><button class="btn" style="background:#333;color:white;border:1px solid #444" onclick="forgotOption1()">Option 1: Verify M-PESA to Reset</button><button class="btn" style="background:#222;color:#fbbf24;border:1px dashed #fbbf24" onclick="forgotOption2()">Option 2: Quick Reset (Admin Approval)</button></div><button class="btn" style="background:#111;color:#aaa;margin-top:10px" onclick="closeAccount()">Close</button></div></div>
-<div id="forgotModal1" class="modal" onclick="closeForgot1()"><div class="modal-content" onclick="event.stopPropagation()" style="border-color:#fbbf24"><h3>🔐 Reset PIN - Verify Account</h3><p style="font-size:11px;color:#aaa">Enter your registered M-PESA number</p><label>Enter Registered M-PESA Number</label><input type="tel" id="verifyMpesa" placeholder="07xxxxxxxx"><button class="btn btn-deposit" onclick="verifyAndReset()">Verify & Continue</button><div id="newPinArea" style="display:none;margin-top:15px"><label>New 4-Digit PIN</label><div class="input-wrap"><input type="password" id="newPin1" placeholder="****" maxlength="4"><span class="eye" onclick="toggleEye('newPin1', this)">👁️</span></div><label>Confirm New PIN</label><div class="input-wrap"><input type="password" id="newPin2" placeholder="****" maxlength="4"><span class="eye" onclick="toggleEye('newPin2', this)">👁️</span></div><button class="btn btn-withdraw" onclick="saveNewPin()">✅ Save New PIN</button></div><button class="btn" style="background:#333;color:white" onclick="closeForgot1()">Cancel</button></div></div>
-<div id="depositModal" class="modal" onclick="closeDeposit()"><div class="modal-content" onclick="event.stopPropagation()"><h3>💰 Deposit</h3><p style="font-size:12px">Send to: <b style="color:#22c55e" id="mpesaNum">0718422377</b> <button onclick="copyNum()" style="padding:3px 8px;background:#22c55e;border:none;border-radius:5px;font-size:10px">Copy</button></p><label>Amount</label><input type="number" id="depAmount" placeholder="Min 100"><label>M-PESA Code</label><input type="text" id="depCode" placeholder="QJ12AB34CD"><button class="btn btn-deposit" onclick="submitDeposit()">Submit</button><button class="btn" style="background:#333;color:white" onclick="closeDeposit()">Cancel</button></div></div>
-<div id="withdrawModal" class="modal" onclick="closeWithdraw()"><div class="modal-content" onclick="event.stopPropagation()"><h3>📤 Withdraw</h3><p style="font-size:12px">To: <b id="accNum" style="color:#22c55e">Not Set</b></p><p style="font-size:12px">Available: <b id="availBal" style="color:#22c55e">Ksh 0.00</b></p><div class="time-note">⏰ Withdrawal Time: 9:30 AM - 5:30 PM Only</div><label>Select Amount</label><div class="quick-amounts"><button class="quick-btn" onclick="selectAmount(200)">200</button><button class="quick-btn" onclick="selectAmount(500)">500</button><button class="quick-btn" onclick="selectAmount(700)">700</button><button class="quick-btn" onclick="selectAmount(1000)">1000</button><button class="quick-btn" onclick="selectAmount(1500)">1500</button><button class="quick-btn" onclick="selectAmount(2000)">2000</button></div><div style="background:#1a1a1a;padding:12px;border-radius:10px;border:1px dashed #333;margin:10px 0;text-align:center"><span style="font-size:12px;color:#aaa">Selected:</span><br><b id="selectedAmountDisplay" style="font-size:22px;color:#22c55e">Ksh 0</b></div><div class="calc">Tax 10%: <b id="taxShow">KSH 0</b> | You Get: <b id="netShow">KSH 0</b></div><label>PIN</label><div class="input-wrap"><input type="password" id="withPin" placeholder="****" maxlength="4"><span class="eye" onclick="toggleEye('withPin', this)">👁️</span></div><p style="text-align:center;margin:5px 0"><span onclick="forgotOption1();closeWithdraw()" style="color:#fbbf24;font-size:11px;text-decoration:underline;cursor:pointer">Forgot PIN?</span></p><button class="btn btn-withdraw" onclick="submitWithdraw()">Submit Withdraw</button><button class="btn" style="background:#333;color:white" onclick="closeWithdraw()">Cancel</button></div></div>
+<div id="accountModal" class="modal" onclick="closeAccount()"><div class="modal-content" onclick="event.stopPropagation()"><h3>⚙️ My Receiving Account</h3><p style="font-size:11px;color:#aaa">Current: <b id="currentAcc" style="color:#22c55e">Not Set</b></p><label>M-PESA Number</label><input type="tel" id="setupAccNumber" placeholder="07xxxxxxxx"><label>Set 4-Digit PIN</label><div class="input-wrap"><input type="password" id="setupPin" placeholder="****" maxlength="4"><span class="eye" onclick="toggleEye('setupPin', this)">👁️</span></div><label>Confirm PIN</label><div class="input-wrap"><input type="password" id="setupPinConfirm" placeholder="****" maxlength="4"><span class="eye" onclick="toggleEye('setupPinConfirm', this)">👁️</span></div><button class="btn btn-withdraw" onclick="saveAccount()">💾 Save Account & PIN</button><div style="margin-top:15px;padding-top:12px;border-top:1px solid #222"><p style="font-size:12px;color:#fbbf24;text-align:center">Forgot PIN?</p><button class="btn" style="background:#333;color:white;border:1px solid #444" onclick="forgotOption1()">Option 1: Verify M-PESA to Reset</button><button class="btn" style="background:#222;color:#fbbf24;border:1px dashed #fbbf24" onclick="forgotOption2()">Option 2: Quick Reset (Admin Approval)</button></div><button class="btn" style="background:#111;color:#aaa;margin-top:10px" onclick="closeAccount()">Close</button></div></div>
+<div id="forgotModal1" class="modal" onclick="closeForgot1()"><div class="modal-content" onclick="event.stopPropagation()" style="border-color:#fbbf24"><h3>🔐 Reset PIN - Verify Account</h3><label>Enter Registered M-PESA Number</label><input type="tel" id="verifyMpesa" placeholder="07xxxxxxxx"><button class="btn btn-deposit" onclick="verifyAndReset()">Verify & Continue</button><div id="newPinArea" style="display:none;margin-top:15px"><label>New 4-Digit PIN</label><div class="input-wrap"><input type="password" id="newPin1" placeholder="****" maxlength="4"><span class="eye" onclick="toggleEye('newPin1', this)">👁️</span></div><label>Confirm New PIN</label><div class="input-wrap"><input type="password" id="newPin2" placeholder="****" maxlength="4"><span class="eye" onclick="toggleEye('newPin2', this)">👁️</span></div><button class="btn btn-withdraw" onclick="saveNewPin()">✅ Save New PIN</button></div><button class="btn" style="background:#333;color:white" onclick="closeForgot1()">Cancel</button></div></div>
 
-<div id="chatModal" class="modal" onclick="closeAdminChat()"><div class="wa-modal-content" onclick="event.stopPropagation()"><div class="wa-header"><div class="wa-avatar">🛡️</div><div><div class="wa-name">NEXA ADMIN</div><div class="wa-status">Online • Long press to delete both</div></div><div style="margin-left:auto;display:flex;gap:10px;align-items:center"><button onclick="openDeleteAllConfirm()" style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.3);color:white;padding:5px 10px;border-radius:15px;font-size:10px">🗑️ Delete All</button><div style="cursor:pointer;font-size:22px" onclick="closeAdminChat()">✕</div></div></div><div class="wa-body" id="chatMessages"><p style="color:#667781;font-size:11px;text-align:center;margin-top:40px">🔒 Messages kept forever<br>Long press any message to delete for both</p></div><div class="wa-input-area"><input type="text" id="chatInput" class="wa-input" placeholder="Type a message" autocomplete="off"><button type="button" class="wa-send" onclick="sendChat()">➤</button></div></div></div>
+<div id="depositModal" class="modal" onclick="closeDeposit()"><div class="modal-content" onclick="event.stopPropagation()" style="border-color:#22c55e"><h3>💰 Deposit - Strict Transparency</h3><p style="font-size:12px">Send to: <b style="color:#22c55e" id="mpesaNum">0718422377</b> <button onclick="copyNum()" style="padding:3px 8px;background:#22c55e;border:none;border-radius:5px;font-size:10px">Copy</button></p><label>Amount (Ksh) *</label><input type="number" id="depAmount" placeholder="Min 100"><label>M-PESA Code * (e.g. QJ12AB34CD)</label><input type="text" id="depCode" placeholder="QJ12AB34CD" style="text-transform:uppercase"><div class="transparency-box"><label style="color:#22c55e">📱 M-PESA Confirm Message (Paste full SMS for transparency) * Strict Required</label><textarea id="mpesaConfirmMsg" rows="3" placeholder="Paste full M-PESA message here: e.g. QJ12AB34CD Confirmed. Ksh500.00 sent to..."></textarea><p style="font-size:10px;color:#888;margin:4px 0 0">We verify code + message for fraud prevention</p></div><button class="btn btn-deposit" onclick="submitDeposit()">Submit Deposit</button><button class="btn" style="background:#333;color:white" onclick="closeDeposit()">Cancel</button></div></div>
+
+<div id="withdrawModal" class="modal" onclick="closeWithdraw()"><div class="modal-content" onclick="event.stopPropagation()"><h3>📤 Withdraw</h3><p style="font-size:12px">To: <b id="accNum" style="color:#22c55e">Not Set</b></p><p style="font-size:12px">Available: <b id="availBal" style="color:#22c55e">Ksh 0.00</b></p><div class="time-note">⏰ 9:30 AM - 5:30 PM Only</div><label>Select Amount</label><div class="quick-amounts"><button class="quick-btn" onclick="selectAmount(200)">200</button><button class="quick-btn" onclick="selectAmount(500)">500</button><button class="quick-btn" onclick="selectAmount(700)">700</button><button class="quick-btn" onclick="selectAmount(1000)">1000</button><button class="quick-btn" onclick="selectAmount(1500)">1500</button><button class="quick-btn" onclick="selectAmount(2000)">2000</button></div><div style="background:#1a1a1a;padding:12px;border-radius:10px;border:1px dashed #333;margin:10px 0;text-align:center"><span style="font-size:12px;color:#aaa">Selected:</span><br><b id="selectedAmountDisplay" style="font-size:22px;color:#22c55e">Ksh 0</b></div><div class="calc">Tax 10%: <b id="taxShow">KSH 0</b> | You Get: <b id="netShow">KSH 0</b></div><label>PIN</label><div class="input-wrap"><input type="password" id="withPin" placeholder="****" maxlength="4"><span class="eye" onclick="toggleEye('withPin', this)">👁️</span></div><p style="text-align:center;margin:5px 0"><span onclick="forgotOption1();closeWithdraw()" style="color:#fbbf24;font-size:11px;text-decoration:underline;cursor:pointer">Forgot PIN?</span></p><button class="btn btn-withdraw" onclick="submitWithdraw()">Submit Withdraw</button><button class="btn" style="background:#333;color:white" onclick="closeWithdraw()">Cancel</button></div></div>
+
+<div id="chatModal" class="modal" onclick="closeAdminChat()"><div class="wa-modal-content" onclick="event.stopPropagation()"><div class="wa-header"><div class="wa-avatar">🛡️</div><div><div class="wa-name">NEXA ADMIN</div><div class="wa-status">Online • Long press to delete both</div></div><div style="margin-left:auto;display:flex;gap:10px;align-items:center"><button onclick="openDeleteAllConfirm()" style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.3);color:white;padding:5px 10px;border-radius:15px;font-size:10px">🗑️ Delete All</button><div style="cursor:pointer;font-size:22px" onclick="closeAdminChat()">✕</div></div></div><div class="wa-body" id="chatMessages"><p style="color:#667781;font-size:11px;text-align:center;margin-top:40px">🔒 Messages kept forever<br>Long press any message to delete for both</p></div><div class="wa-input-area"><input type="text" id="chatInput" class="wa-input" placeholder="Type a message"><button type="button" class="wa-send" onclick="sendChat()">➤</button></div></div></div>
 
 <div id="contextMenu" class="context-menu">
-<button class="delete" onclick="openSingleDeleteConfirm()">🗑️ Delete for me and receiver</button>
+<button class="delete" id="deleteOneBtn">🗑️ Delete for me and receiver</button>
 <button onclick="hideContextMenu()" style="color:#888">Cancel</button>
 </div>
 
 <div id="notifyModal" class="notify-modal"><div class="notify-box"><div id="notifyIcon" style="font-size:32px;margin-bottom:10px">✅</div><p id="notifyText" style="font-size:13px;margin:0 0 15px 0;color:white"></p><button class="btn btn-deposit" style="width:100%" onclick="closeNotify()">OK</button></div></div>
 
-<div id="confirmModal" class="notify-modal"><div class="confirm-box"><div style="font-size:32px;margin-bottom:10px">🗑️</div><p id="confirmText" style="font-size:13px;margin:0 0 15px 0;color:white"></p><div style="display:flex;gap:10px"><button class="btn" style="flex:1;background:#222;color:#aaa;border:1px solid #444" onclick="closeConfirm()">Cancel</button><button class="btn" style="flex:1;background:#ef4444;color:white" onclick="doConfirmAction()">OK Delete</button></div></div></div>
+<div id="confirmModal" class="notify-modal"><div class="confirm-box"><div style="font-size:40px;margin-bottom:12px">🗑️</div><p id="confirmText" style="font-size:14px;margin:0 0 18px 0;color:white;line-height:1.4"></p><div style="display:flex;gap:12px"><button class="btn" style="flex:1;background:#222;color:#aaa;border:1px solid #444;padding:14px" onclick="closeConfirm()">Cancel</button><button class="btn" id="confirmOkBtn" style="flex:1;background:#ef4444;color:white;padding:14px">OK Delete</button></div></div></div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
@@ -124,25 +126,28 @@ const db = firebase.firestore();
 const phone = localStorage.getItem("nexaPhone");
 if(!phone) window.location.href="index.html";
 let allTransactions=[]; let currentFilter='all'; let chatUnsubscribe=null; let selectedWithdrawAmount=0;
-let pressTimer=null; let selectedChatId=null; let pendingConfirmAction=null;
+let pressTimer=null; let selectedChatId=null; let pendingDeleteId=null;
 
 function showToast(msg,type="success"){const box=document.getElementById('toastBox');const toast=document.createElement('div');toast.className=`toast ${type}`;toast.innerHTML=`<div>${type=='success'?'✅':'❌'}</div><div style="flex:1;font-size:13px">${msg}</div>`;box.appendChild(toast);setTimeout(()=>{ toast.style.opacity='0'; setTimeout(()=>toast.remove(),300) },4000);}
 function showNotify(msg,icon="✅"){document.getElementById('notifyText').innerText=msg;document.getElementById('notifyIcon').innerText=icon;document.getElementById('notifyModal').style.display='flex';}
 function closeNotify(){document.getElementById('notifyModal').style.display='none';}
-function showConfirm(msg,action){document.getElementById('confirmText').innerText=msg;pendingConfirmAction=action;document.getElementById('confirmModal').style.display='flex';}
-function closeConfirm(){document.getElementById('confirmModal').style.display='none';pendingConfirmAction=null;}
-function doConfirmAction(){if(pendingConfirmAction) pendingConfirmAction(); closeConfirm();}
+function showConfirm(msg, onOk){
+  document.getElementById('confirmText').innerText=msg;
+  document.getElementById('confirmModal').style.display='flex';
+  const okBtn=document.getElementById('confirmOkBtn');
+  okBtn.onclick=function(){ closeConfirm(); if(onOk) onOk(); };
+}
+function closeConfirm(){document.getElementById('confirmModal').style.display='none';}
 function toggleEye(id,el){const input=document.getElementById(id);if(input.type==='password'){ input.type='text'; el.innerText='🙈'; } else { input.type='password'; el.innerText='👁️'; }}
 function formatDateTime(ts){if(!ts) return 'Just now';let d=ts.seconds? new Date(ts.seconds*1000) : new Date(ts);return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});}
 function formatDateFull(ts){if(!ts) return '';let d=ts.seconds? new Date(ts.seconds*1000) : new Date(ts);return d.toLocaleDateString()+' '+d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});}
 function goBack(){ window.location.href='dashboard.html'; }
 function handleLogout(){ showConfirm("Log out from NEXA VIEW?",()=>{localStorage.removeItem("nexaPhone");window.location.href='index.html';}); }
 function isWithdrawalTimeAllowed(){const now=new Date();const mins=now.getHours()*60+now.getMinutes();return mins>=570&&mins<=1050;}
-
 function copyUserId(){
   let uid=document.getElementById('userId').innerText;
   if(!uid||uid==='NEXA...'){showToast("User ID not loaded yet","error");return;}
-  navigator.clipboard.writeText(uid).then(()=>{showToast("User ID copied: "+uid,"success");}).catch(()=>{showNotify("User ID: "+uid+" - Copied!","📋");});
+  navigator.clipboard.writeText(uid).then(()=>{showToast("Copied: "+uid,"success");}).catch(()=>{showNotify(uid+" Copied!","📋");});
 }
 async function loadWallet(){
   db.collection("users").doc(phone).onSnapshot(doc=>{
@@ -188,7 +193,7 @@ function renderHistory(){
   document.getElementById('allHistory').innerHTML=html;
 }
 function filterHist(type){currentFilter=type;['all','pending','approved','rejected'].forEach(t=>{let el=document.getElementById('f'+t.charAt(0).toUpperCase()+t.slice(1));el.style.background=t===type?'#fbbf24':'#222';el.style.color=t===type?'#000':'#aaa';});renderHistory();}
-function copyNum(){navigator.clipboard.writeText(document.getElementById('mpesaNum').innerText).then(()=>showToast("M-PESA copied","success")).catch(()=>showNotify("Copied: "+document.getElementById('mpesaNum').innerText,"📋"));}
+function copyNum(){navigator.clipboard.writeText(document.getElementById('mpesaNum').innerText).then(()=>showToast("M-PESA copied","success"));}
 function openAccount(){document.getElementById('accountModal').style.display='flex';}
 function closeAccount(){document.getElementById('accountModal').style.display='none';}
 function openDeposit(){document.getElementById('depositModal').style.display='flex';}
@@ -198,10 +203,17 @@ function closeWithdraw(){document.getElementById('withdrawModal').style.display=
 function selectAmount(amt){selectedWithdrawAmount=amt;document.getElementById('selectedAmountDisplay').innerText='Ksh '+amt;let tax=amt*0.1;document.getElementById('taxShow').innerText='KSH '+tax;document.getElementById('netShow').innerText='KSH '+(amt-tax);document.querySelectorAll('.quick-btn').forEach(b=>{b.classList.remove('active');if(parseInt(b.innerText)===amt)b.classList.add('active');});}
 function submitDeposit(){
   let amt=parseFloat(document.getElementById('depAmount').value);
-  let code=document.getElementById('depCode').value.trim();
-  if(!amt||amt<100){showNotify("Min deposit Ksh 100","❌");return;}
-  if(!code){showNotify("Enter M-PESA code","❌");return;}
-  db.collection("deposits").add({phone,amount:amt,code,status:"pending",date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{showNotify("Deposit submitted - Waiting approval","✅");closeDeposit();loadAllHistory();});
+  let code=document.getElementById('depCode').value.trim().toUpperCase();
+  let confirmMsg=document.getElementById('mpesaConfirmMsg').value.trim();
+  if(!amt||amt<100){showNotify("Min deposit Ksh 100 required","❌");return;}
+  if(!code||code.length<6){showNotify("Enter valid M-PESA code e.g. QJ12AB34CD","❌");return;}
+  if(!confirmMsg||confirmMsg.length<10){showNotify("Paste full M-PESA confirmation SMS for transparency - Strict required!","❌");return;}
+  if(!confirmMsg.includes(code)){showNotify("Code must match the message! Paste correct SMS","❌");return;}
+  db.collection("deposits").add({phone,amount:amt,code,mpesaMessage:confirmMsg,status:"pending",date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{
+    showNotify("Deposit submitted with M-PESA proof! Waiting admin approval - Transparent ✅","✅");
+    document.getElementById('depAmount').value="";document.getElementById('depCode').value="";document.getElementById('mpesaConfirmMsg').value="";
+    closeDeposit();loadAllHistory();
+  });
 }
 function submitWithdraw(){
   let pin=document.getElementById('withPin').value;
@@ -246,6 +258,7 @@ function saveNewPin(){
 }
 function forgotOption2(){db.collection("pinResetRequests").add({phone,userId:document.getElementById('userId').innerText,status:"pending",date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{showNotify("Request sent to Admin - PIN will be reset to 0000 after approval","✅");closeAccount();});}
 
+// CHAT - FIXED DELETE LOGIC
 function openAdminChat(){document.getElementById('chatModal').style.display='flex';loadChats();}
 function closeAdminChat(){document.getElementById('chatModal').style.display='none';if(chatUnsubscribe)chatUnsubscribe();hideContextMenu();}
 function loadChats(){
@@ -256,20 +269,65 @@ function loadChats(){
     let html="";if(msgs.length===0)html=`<p style="color:#667781;font-size:11px;text-align:center;margin-top:40px">🔒 Messages kept forever<br>Long press any message to delete for both</p>`;
     msgs.forEach(m=>{
       let cls=m.from==='user'?'wa-user':'wa-admin';
-      html+=`<div class="wa-msg ${cls}" data-id="${m.id}" onmousedown="startPressChat('${m.id}',event)" onmouseup="endPress()" onmouseleave="endPress()" ontouchstart="startPressChat('${m.id}',event)" ontouchend="endPress()">${m.message}<span class="wa-time">${formatDateTime(m.date)} ${m.from==='user'?'✓✓':''}</span></div>`;
+      html+=`<div class="wa-msg ${cls}" data-id="${m.id}" onmousedown="startPress('${m.id}',event)" onmouseup="endPress()" onmouseleave="endPress()" ontouchstart="startPress('${m.id}',event)" ontouchend="endPress()" ontouchmove="endPress()">${m.message}<span class="wa-time">${formatDateTime(m.date)} ${m.from==='user'?'✓✓':''}</span></div>`;
     });
     document.getElementById('chatMessages').innerHTML=html;
     document.getElementById('chatMessages').scrollTop=999999;
   });
 }
 function sendChat(){let input=document.getElementById('chatInput');let msg=input.value.trim();if(!msg)return;db.collection("chats").add({phone,message:msg,from:"user",date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{input.value="";});}
-function startPressChat(id,e){selectedChatId=id;if(e)e.preventDefault();pressTimer=setTimeout(()=>{let t=e.touches?e.touches[0]:e;showContextMenu(t.clientX||100,t.clientY||100);},600);}
+
+function startPress(id,e){
+  if(e) e.preventDefault();
+  pendingDeleteId=id;
+  selectedChatId=id;
+  clearTimeout(pressTimer);
+  pressTimer=setTimeout(()=>{
+    let clientX=100, clientY=100;
+    if(e.touches && e.touches[0]){ clientX=e.touches[0].clientX; clientY=e.touches[0].clientY; }
+    else if(e.clientX){ clientX=e.clientX; clientY=e.clientY; }
+    showContextMenu(clientX, clientY);
+  },650);
+}
 function endPress(){clearTimeout(pressTimer);}
-function showContextMenu(x,y){let menu=document.getElementById('contextMenu');menu.style.left=(x>window.innerWidth-200?window.innerWidth-200:x)+'px';menu.style.top=(y>window.innerHeight-150?window.innerHeight-150:y)+'px';menu.style.display='block';}
-function hideContextMenu(){document.getElementById('contextMenu').style.display='none';selectedChatId=null;}
-function openSingleDeleteConfirm(){hideContextMenu();showConfirm("Delete this message for me and receiver? Both will lose it!",()=>{db.collection("chats").doc(selectedChatId).delete().then(()=>{showToast("Deleted for both sides","success");});});}
-function openDeleteAllConfirm(){showConfirm("Delete ALL your chats? Both you and admin will lose all? Cannot be undone!",()=>{db.collection("chats").where("phone","==",phone).get().then(s=>{s.forEach(d=>db.collection("chats").doc(d.id).delete());showToast("All chats deleted for both","success");});});}
-document.addEventListener('click',function(e){if(!e.target.closest('#contextMenu')&&!e.target.closest('.wa-msg'))hideContextMenu();});
+function showContextMenu(x,y){
+  let menu=document.getElementById('contextMenu');
+  menu.style.left=Math.min(x, window.innerWidth-220)+'px';
+  menu.style.top=Math.min(y, window.innerHeight-160)+'px';
+  menu.style.display='block';
+}
+function hideContextMenu(){document.getElementById('contextMenu').style.display='none';}
+
+// FIXED: Save ID before hiding menu
+document.getElementById('deleteOneBtn').onclick=function(){
+  let idToDelete = pendingDeleteId || selectedChatId;
+  hideContextMenu();
+  if(!idToDelete){showNotify("No message selected","❌");return;}
+  showConfirm("Delete this message for me and receiver? Both will lose it!",()=>{
+    db.collection("chats").doc(idToDelete).delete().then(()=>{
+      showToast("Deleted for both - You and Admin","success");
+      pendingDeleteId=null; selectedChatId=null;
+    }).catch(()=>{showNotify("Delete failed - Try again","❌");});
+  });
+};
+
+function openDeleteAllConfirm(){
+  showConfirm("Delete ALL your chats? Both you and admin will lose all chats! This cannot be undone!",()=>{
+    db.collection("chats").where("phone","==",phone).get().then(snap=>{
+      if(snap.empty){showNotify("No chats to delete","❌");return;}
+      let batch=db.firestore().batch();
+      snap.forEach(d=>{ batch.delete(db.collection("chats").doc(d.id)); });
+      batch.commit().then(()=>{
+        showToast("All chats deleted for BOTH you and admin ✅","success");
+      });
+    });
+  });
+}
+
+document.addEventListener('click',function(e){
+  if(!e.target.closest('#contextMenu') &&!e.target.closest('.wa-msg')) hideContextMenu();
+});
+
 loadWallet();
 </script>
 </body>
