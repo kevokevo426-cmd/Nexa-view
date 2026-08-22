@@ -32,6 +32,15 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
 .badge-inactive{background:#422006;color:#fbbf24;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700}
 #toastBox{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;width:90%;max-width:350px}
 .toast{background:#111;border:1px solid #22c55e;color:white;padding:12px;border-radius:12px;font-size:12px;margin-bottom:8px;box-shadow:0 10px 30px rgba(0,0,0,0.8)}
+/* 2 COLUMNS */
+.team-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+.team-col{background:#0f0f0f;border:1px solid #222;border-radius:12px;padding:10px}
+.team-col h4{margin:0 0 8px 0;font-size:12px;font-weight:800;text-align:center;padding:6px;border-radius:8px}
+.team-col.l1 h4{background:rgba(251,191,36,0.15);color:#fbbf24;border:1px solid #fbbf24}
+.team-col.l2 h4{background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid #22c55e}
+.team-member{background:#1a1a1a;padding:8px;border-radius:8px;margin:6px 0;border:1px solid #222;font-size:11px}
+.team-member b{font-size:11px}
+@media(max-width:350px){.team-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -59,7 +68,19 @@ label{font-size:11px;color:#aaa;margin-bottom:4px;display:block;font-weight:600}
 
 <div class="box">
   <h3>📜 Referral History <span style="font-size:11px;color:#fbbf24">(<span id="teamCount">0</span> Members)</span></h3>
-  <div id="refHistory"><p style="color:#888">Loading...</p></div>
+  
+  <!-- 2 COLUMNS L1/L2 -->
+  <div class="team-grid">
+    <div class="team-col l1">
+      <h4>👤 LV1 - 10% (<span id="lv1Count2">0</span>)</h4>
+      <div id="lv1Container"><p style="color:#555;font-size:11px;text-align:center">No LV1 yet</p></div>
+    </div>
+    <div class="team-col l2">
+      <h4>👥 LV2 - 5% (<span id="lv2Count2">0</span>)</h4>
+      <div id="lv2Container"><p style="color:#555;font-size:11px;text-align:center">No LV2 yet</p></div>
+    </div>
+  </div>
+
 </div>
 
 <button class="btn" onclick="window.location.href='dashboard.html'" style="width:100%;background:#333;margin-top:10px">← BACK TO DASHBOARD</button>
@@ -92,7 +113,6 @@ function loadReferralInfo(){
     if(!doc.exists) return;
     let u = doc.data();
     let myCode = u.myReferralCode || u.userId || phone.substring(3,9);
-    // FIXED: VERCEL LINK - NO MORE 404!
     let myLink = `https://nexa-view.vercel.app/register.html?ref=${myCode}`;
 
     document.getElementById('myCode').value = myCode;
@@ -104,64 +124,61 @@ function loadReferralInfo(){
     
     document.getElementById('lv1Count').innerText = lv1Phones.length;
     document.getElementById('lv2Count').innerText = lv2Phones.length;
+    document.getElementById('lv1Count2').innerText = lv1Phones.length;
+    document.getElementById('lv2Count2').innerText = lv2Phones.length;
     document.getElementById('teamCount').innerText = lv1Phones.length + lv2Phones.length;
 
-    let html = "";
     if(lv1Phones.length==0 && lv2Phones.length==0){
-      html = "<p style='color:#888'>No team members yet - Share your link!</p>";
-      document.getElementById('refHistory').innerHTML = html;
+      document.getElementById('lv1Container').innerHTML = "<p style='color:#555;font-size:11px;text-align:center'>No team yet</p>";
+      document.getElementById('lv2Container').innerHTML = "<p style='color:#555;font-size:11px;text-align:center'>No team yet</p>";
       return;
     }
 
-    html += `<p style="font-size:12px;color:#fbbf24;font-weight:700;margin:10px 0 6px">👤 LV1 - Direct (10% Bonus)</p>`;
-    if(lv1Phones.length==0){
-      html += `<p style='color:#555;font-size:11px'>No LV1 yet</p>`;
+    // Load LV1
+    if(lv1Phones.length>0){
+      document.getElementById('lv1Container').innerHTML="";
+      lv1Phones.forEach(p=>{
+        db.collection("users").doc(p).get().then(snap=>{
+          let user = snap.exists ? snap.data() : null;
+          if(!user){
+            db.collection("users").where("userId","==",p).get().then(s2=>{
+              s2.forEach(d=>appendRef(d.data(), "lv1Container"));
+            });
+            return;
+          }
+          appendRef(user, "lv1Container");
+        });
+      });
+    } else {
+      document.getElementById('lv1Container').innerHTML="<p style='color:#555;font-size:11px;text-align:center'>No LV1 yet</p>";
     }
-    html += `<div id="lv1Container"></div>`;
-    html += `<p style="font-size:12px;color:#22c55e;font-weight:700;margin:15px 0 6px">👥👥 LV2 - Team of LV1 (5% Bonus)</p><div id="lv2Container"></div>`;
-    document.getElementById('refHistory').innerHTML = html;
 
-    setTimeout(()=>{
-      if(lv1Phones.length>0){
-        document.getElementById('lv1Container').innerHTML="";
-        lv1Phones.forEach(p=>{
-          db.collection("users").doc(p).get().then(snap=>{
-            let user = snap.exists ? snap.data() : null;
-            if(!user){
-              db.collection("users").where("userId","==",p).get().then(s2=>{
-                s2.forEach(d=>appendRef(d.data(), "lv1Container", "LV1"));
-              });
-              return;
-            }
-            appendRef(user, "lv1Container", "LV1");
-          });
+    // Load LV2
+    if(lv2Phones.length>0){
+      document.getElementById('lv2Container').innerHTML="";
+      lv2Phones.forEach(p=>{
+        db.collection("users").doc(p).get().then(snap=>{
+          let user = snap.exists ? snap.data() : null;
+          if(!user) return;
+          appendRef(user, "lv2Container");
         });
-      }
-      if(lv2Phones.length>0){
-        document.getElementById('lv2Container').innerHTML="";
-        lv2Phones.forEach(p=>{
-          db.collection("users").doc(p).get().then(snap=>{
-            let user = snap.exists ? snap.data() : null;
-            if(!user) return;
-            appendRef(user, "lv2Container", "LV2");
-          });
-        });
-      } else {
-        if(document.getElementById('lv2Container')) document.getElementById('lv2Container').innerHTML="<p style='color:#555;font-size:11px'>No LV2 yet - When LV1 invites, they become your LV2</p>";
-      }
-    },300);
+      });
+    } else {
+      document.getElementById('lv2Container').innerHTML="<p style='color:#555;font-size:11px;text-align:center'>No LV2 yet</p>";
+    }
   });
 }
 
-function appendRef(user, containerId, level){
+function appendRef(user, containerId){
   let el=document.getElementById(containerId);
   if(!el) return;
   let isActive = user.hasPurchased || user.isActive;
   let statusBadge = isActive ? `<span class="badge-active">ACTIVE</span>` : `<span class="badge-inactive">INACTIVE</span>`;
-  let statusText = isActive ? "Bought Product" : "No purchase yet";
-  el.innerHTML += `<div style="background:#1a1a1a;padding:10px;border-radius:10px;margin:6px 0;display:flex;justify-content:space-between;align-items:center;border:1px solid #222">
-    <div><b style="font-size:13px">${user.userId||'N/A'}</b><br><span style="font-size:11px;color:#aaa">${user.phone||''}</span><br><span style="font-size:10px;color:#666">${level} - ${statusText}</span></div>
-    <div>${statusBadge}</div>
+  el.innerHTML += `<div class="team-member">
+    <b>${user.userId||user.myReferralCode||'N/A'}</b><br>
+    <span style="color:#aaa">${user.name||''}</span><br>
+    <span style="color:#666;font-size:10px">${(user.phone||'').slice(-4)}</span>
+    <div style="margin-top:4px">${statusBadge}</div>
   </div>`;
 }
 
@@ -169,7 +186,6 @@ function copyLink(){
   let link = document.getElementById('myLink').value; 
   navigator.clipboard.writeText(link).then(()=>showToast("Vercel Link Copied! "+link));
 }
-
 function shareLink(){
   let link = document.getElementById('myLink').value;
   let code = document.getElementById('myCode').value;
@@ -177,7 +193,6 @@ function shareLink(){
   let whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
   window.open(whatsappUrl, '_blank');
 }
-
 window.onload = loadReferralInfo;
 </script>
 </body>
