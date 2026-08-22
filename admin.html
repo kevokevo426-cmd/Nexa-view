@@ -32,11 +32,16 @@ input,textarea{padding:8px;background:#1a1a1a;border:1px solid #444;color:white;
 .edit-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:999;justify-content:center;align-items:center}
 .modal-content{background:#111;width:95%;max-width:450px;border-radius:12px;padding:14px;border:1px solid #333;max-height:90vh;overflow-y:auto}
-.wa-msg{padding:7px 10px;border-radius:8px;margin:5px 0;max-width:78%;font-size:12px}
+.wa-msg{padding:7px 10px;border-radius:8px;margin:5px 0;max-width:78%;font-size:12px;position:relative;user-select:none;cursor:pointer;transition:0.2s}
+.wa-msg:active{transform:scale(0.97);opacity:0.8}
 .wa-user{background:#dcf8c6;color:#000;margin-left:auto}
 .wa-admin{background:white;color:#000;margin-right:auto}
 #loginScreen{display:flex;position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:9999;justify-content:center;align-items:center}
 .login-box{background:#111;padding:20px;border-radius:14px;border:1px solid #333;width:90%;max-width:320px;text-align:center}
+.wallet-msg{background:#1a1a1a;padding:8px;border-radius:7px;margin:4px 0;border-left:3px solid #fbbf24;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.context-menu{position:fixed;background:#222;border:1px solid #444;border-radius:8px;padding:6px;z-index:10000;display:none}
+.context-menu button{display:block;width:100%;padding:8px 12px;background:#1a1a1a;border:none;color:white;text-align:left;border-radius:6px;margin:2px 0;font-size:12px}
+.context-menu button:hover{background:#333}
 </style>
 </head>
 <body>
@@ -56,156 +61,169 @@ input,textarea{padding:8px;background:#1a1a1a;border:1px solid #444;color:white;
 
 <div class="box" style="border-color:#fbbf24"><h3>🔐 PIN Reset Requests</h3><div id="pinResetList">Loading...</div></div>
 
-<div class="box" style="border-color:#22c55e"><h3>💬 Chats - Tap Reply + Delete Tab</h3><input type="text" id="chatSearch" placeholder="Search phone..." onkeyup="filterChats()"><div id="internalChatList">Loading...</div></div>
+<div class="box" style="border-color:#22c55e"><h3>💬 Chats - Long Press Message to Delete (Both Sides)</h3>
+<div style="display:flex;gap:6px;margin-bottom:8px"><input type="text" id="chatSearch" placeholder="Search phone..." onkeyup="filterChats()" style="flex:1;margin:0"><button class="btn btn-red btn-small" onclick="deleteAllChats()">🗑️ Delete All Chats</button></div>
+<div id="internalChatList">Loading...</div></div>
+
+<div class="box" style="border-color:#fbbf24"><h3>💳 Wallet Transactions - Long Press to Delete</h3>
+<div style="display:flex;gap:6px;margin-bottom:8px"><input type="text" id="walletSearch" placeholder="Search phone..." onkeyup="filterWallet()" style="flex:1;margin:0"><button class="btn btn-red btn-small" onclick="deleteAllWallet()">🗑️ Delete All Wallet History</button></div>
+<div id="walletList">Loading wallet...</div>
+</div>
 
 <div class="box"><h3>💸 Pending Withdrawals</h3><div id="withdrawList">Loading...</div></div>
 <div class="box"><h3>🎁 Referral Pending</h3><div id="referralList">Loading...</div></div>
 
-<div class="box" style="border:1.5px solid #8b5cf6"><h3>⚙️ Edit Content - Banner, Packages, Terms, Policies, About</h3>
-<button class="btn btn-blue" style="width:100%;margin-bottom:10px" onclick="debugSettings()">🔍 Debug - Show Where Yesterday Data Is</button>
-
-<div style="margin-bottom:12px;background:#0f0f0f;padding:8px;border-radius:8px">
-<label>🖼️ Banner</label><textarea id="editBanner" rows="2" placeholder="Welcome to NEXA VIEW..."></textarea>
-<div class="edit-row"><button class="btn btn-yellow btn-small" onclick="document.getElementById('editBanner').focus()">✏️ Edit</button><button class="btn btn-green btn-small" onclick="saveSingle('banner','editBanner')">💾 Save Banner</button><span id="statusBanner" style="font-size:10px;color:#aaa"></span></div>
-</div>
-
-<div style="margin-bottom:12px;background:#0f0f0f;padding:8px;border-radius:8px">
-<label>📦 Packages</label><textarea id="editPackages" rows="3" placeholder='[{"name":"NEXA","price":500,"daily":75}]'></textarea>
-<div class="edit-row"><button class="btn btn-yellow btn-small" onclick="document.getElementById('editPackages').focus()">✏️ Edit</button><button class="btn btn-green btn-small" onclick="saveSingle('packages','editPackages')">💾 Save Packages</button><span id="statusPackages" style="font-size:10px;color:#aaa"></span></div>
-</div>
-
-<div style="margin-bottom:12px;background:#0f0f0f;padding:8px;border-radius:8px">
-<label>📜 Terms</label><textarea id="editTerms" rows="3" placeholder="Terms..."></textarea>
-<div class="edit-row"><button class="btn btn-yellow btn-small" onclick="document.getElementById('editTerms').focus()">✏️ Edit</button><button class="btn btn-green btn-small" onclick="saveSingle('terms','editTerms')">💾 Save Terms</button><span id="statusTerms" style="font-size:10px;color:#aaa"></span></div>
-</div>
-
-<div style="margin-bottom:12px;background:#0f0f0f;padding:8px;border-radius:8px">
-<label>🔒 Policies</label><textarea id="editPolicies" rows="3" placeholder="Policies..."></textarea>
-<div class="edit-row"><button class="btn btn-yellow btn-small" onclick="document.getElementById('editPolicies').focus()">✏️ Edit</button><button class="btn btn-green btn-small" onclick="saveSingle('policies','editPolicies')">💾 Save Policies</button><span id="statusPolicies" style="font-size:10px;color:#aaa"></span></div>
-</div>
-
-<div style="margin-bottom:12px;background:#0f0f0f;padding:8px;border-radius:8px">
-<label>ℹ️ About</label><textarea id="editAbout" rows="3" placeholder="About..."></textarea>
-<div class="edit-row"><button class="btn btn-yellow btn-small" onclick="document.getElementById('editAbout').focus()">✏️ Edit</button><button class="btn btn-green btn-small" onclick="saveSingle('about','editAbout')">💾 Save About</button><span id="statusAbout" style="font-size:10px;color:#aaa"></span></div>
-</div>
-
-<button class="btn btn-green" style="width:100%;padding:12px" onclick="saveAllContent()">💾 Save All Content</button>
+<div class="box" style="border:1.5px solid #8b5cf6"><h3>⚙️ Edit Content</h3>
+<button class="btn btn-blue" style="width:100%;margin-bottom:10px" onclick="debugSettings()">🔍 Debug - Find Yesterday Data</button>
+<div style="margin-bottom:10px;background:#0f0f0f;padding:8px;border-radius:8px"><label>🖼️ Banner</label><textarea id="editBanner" rows="2"></textarea><div class="edit-row"><button class="btn btn-yellow btn-small" onclick="document.getElementById('editBanner').focus()">✏️ Edit</button><button class="btn btn-green btn-small" onclick="saveSingle('banner','editBanner')">💾 Save</button><span id="statusBanner" style="font-size:10px;color:#aaa"></span></div></div>
+<div style="margin-bottom:10px;background:#0f0f0f;padding:8px;border-radius:8px"><label>📦 Packages</label><textarea id="editPackages" rows="3"></textarea><div class="edit-row"><button class="btn btn-yellow btn-small" onclick="document.getElementById('editPackages').focus()">✏️ Edit</button><button class="btn btn-green btn-small" onclick="saveSingle('packages','editPackages')">💾 Save</button><span id="statusPackages" style="font-size:10px;color:#aaa"></span></div></div>
+<div style="margin-bottom:10px;background:#0f0f0f;padding:8px;border-radius:8px"><label>📜 Terms</label><textarea id="editTerms" rows="3"></textarea><div class="edit-row"><button class="btn btn-yellow btn-small" onclick="document.getElementById('editTerms').focus()">✏️ Edit</button><button class="btn btn-green btn-small" onclick="saveSingle('terms','editTerms')">💾 Save</button><span id="statusTerms" style="font-size:10px;color:#aaa"></span></div></div>
+<div style="margin-bottom:10px;background:#0f0f0f;padding:8px;border-radius:8px"><label>🔒 Policies</label><textarea id="editPolicies" rows="3"></textarea><div class="edit-row"><button class="btn btn-yellow btn-small" onclick="document.getElementById('editPolicies').focus()">✏️ Edit</button><button class="btn btn-green btn-small" onclick="saveSingle('policies','editPolicies')">💾 Save</button><span id="statusPolicies" style="font-size:10px;color:#aaa"></span></div></div>
+<div style="margin-bottom:10px;background:#0f0f0f;padding:8px;border-radius:8px"><label>ℹ️ About</label><textarea id="editAbout" rows="3"></textarea><div class="edit-row"><button class="btn btn-yellow btn-small" onclick="document.getElementById('editAbout').focus()">✏️ Edit</button><button class="btn btn-green btn-small" onclick="saveSingle('about','editAbout')">💾 Save</button><span id="statusAbout" style="font-size:10px;color:#aaa"></span></div></div>
+<button class="btn btn-green" style="width:100%;padding:12px" onclick="saveAllContent()">💾 Save All</button>
 </div>
 </div>
 
-<div id="chatModal" class="modal" onclick="closeChatModal()"><div class="modal-content" onclick="event.stopPropagation()"><h3 id="chatPhone" style="color:#22c55e;margin:0 0 10px"></h3><div id="chatThread" style="background:#0a0a0a;border-radius:8px;padding:8px;max-height:350px;overflow-y:auto;display:flex;flex-direction:column"></div><div style="display:flex;gap:6px;margin-top:8px"><input type="text" id="replyInput" placeholder="Type reply..." style="margin:0"><button class="btn btn-green" onclick="sendReply()">Send</button></div><div style="display:flex;gap:6px;margin-top:8px"><button class="btn btn-red" style="flex:1" onclick="deleteChat()">🗑️ Delete Chat</button><button class="btn btn-blue" style="flex:1" onclick="closeChatModal()">Close</button></div></div></div>
+<!-- Chat Modal -->
+<div id="chatModal" class="modal" onclick="closeChatModal()"><div class="modal-content" onclick="event.stopPropagation()"><h3 id="chatPhone" style="color:#22c55e;margin:0 0 10px"></h3><p style="font-size:10px;color:#888;margin:0 0 8px">💡 Long press any message to delete for both</p><div id="chatThread" style="background:#0a0a0a;border-radius:8px;padding:8px;max-height:350px;overflow-y:auto;display:flex;flex-direction:column"></div><div style="display:flex;gap:6px;margin-top:8px"><input type="text" id="replyInput" placeholder="Type reply..." style="margin:0"><button class="btn btn-green" onclick="sendReply()">Send</button></div><div style="display:flex;gap:6px;margin-top:8px"><button class="btn btn-red" style="flex:1" onclick="deleteChat()">🗑️ Delete This Chat (Both)</button><button class="btn btn-blue" style="flex:1" onclick="closeChatModal()">Close</button></div></div></div>
+
+<!-- Long Press Menu -->
+<div id="contextMenu" class="context-menu">
+<button onclick="deleteSingleMsg()">🗑️ Delete for me and receiver</button>
+<button onclick="hideContextMenu()" style="color:#888">Cancel</button>
+</div>
 
 <script>
 const firebaseConfig = {apiKey:"AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",authDomain:"nexa-view.firebaseapp.com",projectId:"nexa-view"};
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const ADMIN_PASSWORD="admin123";
-let chatCache={}, selectedPhone="";
+let chatCache={}, selectedPhone="", selectedMsgId="", walletCache=[], pressTimer;
 
 function checkLogin(){if(document.getElementById('adminPassword').value===ADMIN_PASSWORD){localStorage.setItem('nexaAdminLoggedIn','true');showPanel();}else document.getElementById('loginError').innerText="Wrong";}
-function showPanel(){document.getElementById('loginScreen').style.display='none';document.getElementById('mainPanel').style.display='block';loadMpesa();loadStats();loadPinResets();loadChats();loadWithdraw();loadReferral();loadContent();}
+function showPanel(){document.getElementById('loginScreen').style.display='none';document.getElementById('mainPanel').style.display='block';loadMpesa();loadStats();loadPinResets();loadChats();loadWallet();loadWithdraw();loadReferral();loadContent();}
 function logout(){localStorage.removeItem('nexaAdminLoggedIn');location.reload();}
 
-function loadMpesa(){db.collection("settings").doc("deposit").get().then(d=>{if(d.exists){let data=d.data();document.getElementById('mpesaNumber').value=data.mpesaNumber||data.value||"0718422377";}});}
-function saveMpesa(){db.collection("settings").doc("deposit").set({mpesaNumber:document.getElementById('mpesaNumber').value}).then(()=>alert("Saved M-PESA"));}
+function loadMpesa(){db.collection("settings").doc("deposit").get().then(d=>{if(d.exists)document.getElementById('mpesaNumber').value=d.data().mpesaNumber||d.data().value||"0718422377";});}
+function saveMpesa(){db.collection("settings").doc("deposit").set({mpesaNumber:document.getElementById('mpesaNumber').value}).then(()=>alert("Saved"));}
 
 function loadPinResets(){db.collection("pinResetRequests").where("status","==","pending").onSnapshot(s=>{let h="";if(s.empty)h="<p style='color:#888'>None</p>";s.forEach(d=>{let x=d.data();h+=`<div class="req-card"><span><b>${x.phone}</b></span><span><button class="btn btn-green btn-small" onclick="approvePin('${d.id}','${x.phone}')">0000</button><button class="btn btn-red btn-small" onclick="rejectPin('${d.id}')">X</button></span></div>`;});document.getElementById('pinResetList').innerHTML=h;});}
 function approvePin(id,phone){db.collection("users").doc(phone).update({accPin:"0000"}).then(()=>{db.collection("pinResetRequests").doc(id).update({status:"approved"});db.collection("chats").add({phone,message:"✅ PIN reset to 0000",from:"admin",date:firebase.firestore.FieldValue.serverTimestamp()});});}
 function rejectPin(id){db.collection("pinResetRequests").doc(id).update({status:"rejected"});}
 
 function loadChats(){
- db.collection("chats").limit(200).onSnapshot(s=>{
+ db.collection("chats").limit(300).onSnapshot(s=>{
   let latest={};
-  s.forEach(d=>{let x=d.data();if(!latest[x.phone]||(x.date?.seconds||0)>(latest[x.phone].date?.seconds||0))latest[x.phone]=x;});
+  s.forEach(d=>{let x=d.data();x.id=d.id;if(!latest[x.phone]||(x.date?.seconds||0)>(latest[x.phone].date?.seconds||0))latest[x.phone]=x;});
   chatCache=latest; renderChats(Object.values(latest));
  });
 }
 function renderChats(list){
  list.sort((a,b)=>(b.date?.seconds||0)-(a.date?.seconds||0));
- let h=""; if(list.length===0)h="<p style='color:#666'>No chats - Kept forever</p>";
+ let h=""; if(list.length===0)h="<p style='color:#666'>No chats</p>";
  list.forEach(x=>{
   h+=`<div class="chat-row"><div onclick="openChat('${x.phone}')" style="flex:1;cursor:pointer"><div class="chat-phone">${x.phone}</div><div class="chat-prev">${x.from==='user'?'👤 ':'👑 '}${x.message.substring(0,35)}</div></div><div style="display:flex;gap:4px"><button class="btn btn-green btn-small" onclick="openChat('${x.phone}')">Reply</button><button class="btn btn-red btn-small" onclick="deleteChatByPhone('${x.phone}')">Delete</button></div></div>`;
  });
  document.getElementById('internalChatList').innerHTML=h;
 }
 function filterChats(){let q=document.getElementById('chatSearch').value.toLowerCase();let f=Object.values(chatCache).filter(c=>c.phone.toLowerCase().includes(q));renderChats(f);}
-function openChat(phone){selectedPhone=phone;document.getElementById('chatPhone').innerText=phone;document.getElementById('chatModal').style.display='flex';
+
+let chatMessages=[];
+function openChat(phone){
+ selectedPhone=phone;document.getElementById('chatPhone').innerText=phone;document.getElementById('chatModal').style.display='flex';
  db.collection("chats").where("phone","==",phone).onSnapshot(s=>{
-  let msgs=[];s.forEach(d=>msgs.push(d.data()));msgs.sort((a,b)=>(a.date?.seconds||0)-(b.date?.seconds||0));
-  let h="";msgs.forEach(m=>{let cls=m.from==='user'?'wa-user':'wa-admin';h+=`<div class="wa-msg ${cls}">${m.message}</div>`;});
+  chatMessages=[];s.forEach(d=>{let m=d.data();m.id=d.id;chatMessages.push(m);});
+  chatMessages.sort((a,b)=>(a.date?.seconds||0)-(b.date?.seconds||0));
+  let h="";chatMessages.forEach(m=>{
+   let cls=m.from==='user'?'wa-user':'wa-admin';
+   h+=`<div class="wa-msg ${cls}" data-id="${m.id}" onmousedown="startPress('${m.id}',event)" onmouseup="endPress()" onmouseleave="endPress()" ontouchstart="startPress('${m.id}',event)" ontouchend="endPress()" ontouchmove="endPress()">${m.message}<br><small style="font-size:8px;color:#666">${m.date?new Date(m.date.seconds*1000).toLocaleString():''}</small></div>`;
+  });
   document.getElementById('chatThread').innerHTML=h;document.getElementById('chatThread').scrollTop=9999;
  });
 }
-function closeChatModal(){document.getElementById('chatModal').style.display='none';}
+function closeChatModal(){document.getElementById('chatModal').style.display='none';hideContextMenu();}
 function sendReply(){let msg=document.getElementById('replyInput').value.trim();if(!msg)return;db.collection("chats").add({phone:selectedPhone,message:msg,from:"admin",date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{document.getElementById('replyInput').value="";});}
 function deleteChat(){if(!selectedPhone)return;deleteChatByPhone(selectedPhone);}
-function deleteChatByPhone(phone){if(!confirm("Delete ALL messages for "+phone+"?"))return;db.collection("chats").where("phone","==",phone).get().then(s=>{s.forEach(d=>db.collection("chats").doc(d.id).delete());alert("Deleted "+phone);closeChatModal();});}
+function deleteChatByPhone(phone){if(!confirm("Delete ALL messages for "+phone+"? Both sides will lose it!"))return;db.collection("chats").where("phone","==",phone).get().then(s=>{s.forEach(d=>db.collection("chats").doc(d.id).delete());alert("Deleted "+phone+" - Both sides");closeChatModal();});}
+function deleteAllChats(){if(!confirm("⚠️ DELETE ALL CHATS FOR EVERYONE? Both me and receivers will lose all chats!"))return;if(!confirm("Are you REALLY sure? This cannot be undone!"))return;db.collection("chats").limit(500).get().then(s=>{s.forEach(d=>db.collection("chats").doc(d.id).delete());alert("All chats deleted - Both sides");});}
+
+// Long Press Logic
+function startPress(msgId,e){
+ selectedMsgId=msgId;
+ if(e) e.preventDefault();
+ pressTimer=setTimeout(()=>{
+  let touch = e.touches?e.touches[0]:e;
+  showContextMenu(touch.clientX||100, touch.clientY||100);
+ },600);
+}
+function endPress(){clearTimeout(pressTimer);}
+function showContextMenu(x,y){
+ let menu=document.getElementById('contextMenu');
+ menu.style.left=x+'px';menu.style.top=y+'px';menu.style.display='block';
+}
+function hideContextMenu(){document.getElementById('contextMenu').style.display='none';}
+function deleteSingleMsg(){
+ if(!selectedMsgId)return;
+ if(!confirm("Delete this message for me and receiver?")){hideContextMenu();return;}
+ db.collection("chats").doc(selectedMsgId).delete().then(()=>{alert("Deleted for both!");hideContextMenu();});
+}
+
+// WALLET - Same logic
+function loadWallet(){
+ db.collection("transactions").limit(200).onSnapshot(s=>{
+  walletCache=[];s.forEach(d=>{let x=d.data();x.id=d.id;walletCache.push(x);});
+  renderWallet(walletCache);
+ },()=>{ // fallback if no transactions collection, try withdrawals as wallet
+  db.collection("withdrawals").limit(100).get().then(s=>{
+   walletCache=[];s.forEach(d=>{let x=d.data();x.id=d.id;x.type="withdraw";walletCache.push(x);});
+   renderWallet(walletCache);
+  });
+ });
+}
+function renderWallet(list){
+ list.sort((a,b)=>(b.date?.seconds||0)-(a.date?.seconds||0));
+ let h="";if(list.length===0)h="<p style='color:#666'>No wallet history</p>";
+ list.forEach(x=>{
+  h+=`<div class="wallet-msg" data-id="${x.id}" onmousedown="startWalletPress('${x.id}',event)" ontouchstart="startWalletPress('${x.id}',event)" onmouseup="endPress()" ontouchend="endPress()"><div><b style="color:#fbbf24">${x.phone||x.user||''}</b><br><small style="color:#aaa">Ksh ${x.amount||0} - ${x.type||x.status||'tx'}</small></div><div style="display:flex;gap:4px"><button class="btn btn-red btn-small" onclick="deleteWalletSingle('${x.id}')">Delete</button></div></div>`;
+ });
+ document.getElementById('walletList').innerHTML=h;
+}
+function filterWallet(){let q=document.getElementById('walletSearch').value.toLowerCase();let f=walletCache.filter(c=>(c.phone||'').toLowerCase().includes(q));renderWallet(f);}
+function startWalletPress(id,e){selectedMsgId=id;if(e) e.preventDefault();pressTimer=setTimeout(()=>{let touch=e.touches?e.touches[0]:e;showContextMenu(touch.clientX||100,touch.clientY||100);},600);}
+function deleteWalletSingle(id){if(!confirm("Delete this wallet record for me and receiver? Both will lose it!"))return;db.collection("transactions").doc(id).delete().catch(()=>{db.collection("withdrawals").doc(id).delete();}).then(()=>alert("Wallet record deleted for both!"));}
+function deleteAllWallet(){if(!confirm("Delete ALL wallet history for everyone?"))return;if(!confirm("REALLY delete all?"))return;db.collection("transactions").limit(500).get().then(s=>{s.forEach(d=>db.collection("transactions").doc(d.id).delete());});db.collection("withdrawals").limit(500).get().then(s=>{s.forEach(d=>{if(d.data().status!=="pending")db.collection("withdrawals").doc(d.id).delete();});});alert("Wallet cleared for both");}
 
 function loadWithdraw(){db.collection("withdrawals").where("status","==","pending").onSnapshot(s=>{let h="";if(s.empty)h="<p style='color:#666'>None</p>";s.forEach(d=>{let x=d.data();h+=`<div class="req-card"><span><b>${x.phone}</b><br>Ksh ${x.amount}</span><span><button class="btn btn-green btn-small" onclick="approveW('${d.id}')">Approve</button><button class="btn btn-red btn-small" onclick="rejectW('${d.id}')">Refund</button></span></div>`;});document.getElementById('withdrawList').innerHTML=h;});}
 function approveW(id){db.collection("withdrawals").doc(id).update({status:"paid"});}
 function rejectW(id){if(!confirm("Refund?"))return;db.collection("withdrawals").doc(id).get().then(d=>{let x=d.data();db.collection("users").doc(x.phone).update({balance:firebase.firestore.FieldValue.increment(x.amount)});db.collection("withdrawals").doc(id).update({status:"rejected"});});}
-
 function loadReferral(){db.collection("referralRequests").where("status","==","pending").onSnapshot(s=>{let h="";if(s.empty)h="<p style='color:#666'>None</p>";s.forEach(d=>{let x=d.data();h+=`<div class="req-card"><span>${x.phone} - Ksh ${x.amount}</span><span><button class="btn btn-green btn-small" onclick="approveR('${d.id}')">Approve</button><button class="btn btn-red btn-small" onclick="rejectR('${d.id}')">Reject</button></span></div>`;});document.getElementById('referralList').innerHTML=h;});}
 function approveR(id){db.collection("referralRequests").doc(id).get().then(d=>{let x=d.data();db.collection("users").doc(x.phone).update({balance:firebase.firestore.FieldValue.increment(x.amount)});db.collection("referralRequests").doc(id).update({status:"paid"});});}
 function rejectR(id){db.collection("referralRequests").doc(id).update({status:"rejected"});}
-
 function loadStats(){let totI=0,totW=0;db.collection("users").get().then(s=>{s.forEach(d=>totI+=d.data().totalInvested||0);document.getElementById('totalInvested').innerText='+Ksh '+totI;document.getElementById('todayInvested').innerText='+Ksh '+totI;});db.collection("withdrawals").where("status","==","paid").get().then(s=>{s.forEach(d=>totW+=d.data().amount||0);document.getElementById('totalWithdrawals').innerText='-Ksh '+totW;document.getElementById('todayWithdrawals').innerText='-Ksh '+totW;});}
-
-// SUPER LOADER - FINDS YESTERDAY DATA ANYWHERE
 function loadContent(){
  db.collection("settings").get().then(snap=>{
   let found={banner:"",packages:"",terms:"",policies:"",about:""};
   snap.forEach(doc=>{
-   let id=doc.id.toLowerCase();
-   let data=doc.data();
-   // Direct docs
-   if(id==="banner") found.banner = data.value||data.text||data.banner||"";
-   if(id==="packages") found.packages = data.value||data.packages||JSON.stringify(data);
-   if(id==="terms") found.terms = data.value||data.terms||data.text||"";
-   if(id==="policies"||id==="policy") found.policies = data.value||data.policies||data.text||"";
-   if(id==="about") found.about = data.value||data.about||data.text||"";
-   // If saved inside info/content/deposit
-   if(id==="info"||id==="content"||id==="config"){
-    if(data.banner) found.banner=data.banner;
-    if(data.packages) found.packages=typeof data.packages==='string'?data.packages:JSON.stringify(data.packages,null,2);
-    if(data.terms) found.terms=data.terms;
-    if(data.policies||data.policy) found.policies=data.policies||data.policy;
-    if(data.about) found.about=data.about;
-    if(data.value && id==="banner") found.banner=data.value;
-   }
-   // Generic fallback: any doc with value that looks like banner
-   if(data.bannerText) found.banner=data.bannerText;
-   if(data.termsText) found.terms=data.termsText;
+   let id=doc.id.toLowerCase();let data=doc.data();
+   if(id==="banner") found.banner=data.value||data.text||"";
+   if(id==="packages") found.packages=data.value||"";
+   if(id==="terms") found.terms=data.value||"";
+   if(id==="policies"||id==="policy") found.policies=data.value||"";
+   if(id==="about") found.about=data.value||"";
+   if(id==="info"||id==="content"){if(data.banner)found.banner=data.banner;if(data.packages)found.packages=typeof data.packages==='string'?data.packages:JSON.stringify(data.packages);if(data.terms)found.terms=data.terms;if(data.policies)found.policies=data.policies;if(data.about)found.about=data.about;}
   });
-
-  // Fill inputs
-  if(found.banner){document.getElementById('editBanner').value=found.banner;document.getElementById('statusBanner').innerText="✅ Yesterday data loaded!";}
-  if(found.packages){document.getElementById('editPackages').value=found.packages;document.getElementById('statusPackages').innerText="✅ Yesterday data loaded!";}
-  if(found.terms){document.getElementById('editTerms').value=found.terms;document.getElementById('statusTerms').innerText="✅ Yesterday data loaded!";}
-  if(found.policies){document.getElementById('editPolicies').value=found.policies;document.getElementById('statusPolicies').innerText="✅ Yesterday data loaded!";}
-  if(found.about){document.getElementById('editAbout').value=found.about;document.getElementById('statusAbout').innerText="✅ Yesterday data loaded!";}
-
-  if(!found.banner &&!found.packages &&!found.terms &&!found.policies &&!found.about){
-    document.getElementById('statusBanner').innerText="⚠️ No data found - click Debug button below";
-  }
+  if(found.banner)document.getElementById('editBanner').value=found.banner;
+  if(found.packages)document.getElementById('editPackages').value=found.packages;
+  if(found.terms)document.getElementById('editTerms').value=found.terms;
+  if(found.policies)document.getElementById('editPolicies').value=found.policies;
+  if(found.about)document.getElementById('editAbout').value=found.about;
  });
 }
+function saveSingle(key,inputId){let v=document.getElementById(inputId).value;if(!v.trim()){alert("Empty!");return;}db.collection("settings").doc(key).set({value:v,updated:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>alert("✅ "+key+" Saved!"));}
+function saveAllContent(){let data={banner:document.getElementById('editBanner').value,packages:document.getElementById('editPackages').value,terms:document.getElementById('editTerms').value,policies:document.getElementById('editPolicies').value,about:document.getElementById('editAbout').value};Object.keys(data).forEach(k=>{if(data[k].trim())db.collection("settings").doc(k).set({value:data[k],updated:firebase.firestore.FieldValue.serverTimestamp()});});alert("✅ All Saved!");}
+function debugSettings(){db.collection("settings").get().then(s=>{let msg="Found "+s.size+" docs:\n\n";s.forEach(d=>{msg+="ID: "+d.id+" | Fields: "+Object.keys(d.data()).join(", ")+"\n\n";});alert(msg);});}
 
-function saveSingle(key,inputId){let v=document.getElementById(inputId).value;if(!v.trim()){alert("Empty!");return;}db.collection("settings").doc(key).set({value:v,updated:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{document.getElementById('status'+key.charAt(0).toUpperCase()+key.slice(1)).innerText="✅ Saved!";alert("✅ "+key+" Saved!");});}
-function saveAllContent(){
- let data={banner:document.getElementById('editBanner').value,packages:document.getElementById('editPackages').value,terms:document.getElementById('editTerms').value,policies:document.getElementById('editPolicies').value,about:document.getElementById('editAbout').value};
- Object.keys(data).forEach(k=>{if(data[k].trim())db.collection("settings").doc(k).set({value:data[k],updated:firebase.firestore.FieldValue.serverTimestamp()});});
- alert("✅ All Saved!");
-}
-function debugSettings(){
- db.collection("settings").get().then(s=>{
-  let msg="Found "+s.size+" docs in settings:\n\n";
-  s.forEach(d=>{msg+= "📄 ID: "+d.id+" | Fields: "+Object.keys(d.data()).join(", ")+"\nPreview: "+JSON.stringify(d.data()).substring(0,120)+"\n\n";});
-  alert(msg);
-  console.log(msg);
- });
-}
-
+document.addEventListener('click',function(e){if(!e.target.closest('#contextMenu') &&!e.target.closest('.wa-msg') &&!e.target.closest('.wallet-msg'))hideContextMenu();});
 window.onload=()=>{if(localStorage.getItem('nexaAdminLoggedIn')==='true')showPanel();}
 </script>
 </body>
