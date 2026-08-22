@@ -7,36 +7,39 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 *{box-sizing:border-box}
 body{background:#fff8ec;color:#222;font-family:Poppins;margin:0;padding:0 0 85px 0}
-.top-stats{background:#111;margin:0;padding:16px 15px;border-radius:0 0 18px 18px}
-.stat-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #222;font-size:13px;color:#aaa}
+
+/* FIXED - SMALL BAR NOW */
+.top-stats{background:#111;margin:12px auto;padding:12px 14px;border-radius:16px;max-width:92%;border:1px solid #222}
+.stat-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #222;font-size:12px;color:#aaa}
 .stat-row:last-child{border:none}
-.stat-row b{color:#22c55e}
-.stat-row.total b{color:#fbbf24;font-size:15px}
-.tab-bar{display:flex;background:#f5e8cc;margin:0;overflow:hidden;position:sticky;top:0;z-index:10}
-.tab{flex:1;text-align:center;padding:14px 0;font-weight:700;font-size:14px;cursor:pointer;color:#888;border-bottom:3px solid transparent}
+.stat-row b{color:#22c55e;font-size:12px}
+.stat-row.total b{color:#fbbf24;font-size:13px}
+
+.tab-bar{display:flex;background:#f5e8cc;margin:12px auto 0 auto;overflow:hidden;position:sticky;top:0;z-index:10;max-width:92%;border-radius:12px 12px 0 0}
+.tab{flex:1;text-align:center;padding:12px 0;font-weight:700;font-size:13px;cursor:pointer;color:#888;border-bottom:3px solid transparent}
 .tab.active{color:#d97706;border-bottom:3px solid #d97706;background:#fff3d6}
-.level-list{background:#fff8ec;min-height:300px}
+.level-list{background:#fff8ec;min-height:300px;max-width:92%;margin:0 auto}
 .level-list.hidden{display:none}
-.member-row{display:flex;align-items:center;gap:12px;padding:14px 12px;border-bottom:1px solid #f0d9a8;background:white}
-.avatar{width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid #fbbf24;flex-shrink:0;background:#111}
+.member-row{display:flex;align-items:center;gap:12px;padding:12px;border-bottom:1px solid #f0d9a8;background:white}
+.avatar{width:42px;height:42px;border-radius:50%;border:2px solid #fbbf24;flex-shrink:0;background:#111}
 .info{flex:1;line-height:1.3}
-.info b{font-size:14px;color:#111;display:block}
-.sub{font-size:11px;color:#666}
-.sub2{font-size:11px;color:#999}
-.sub3{font-size:12px;color:#111;font-weight:600;margin-top:2px}
-.status{padding:6px 12px;border-radius:20px;font-size:11px;font-weight:700;background:#eee;color:#888;flex-shrink:0}
+.info b{font-size:13px;color:#111;display:block}
+.sub{font-size:10px;color:#666}
+.sub2{font-size:10px;color:#999}
+.sub3{font-size:11px;color:#111;font-weight:600;margin-top:2px}
+.status{padding:5px 10px;border-radius:20px;font-size:10px;font-weight:700;background:#eee;color:#888;flex-shrink:0}
 .status.active{background:#dcfce7;color:#16a34a}
-.arrow{color:#aaa;font-size:18px}
-.box2{margin:12px;background:#111;padding:14px;border-radius:16px;border:1px solid #222}
-.box2 label{font-size:11px;color:#aaa;margin-bottom:4px;display:block}
-.box2 input{width:100%;padding:11px;background:#1a1a1a;border:1px solid #333;color:white;border-radius:8px;margin:6px 0;font-size:13px}
-.btn-wrap{display:flex;gap:8px;margin-top:10px}
-.btn{flex:1;padding:12px;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-size:13px}
+.arrow{color:#aaa;font-size:16px}
+.box2{margin:12px auto;padding:12px;border-radius:14px;border:1px solid #222;background:#111;max-width:92%}
+.box2 label{font-size:10px;color:#aaa;margin-bottom:4px;display:block}
+.box2 input{width:100%;padding:10px;background:#1a1a1a;border:1px solid #333;color:white;border-radius:8px;margin:4px 0;font-size:12px}
+.btn-wrap{display:flex;gap:8px;margin-top:8px}
+.btn{flex:1;padding:10px;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:12px}
 .btn-green{background:linear-gradient(180deg,#22c55e,#16a34a);color:white}
 .btn-orange{background:linear-gradient(180deg,#fbbf24,#f59e0b);color:black}
 .bottom-nav{position:fixed;bottom:0;left:0;width:100%;background:#0a0a0a;border-top:1px solid #222;display:flex;justify-content:space-around;padding:8px 0 12px 0;z-index:99}
-.nav-item{flex:1;text-align:center;font-size:11px;color:#666;text-decoration:none;transition:0.2s}
-.nav-item svg{width:24px;height:24px;display:block;margin:0 auto 3px auto;fill:currentColor}
+.nav-item{flex:1;text-align:center;font-size:10px;color:#666;text-decoration:none}
+.nav-item svg{width:22px;height:22px;display:block;margin:0 auto 3px auto;fill:currentColor}
 .nav-item.active{color:#fbbf24;font-weight:800;transform:translateY(-2px)}
 .nav-item.active svg{filter:drop-shadow(0 0 8px #fbbf24)}
 #toastBox{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;width:90%;max-width:350px}
@@ -47,7 +50,7 @@ body{background:#fff8ec;color:#222;font-family:Poppins;margin:0;padding:0 0 85px
 <div id="toastBox"></div>
 
 <div class="top-stats">
-  <div style="text-align:center;color:#fbbf24;font-weight:800;margin-bottom:8px">🎁 MY TEAM EARNINGS</div>
+  <div style="text-align:center;color:#fbbf24;font-weight:800;margin-bottom:6px;font-size:13px">🎁 MY TEAM EARNINGS</div>
   <div class="stat-row total"><span>Total Gained</span><b>Ksh <span id="totalGained">0.00</span></b></div>
   <div class="stat-row"><span>Gained from L1 (10%)</span><b>Ksh <span id="gainedL1">0.00</span></b></div>
   <div class="stat-row"><span>Gained from L2 (5%)</span><b>Ksh <span id="gainedL2">0.00</span></b></div>
@@ -69,7 +72,6 @@ body{background:#fff8ec;color:#222;font-family:Poppins;margin:0;padding:0 0 85px
   <div id="level2List" class="level-list hidden"></div>
 </div>
 
-<!-- BOTTOM NAV WITH ICONS RESTORED -->
 <div class="bottom-nav">
   <a href="dashboard.html" class="nav-item"><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Home</a>
   <a href="tasks.html" class="nav-item"><svg viewBox="0 0 24 24"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>Tasks</a>
@@ -85,101 +87,26 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const phone = localStorage.getItem("nexaPhone");
 if(!phone) window.location.href="index.html";
-
 function showToast(m){let b=document.getElementById('toastBox');let t=document.createElement('div');t.className='toast';t.innerText="✅ "+m;b.appendChild(t);setTimeout(()=>t.remove(),3000);}
 let currentTab=1;
-function switchTab(n){
-  currentTab=n;
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelector(`.tab[data-level="${n}"]`).classList.add('active');
-  document.getElementById('level1List').classList.toggle('hidden', n!=1);
-  document.getElementById('level2List').classList.toggle('hidden', n!=2);
-}
-let startX=0;
-let area=document.getElementById('swipeArea');
+function switchTab(n){currentTab=n;document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelector(`.tab[data-level="${n}"]`).classList.add('active');document.getElementById('level1List').classList.toggle('hidden', n!=1);document.getElementById('level2List').classList.toggle('hidden', n!=2);}
+let startX=0;let area=document.getElementById('swipeArea');
 area.addEventListener('touchstart',e=>{startX=e.touches[0].clientX;},{passive:true});
-area.addEventListener('touchend',e=>{
-  let diff=e.changedTouches[0].clientX-startX;
-  if(Math.abs(diff)>80){
-    if(diff<0 && currentTab==1) switchTab(2);
-    else if(diff>0 && currentTab==2) switchTab(1);
-  }
-});
-function formatDate(ts){
-  if(!ts) return 'Unknown';
-  try{let d=ts.toDate?ts.toDate():new Date(ts);return (d.getMonth()+1)+'/'+d.getDate()+'/'+d.getFullYear();}catch(e){return 'Unknown';}
-}
+area.addEventListener('touchend',e=>{let diff=e.changedTouches[0].clientX-startX;if(Math.abs(diff)>80){if(diff<0&&currentTab==1)switchTab(2);else if(diff>0&&currentTab==2)switchTab(1);}});
+function formatDate(ts){if(!ts)return'Unknown';try{let d=ts.toDate?ts.toDate():new Date(ts);return (d.getMonth()+1)+'/'+d.getDate()+'/'+d.getFullYear();}catch(e){return'Unknown';}}
 function loadReferrals(){
   db.collection("users").doc(phone).onSnapshot(doc=>{
-    if(!doc.exists) return;
-    let u=doc.data();
-    let myCode=u.myReferralCode||u.userId;
-    document.getElementById('myCode').value=myCode;
-    document.getElementById('myLink').value=`https://nexa-view.vercel.app/register.html?ref=${myCode}`;
+    if(!doc.exists)return;let u=doc.data();let myCode=u.myReferralCode||u.userId;
+    document.getElementById('myCode').value=myCode;document.getElementById('myLink').value=`https://nexa-view.vercel.app/register.html?ref=${myCode}`;
     document.getElementById('totalGained').innerText=(u.totalReferralEarned||0).toFixed(2);
     document.getElementById('gainedL1').innerText=(u.totalReferralEarnedL1||u.referralEarnL1||0).toFixed(2);
     document.getElementById('gainedL2').innerText=(u.totalReferralEarnedL2||u.referralEarnL2||0).toFixed(2);
-    let lv1Phones=u.myReferralsLV1||u.referrals||[];
-    let lv2Phones=u.myReferralsLV2||[];
-    document.getElementById('lv1CountTab').innerText=lv1Phones.length;
-    document.getElementById('lv2CountTab').innerText=lv2Phones.length;
-    document.getElementById('level1List').innerHTML= lv1Phones.length==0?'<p style="padding:20px;color:#888;text-align:center">No Level 1 yet</p>':'';
-    document.getElementById('level2List').innerHTML= lv2Phones.length==0?'<p style="padding:20px;color:#888;text-align:center">No Level 2 yet</p>':'';
-
-    lv1Phones.forEach((lv1Phone, idx)=>{
-      db.collection("users").doc(lv1Phone).get().then(snap=>{
-        if(!snap.exists) return;
-        let data=snap.data();
-        let phoneDisplay=data.phone||lv1Phone;
-        let id=data.userId||data.myReferralCode||'N/A';
-        let joined=formatDate(data.date);
-        let pkg = data.ownedPackagesList && data.ownedPackagesList.length>0? data.ownedPackagesList[0] : (data.hasPurchased?'Active':'No Package');
-        // REFERRALS COUNT INSTEAD OF WITHDRAWALS
-        let refCount = (data.myReferralsLV1||data.referrals||[]).length + (data.myReferralsLV2||[]).length;
-        let isActive=data.hasPurchased||data.isActive;
-        let row=document.createElement('div');
-        row.className='member-row';
-        row.innerHTML=`
-          <img src="nexa_view_icon.webp" class="avatar" onerror="this.src='https://via.placeholder.com/50/fbbf24/000?text=N'">
-          <div class="info">
-            <b>${idx+1}. ${phoneDisplay}</b>
-            <span class="sub">ID ${id} · @${phoneDisplay.slice(-6)}</span>
-            <span class="sub2">Joined ${joined}</span>
-            <span class="sub3">Package: ${pkg} · Referrals: ${refCount}</span>
-          </div>
-          <span class="status ${isActive?'active':''}">${isActive?'Active':'Inactive'}</span>
-          <span class="arrow">›</span>
-        `;
-        document.getElementById('level1List').appendChild(row);
-      });
-    });
-
-    lv2Phones.forEach((lv2Phone, idx)=>{
-      db.collection("users").doc(lv2Phone).get().then(snap=>{
-        if(!snap.exists) return;
-        let data=snap.data();
-        let phoneDisplay=data.phone||lv2Phone;
-        let id=data.userId||data.myReferralCode||'N/A';
-        let joined=formatDate(data.date);
-        let pkg = data.ownedPackagesList && data.ownedPackagesList.length>0? data.ownedPackagesList[0] : (data.hasPurchased?'Active':'No Package');
-        let refCount = (data.myReferralsLV1||data.referrals||[]).length + (data.myReferralsLV2||[]).length;
-        let isActive=data.hasPurchased||data.isActive;
-        let row=document.createElement('div');
-        row.className='member-row';
-        row.innerHTML=`
-          <img src="nexa_view_icon.webp" class="avatar">
-          <div class="info">
-            <b>${idx+1}. ${phoneDisplay}</b>
-            <span class="sub">ID ${id} · @${phoneDisplay.slice(-6)}</span>
-            <span class="sub2">Joined ${joined}</span>
-            <span class="sub3">Package: ${pkg} · Referrals: ${refCount}</span>
-          </div>
-          <span class="status ${isActive?'active':''}">${isActive?'Active':'Inactive'}</span>
-          <span class="arrow">›</span>
-        `;
-        document.getElementById('level2List').appendChild(row);
-      });
-    });
+    let lv1Phones=u.myReferralsLV1||u.referrals||[];let lv2Phones=u.myReferralsLV2||[];
+    document.getElementById('lv1CountTab').innerText=lv1Phones.length;document.getElementById('lv2CountTab').innerText=lv2Phones.length;
+    document.getElementById('level1List').innerHTML=lv1Phones.length==0?'<p style="padding:20px;color:#888;text-align:center">No Level 1 yet</p>':'';
+    document.getElementById('level2List').innerHTML=lv2Phones.length==0?'<p style="padding:20px;color:#888;text-align:center">No Level 2 yet</p>':'';
+    lv1Phones.forEach((lv1Phone,idx)=>{db.collection("users").doc(lv1Phone).get().then(snap=>{if(!snap.exists)return;let data=snap.data();let pd=data.phone||lv1Phone;let id=data.userId||'N/A';let joined=formatDate(data.date);let pkg=data.ownedPackagesList&&data.ownedPackagesList.length>0?data.ownedPackagesList[0]:'No Package';let refCount=(data.myReferralsLV1||data.referrals||[]).length+(data.myReferralsLV2||[]).length;let isActive=data.hasPurchased||data.isActive;let row=document.createElement('div');row.className='member-row';row.innerHTML=`<img src="nexa_view_icon.webp" class="avatar" onerror="this.src='https://via.placeholder.com/50/fbbf24/000?text=N'"><div class="info"><b>${idx+1}. ${pd}</b><span class="sub">ID ${id} · @${pd.slice(-6)}</span><span class="sub2">Joined ${joined}</span><span class="sub3">Package: ${pkg} · Referrals: ${refCount}</span></div><span class="status ${isActive?'active':''}">${isActive?'Active':'Inactive'}</span><span class="arrow">›</span>`;document.getElementById('level1List').appendChild(row);});});
+    lv2Phones.forEach((lv2Phone,idx)=>{db.collection("users").doc(lv2Phone).get().then(snap=>{if(!snap.exists)return;let data=snap.data();let pd=data.phone||lv2Phone;let id=data.userId||'N/A';let joined=formatDate(data.date);let pkg=data.ownedPackagesList&&data.ownedPackagesList.length>0?data.ownedPackagesList[0]:'No Package';let refCount=(data.myReferralsLV1||data.referrals||[]).length+(data.myReferralsLV2||[]).length;let isActive=data.hasPurchased||data.isActive;let row=document.createElement('div');row.className='member-row';row.innerHTML=`<img src="nexa_view_icon.webp" class="avatar"><div class="info"><b>${idx+1}. ${pd}</b><span class="sub">ID ${id} · @${pd.slice(-6)}</span><span class="sub2">Joined ${joined}</span><span class="sub3">Package: ${pkg} · Referrals: ${refCount}</span></div><span class="status ${isActive?'active':''}">${isActive?'Active':'Inactive'}</span><span class="arrow">›</span>`;document.getElementById('level2List').appendChild(row);});});
   });
 }
 function copyLink(){navigator.clipboard.writeText(document.getElementById('myLink').value).then(()=>showToast("Link Copied!"));}
