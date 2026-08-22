@@ -10,25 +10,26 @@
 *{box-sizing:border-box}
 body{background:#000;color:white;font-family:Poppins;padding:12px;margin:0;font-size:13px}
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.logout-btn{background:#ef4444;color:white;border:none;padding:6px 10px;border-radius:8px;font-weight:700;cursor:pointer;font-size:11px}
+.logout-btn{background:#ef4444;color:white;border:none;padding:6px 10px;border-radius:8px;font-weight:700;cursor:pointer}
 .box{background:#111;border:1px solid #333;border-radius:10px;padding:12px;margin-bottom:12px}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
 .stat-card{background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:10px;text-align:center}
 .stat-card h4{color:#888;font-size:10px;margin:0}
-.stat-card p{font-size:14px;font-weight:700;margin:3px 0 0 0}
+.stat-card p{font-size:14px;font-weight:700;margin:3px 0 0}
 h2{color:#fbbf24;text-align:center;margin:0;font-size:16px}
-h3{color:#fbbf24;margin:0 0 10px 0;font-size:14px}
+h3{color:#fbbf24;margin:0 0 10px;font-size:14px}
 .btn{padding:6px 10px;border:none;border-radius:6px;font-weight:700;cursor:pointer;font-size:11px;font-family:Poppins}
 .btn-green{background:#22c55e;color:#000}
 .btn-red{background:#ef4444;color:white}
 .btn-blue{background:#3b82f6;color:white}
-.btn-small{padding:4px 7px;font-size:9px}
-.chat-row{padding:9px 10px;background:#1a1a1a;border-radius:8px;margin:5px 0;border-left:3px solid #22c55e;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
-.chat-row:active{background:#222}
+.btn-yellow{background:#fbbf24;color:#000}
+.btn-small{padding:4px 8px;font-size:10px}
+.chat-row{padding:10px;background:#1a1a1a;border-radius:8px;margin:6px 0;border-left:3px solid #22c55e;display:flex;justify-content:space-between;align-items:center}
 .chat-phone{color:#22c55e;font-weight:700;font-size:12px}
-.chat-prev{color:#aaa;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px}
+.chat-prev{color:#aaa;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px}
 .req-card{background:#1a1a1a;padding:9px;border-radius:8px;margin:5px 0;border:1px solid #333;display:flex;justify-content:space-between;align-items:center;font-size:11px}
-input,textarea{padding:8px;background:#222;border:1px solid #444;color:white;border-radius:6px;width:100%;margin:5px 0;font-family:Poppins;font-size:12px}
+input,textarea{padding:8px;background:#1a1a1a;border:1px solid #444;color:white;border-radius:6px;width:100%;margin:5px 0;font-family:Poppins;font-size:12px}
+.edit-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:999;justify-content:center;align-items:center}
 .modal-content{background:#111;width:95%;max-width:450px;border-radius:12px;padding:14px;border:1px solid #333;max-height:90vh;overflow-y:auto}
 .wa-msg{padding:7px 10px;border-radius:8px;margin:5px 0;max-width:78%;font-size:12px}
@@ -39,7 +40,7 @@ input,textarea{padding:8px;background:#222;border:1px solid #444;color:white;bor
 </style>
 </head>
 <body>
-<div id="loginScreen"><div class="login-box"><h2>👑 NEXA ADMIN LOGIN</h2><input type="password" id="adminPassword" placeholder="Enter Password"><button class="btn btn-blue" style="width:100%;padding:10px;margin-top:8px" onclick="checkLogin()">Login</button><p id="loginError" style="color:#ef4444;font-size:11px"></p></div></div>
+<div id="loginScreen"><div class="login-box"><h2>👑 NEXA ADMIN</h2><input type="password" id="adminPassword" placeholder="Password"><button class="btn btn-blue" style="width:100%;padding:10px;margin-top:8px" onclick="checkLogin()">Login</button><p id="loginError" style="color:#ef4444"></p></div></div>
 
 <div id="mainPanel" style="display:none">
 <div class="header"><h2>👑 NEXA ADMIN PANEL</h2><button class="logout-btn" onclick="logout()">Logout</button></div>
@@ -47,34 +48,52 @@ input,textarea{padding:8px;background:#222;border:1px solid #444;color:white;bor
 <div class="box"><h3>💰 Deposit M-PESA</h3><div style="display:flex;gap:6px"><input type="text" id="mpesaNumber" value="0718422377"><button class="btn btn-green btn-small" onclick="saveMpesa()">Save</button></div></div>
 
 <div class="stats">
-<div class="stat-card"><h4>Total Invested</h4><p id="totalInvested" style="color:#22c55e">+Ksh 0</p></div>
-<div class="stat-card"><h4>Today Invested</h4><p id="todayInvested" style="color:#22c55e">+Ksh 0</p></div>
-<div class="stat-card"><h4>Today Withdraw</h4><p id="todayWithdrawals" style="color:#ef4444">-Ksh 0</p></div>
-<div class="stat-card"><h4>Total Withdraw</h4><p id="totalWithdrawals" style="color:#ef4444">-Ksh 0</p></div>
+<div class="stat-card"><h4>Total Invested</h4><p id="totalInvested" style="color:#22c55e">0</p></div>
+<div class="stat-card"><h4>Today Invested</h4><p id="todayInvested" style="color:#22c55e">0</p></div>
+<div class="stat-card"><h4>Today Withdraw</h4><p id="todayWithdrawals" style="color:#ef4444">0</p></div>
+<div class="stat-card"><h4>Total Withdraw</h4><p id="totalWithdrawals" style="color:#ef4444">0</p></div>
 </div>
 
 <div class="box" style="border-color:#fbbf24"><h3>🔐 PIN Reset Requests</h3><div id="pinResetList">Loading...</div></div>
 
-<!-- MINIMIZED CHATS - ONE TAP ONLY -->
-<div class="box" style="border-color:#22c55e"><h3>💬 Chats - Tap Phone to Reply</h3><input type="text" id="chatSearch" placeholder="Search phone..." onkeyup="filterChats()" style="padding:6px"><div id="internalChatList">Loading...</div></div>
+<div class="box" style="border-color:#22c55e"><h3>💬 Chats - Tap Reply + Delete Tab</h3><input type="text" id="chatSearch" placeholder="Search phone..." onkeyup="filterChats()"><div id="internalChatList">Loading...</div></div>
 
-<div class="box"><h3>💸 Pending Withdrawals [200,500,700,1000,1500,2000]</h3><div id="withdrawList">Loading...</div></div>
+<div class="box"><h3>💸 Pending Withdrawals</h3><div id="withdrawList">Loading...</div></div>
+<div class="box"><h3>🎁 Referral Pending</h3><div id="referralList">Loading...</div></div>
 
-<div class="box"><h3>🎁 Pending Referral</h3><div id="referralList">Loading...</div></div>
+<div class="box" style="border:1.5px solid #8b5cf6"><h3>⚙️ Edit Content - Banner, Packages, Terms, Policies, About</h3>
+<button class="btn btn-blue" style="width:100%;margin-bottom:10px" onclick="debugSettings()">🔍 Debug - Show Where Yesterday Data Is</button>
 
-<!-- CONTENT EDITOR -->
-<div class="box" style="border-color:#8b5cf6"><h3>⚙️ Edit Content - Banner, Packages, Terms, Policies, About</h3>
-<label>🖼️ Banner</label><textarea id="editBanner" rows="2" placeholder="Welcome to NEXA..."></textarea>
-<label>📦 Packages</label><textarea id="editPackages" rows="3" placeholder='Package list'></textarea>
-<label>📜 Terms</label><textarea id="editTerms" rows="3"></textarea>
-<label>🔒 Policies</label><textarea id="editPolicies" rows="3"></textarea>
-<label>ℹ️ About</label><textarea id="editAbout" rows="3"></textarea>
-<button class="btn btn-green" style="width:100%;margin-top:6px" onclick="saveAllContent()">💾 Save All</button>
+<div style="margin-bottom:12px;background:#0f0f0f;padding:8px;border-radius:8px">
+<label>🖼️ Banner</label><textarea id="editBanner" rows="2" placeholder="Welcome to NEXA VIEW..."></textarea>
+<div class="edit-row"><button class="btn btn-yellow btn-small" onclick="document.getElementById('editBanner').focus()">✏️ Edit</button><button class="btn btn-green btn-small" onclick="saveSingle('banner','editBanner')">💾 Save Banner</button><span id="statusBanner" style="font-size:10px;color:#aaa"></span></div>
 </div>
 
+<div style="margin-bottom:12px;background:#0f0f0f;padding:8px;border-radius:8px">
+<label>📦 Packages</label><textarea id="editPackages" rows="3" placeholder='[{"name":"NEXA","price":500,"daily":75}]'></textarea>
+<div class="edit-row"><button class="btn btn-yellow btn-small" onclick="document.getElementById('editPackages').focus()">✏️ Edit</button><button class="btn btn-green btn-small" onclick="saveSingle('packages','editPackages')">💾 Save Packages</button><span id="statusPackages" style="font-size:10px;color:#aaa"></span></div>
 </div>
 
-<div id="chatModal" class="modal" onclick="closeChatModal()"><div class="modal-content" onclick="event.stopPropagation()"><h3 id="chatPhone" style="color:#22c55e;margin:0 0 10px"></h3><div id="chatThread" style="background:#0a0a0a;border-radius:8px;padding:8px;max-height:350px;overflow-y:auto;display:flex;flex-direction:column"></div><div style="display:flex;gap:6px;margin-top:8px"><input type="text" id="replyInput" placeholder="Type reply..." style="margin:0"><button class="btn btn-green" onclick="sendReply()">Send</button></div><button class="btn btn-red" style="width:100%;margin-top:8px" onclick="closeChatModal()">Close</button></div></div>
+<div style="margin-bottom:12px;background:#0f0f0f;padding:8px;border-radius:8px">
+<label>📜 Terms</label><textarea id="editTerms" rows="3" placeholder="Terms..."></textarea>
+<div class="edit-row"><button class="btn btn-yellow btn-small" onclick="document.getElementById('editTerms').focus()">✏️ Edit</button><button class="btn btn-green btn-small" onclick="saveSingle('terms','editTerms')">💾 Save Terms</button><span id="statusTerms" style="font-size:10px;color:#aaa"></span></div>
+</div>
+
+<div style="margin-bottom:12px;background:#0f0f0f;padding:8px;border-radius:8px">
+<label>🔒 Policies</label><textarea id="editPolicies" rows="3" placeholder="Policies..."></textarea>
+<div class="edit-row"><button class="btn btn-yellow btn-small" onclick="document.getElementById('editPolicies').focus()">✏️ Edit</button><button class="btn btn-green btn-small" onclick="saveSingle('policies','editPolicies')">💾 Save Policies</button><span id="statusPolicies" style="font-size:10px;color:#aaa"></span></div>
+</div>
+
+<div style="margin-bottom:12px;background:#0f0f0f;padding:8px;border-radius:8px">
+<label>ℹ️ About</label><textarea id="editAbout" rows="3" placeholder="About..."></textarea>
+<div class="edit-row"><button class="btn btn-yellow btn-small" onclick="document.getElementById('editAbout').focus()">✏️ Edit</button><button class="btn btn-green btn-small" onclick="saveSingle('about','editAbout')">💾 Save About</button><span id="statusAbout" style="font-size:10px;color:#aaa"></span></div>
+</div>
+
+<button class="btn btn-green" style="width:100%;padding:12px" onclick="saveAllContent()">💾 Save All Content</button>
+</div>
+</div>
+
+<div id="chatModal" class="modal" onclick="closeChatModal()"><div class="modal-content" onclick="event.stopPropagation()"><h3 id="chatPhone" style="color:#22c55e;margin:0 0 10px"></h3><div id="chatThread" style="background:#0a0a0a;border-radius:8px;padding:8px;max-height:350px;overflow-y:auto;display:flex;flex-direction:column"></div><div style="display:flex;gap:6px;margin-top:8px"><input type="text" id="replyInput" placeholder="Type reply..." style="margin:0"><button class="btn btn-green" onclick="sendReply()">Send</button></div><div style="display:flex;gap:6px;margin-top:8px"><button class="btn btn-red" style="flex:1" onclick="deleteChat()">🗑️ Delete Chat</button><button class="btn btn-blue" style="flex:1" onclick="closeChatModal()">Close</button></div></div></div>
 
 <script>
 const firebaseConfig = {apiKey:"AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",authDomain:"nexa-view.firebaseapp.com",projectId:"nexa-view"};
@@ -83,14 +102,14 @@ const db = firebase.firestore();
 const ADMIN_PASSWORD="admin123";
 let chatCache={}, selectedPhone="";
 
-function checkLogin(){if(document.getElementById('adminPassword').value===ADMIN_PASSWORD){localStorage.setItem('nexaAdminLoggedIn','true');showPanel();}else document.getElementById('loginError').innerText="Wrong Password";}
+function checkLogin(){if(document.getElementById('adminPassword').value===ADMIN_PASSWORD){localStorage.setItem('nexaAdminLoggedIn','true');showPanel();}else document.getElementById('loginError').innerText="Wrong";}
 function showPanel(){document.getElementById('loginScreen').style.display='none';document.getElementById('mainPanel').style.display='block';loadMpesa();loadStats();loadPinResets();loadChats();loadWithdraw();loadReferral();loadContent();}
 function logout(){localStorage.removeItem('nexaAdminLoggedIn');location.reload();}
 
-function loadMpesa(){db.collection("settings").doc("deposit").get().then(d=>{if(d.exists)document.getElementById('mpesaNumber').value=d.data().mpesaNumber||"0718422377";});}
-function saveMpesa(){db.collection("settings").doc("deposit").set({mpesaNumber:document.getElementById('mpesaNumber').value}).then(()=>alert("Saved"));}
+function loadMpesa(){db.collection("settings").doc("deposit").get().then(d=>{if(d.exists){let data=d.data();document.getElementById('mpesaNumber').value=data.mpesaNumber||data.value||"0718422377";}});}
+function saveMpesa(){db.collection("settings").doc("deposit").set({mpesaNumber:document.getElementById('mpesaNumber').value}).then(()=>alert("Saved M-PESA"));}
 
-function loadPinResets(){db.collection("pinResetRequests").where("status","==","pending").onSnapshot(s=>{let h="";if(s.empty)h="<p style='color:#888'>None</p>";s.forEach(d=>{let x=d.data();h+=`<div class="req-card"><span><b>${x.phone}</b><br><small>${x.userId||''}</small></span><span><button class="btn btn-green btn-small" onclick="approvePin('${d.id}','${x.phone}')">0000</button><button class="btn btn-red btn-small" onclick="rejectPin('${d.id}')">X</button></span></div>`;});document.getElementById('pinResetList').innerHTML=h;});}
+function loadPinResets(){db.collection("pinResetRequests").where("status","==","pending").onSnapshot(s=>{let h="";if(s.empty)h="<p style='color:#888'>None</p>";s.forEach(d=>{let x=d.data();h+=`<div class="req-card"><span><b>${x.phone}</b></span><span><button class="btn btn-green btn-small" onclick="approvePin('${d.id}','${x.phone}')">0000</button><button class="btn btn-red btn-small" onclick="rejectPin('${d.id}')">X</button></span></div>`;});document.getElementById('pinResetList').innerHTML=h;});}
 function approvePin(id,phone){db.collection("users").doc(phone).update({accPin:"0000"}).then(()=>{db.collection("pinResetRequests").doc(id).update({status:"approved"});db.collection("chats").add({phone,message:"✅ PIN reset to 0000",from:"admin",date:firebase.firestore.FieldValue.serverTimestamp()});});}
 function rejectPin(id){db.collection("pinResetRequests").doc(id).update({status:"rejected"});}
 
@@ -105,23 +124,24 @@ function renderChats(list){
  list.sort((a,b)=>(b.date?.seconds||0)-(a.date?.seconds||0));
  let h=""; if(list.length===0)h="<p style='color:#666'>No chats - Kept forever</p>";
  list.forEach(x=>{
-  h+=`<div class="chat-row" onclick="openChat('${x.phone}')"><div><div class="chat-phone">${x.phone}</div><div class="chat-prev">${x.from==='user'?'👤 ':'👑 '}${x.message.substring(0,45)}</div></div><div style="color:#22c55e;font-size:16px">›</div></div>`;
+  h+=`<div class="chat-row"><div onclick="openChat('${x.phone}')" style="flex:1;cursor:pointer"><div class="chat-phone">${x.phone}</div><div class="chat-prev">${x.from==='user'?'👤 ':'👑 '}${x.message.substring(0,35)}</div></div><div style="display:flex;gap:4px"><button class="btn btn-green btn-small" onclick="openChat('${x.phone}')">Reply</button><button class="btn btn-red btn-small" onclick="deleteChatByPhone('${x.phone}')">Delete</button></div></div>`;
  });
  document.getElementById('internalChatList').innerHTML=h;
 }
 function filterChats(){let q=document.getElementById('chatSearch').value.toLowerCase();let f=Object.values(chatCache).filter(c=>c.phone.toLowerCase().includes(q));renderChats(f);}
-
 function openChat(phone){selectedPhone=phone;document.getElementById('chatPhone').innerText=phone;document.getElementById('chatModal').style.display='flex';
  db.collection("chats").where("phone","==",phone).onSnapshot(s=>{
   let msgs=[];s.forEach(d=>msgs.push(d.data()));msgs.sort((a,b)=>(a.date?.seconds||0)-(b.date?.seconds||0));
-  let h="";msgs.forEach(m=>{let cls=m.from==='user'?'wa-user':'wa-admin';h+=`<div class="wa-msg ${cls}">${m.message}<br><small style="font-size:8px;color:#666">${m.date?new Date(m.date.seconds*1000).toLocaleString():''}</small></div>`;});
+  let h="";msgs.forEach(m=>{let cls=m.from==='user'?'wa-user':'wa-admin';h+=`<div class="wa-msg ${cls}">${m.message}</div>`;});
   document.getElementById('chatThread').innerHTML=h;document.getElementById('chatThread').scrollTop=9999;
  });
 }
 function closeChatModal(){document.getElementById('chatModal').style.display='none';}
 function sendReply(){let msg=document.getElementById('replyInput').value.trim();if(!msg)return;db.collection("chats").add({phone:selectedPhone,message:msg,from:"admin",date:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{document.getElementById('replyInput').value="";});}
+function deleteChat(){if(!selectedPhone)return;deleteChatByPhone(selectedPhone);}
+function deleteChatByPhone(phone){if(!confirm("Delete ALL messages for "+phone+"?"))return;db.collection("chats").where("phone","==",phone).get().then(s=>{s.forEach(d=>db.collection("chats").doc(d.id).delete());alert("Deleted "+phone);closeChatModal();});}
 
-function loadWithdraw(){db.collection("withdrawals").where("status","==","pending").onSnapshot(s=>{let h="";if(s.empty)h="<p style='color:#666'>No pending</p>";s.forEach(d=>{let x=d.data();h+=`<div class="req-card"><span><b>${x.phone}</b><br>Ksh ${x.amount} → Net ${x.net||x.amount*0.9}</span><span><button class="btn btn-green btn-small" onclick="approveW('${d.id}')">Approve</button><button class="btn btn-red btn-small" onclick="rejectW('${d.id}')">Refund</button></span></div>`;});document.getElementById('withdrawList').innerHTML=h;});}
+function loadWithdraw(){db.collection("withdrawals").where("status","==","pending").onSnapshot(s=>{let h="";if(s.empty)h="<p style='color:#666'>None</p>";s.forEach(d=>{let x=d.data();h+=`<div class="req-card"><span><b>${x.phone}</b><br>Ksh ${x.amount}</span><span><button class="btn btn-green btn-small" onclick="approveW('${d.id}')">Approve</button><button class="btn btn-red btn-small" onclick="rejectW('${d.id}')">Refund</button></span></div>`;});document.getElementById('withdrawList').innerHTML=h;});}
 function approveW(id){db.collection("withdrawals").doc(id).update({status:"paid"});}
 function rejectW(id){if(!confirm("Refund?"))return;db.collection("withdrawals").doc(id).get().then(d=>{let x=d.data();db.collection("users").doc(x.phone).update({balance:firebase.firestore.FieldValue.increment(x.amount)});db.collection("withdrawals").doc(id).update({status:"rejected"});});}
 
@@ -129,13 +149,61 @@ function loadReferral(){db.collection("referralRequests").where("status","==","p
 function approveR(id){db.collection("referralRequests").doc(id).get().then(d=>{let x=d.data();db.collection("users").doc(x.phone).update({balance:firebase.firestore.FieldValue.increment(x.amount)});db.collection("referralRequests").doc(id).update({status:"paid"});});}
 function rejectR(id){db.collection("referralRequests").doc(id).update({status:"rejected"});}
 
-function loadStats(){let today=new Date();today.setHours(0,0,0);let totI=0,todayI=0,totW=0,todayW=0;db.collection("users").get().then(s=>{s.forEach(d=>{let u=d.data();totI+=u.totalInvested||0;if(u.lastPurchaseDate&&u.lastPurchaseDate.toDate()>=today)todayI+=u.lastPurchaseAmount||0;});document.getElementById('totalInvested').innerText='+Ksh '+totI;document.getElementById('todayInvested').innerText='+Ksh '+todayI;});db.collection("withdrawals").where("status","==","paid").get().then(s=>{s.forEach(d=>{let w=d.data();totW+=w.amount||0;if(w.date&&w.date.toDate()>=today)todayW+=w.amount||0;});document.getElementById('totalWithdrawals').innerText='-Ksh '+totW;document.getElementById('todayWithdrawals').innerText='-Ksh '+todayW;});}
+function loadStats(){let totI=0,totW=0;db.collection("users").get().then(s=>{s.forEach(d=>totI+=d.data().totalInvested||0);document.getElementById('totalInvested').innerText='+Ksh '+totI;document.getElementById('todayInvested').innerText='+Ksh '+totI;});db.collection("withdrawals").where("status","==","paid").get().then(s=>{s.forEach(d=>totW+=d.data().amount||0);document.getElementById('totalWithdrawals').innerText='-Ksh '+totW;document.getElementById('todayWithdrawals').innerText='-Ksh '+totW;});}
 
-function loadContent(){['banner','packages','terms','policies','about'].forEach(k=>{db.collection("settings").doc(k).get().then(d=>{if(d.exists){let v=d.data().value||"";document.getElementById('edit'+k.charAt(0).toUpperCase()+k.slice(1)).value=v;}});});}
+// SUPER LOADER - FINDS YESTERDAY DATA ANYWHERE
+function loadContent(){
+ db.collection("settings").get().then(snap=>{
+  let found={banner:"",packages:"",terms:"",policies:"",about:""};
+  snap.forEach(doc=>{
+   let id=doc.id.toLowerCase();
+   let data=doc.data();
+   // Direct docs
+   if(id==="banner") found.banner = data.value||data.text||data.banner||"";
+   if(id==="packages") found.packages = data.value||data.packages||JSON.stringify(data);
+   if(id==="terms") found.terms = data.value||data.terms||data.text||"";
+   if(id==="policies"||id==="policy") found.policies = data.value||data.policies||data.text||"";
+   if(id==="about") found.about = data.value||data.about||data.text||"";
+   // If saved inside info/content/deposit
+   if(id==="info"||id==="content"||id==="config"){
+    if(data.banner) found.banner=data.banner;
+    if(data.packages) found.packages=typeof data.packages==='string'?data.packages:JSON.stringify(data.packages,null,2);
+    if(data.terms) found.terms=data.terms;
+    if(data.policies||data.policy) found.policies=data.policies||data.policy;
+    if(data.about) found.about=data.about;
+    if(data.value && id==="banner") found.banner=data.value;
+   }
+   // Generic fallback: any doc with value that looks like banner
+   if(data.bannerText) found.banner=data.bannerText;
+   if(data.termsText) found.terms=data.termsText;
+  });
+
+  // Fill inputs
+  if(found.banner){document.getElementById('editBanner').value=found.banner;document.getElementById('statusBanner').innerText="✅ Yesterday data loaded!";}
+  if(found.packages){document.getElementById('editPackages').value=found.packages;document.getElementById('statusPackages').innerText="✅ Yesterday data loaded!";}
+  if(found.terms){document.getElementById('editTerms').value=found.terms;document.getElementById('statusTerms').innerText="✅ Yesterday data loaded!";}
+  if(found.policies){document.getElementById('editPolicies').value=found.policies;document.getElementById('statusPolicies').innerText="✅ Yesterday data loaded!";}
+  if(found.about){document.getElementById('editAbout').value=found.about;document.getElementById('statusAbout').innerText="✅ Yesterday data loaded!";}
+
+  if(!found.banner &&!found.packages &&!found.terms &&!found.policies &&!found.about){
+    document.getElementById('statusBanner').innerText="⚠️ No data found - click Debug button below";
+  }
+ });
+}
+
+function saveSingle(key,inputId){let v=document.getElementById(inputId).value;if(!v.trim()){alert("Empty!");return;}db.collection("settings").doc(key).set({value:v,updated:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{document.getElementById('status'+key.charAt(0).toUpperCase()+key.slice(1)).innerText="✅ Saved!";alert("✅ "+key+" Saved!");});}
 function saveAllContent(){
  let data={banner:document.getElementById('editBanner').value,packages:document.getElementById('editPackages').value,terms:document.getElementById('editTerms').value,policies:document.getElementById('editPolicies').value,about:document.getElementById('editAbout').value};
- Object.keys(data).forEach(k=>{db.collection("settings").doc(k).set({value:data[k],updated:firebase.firestore.FieldValue.serverTimestamp()});});
+ Object.keys(data).forEach(k=>{if(data[k].trim())db.collection("settings").doc(k).set({value:data[k],updated:firebase.firestore.FieldValue.serverTimestamp()});});
  alert("✅ All Saved!");
+}
+function debugSettings(){
+ db.collection("settings").get().then(s=>{
+  let msg="Found "+s.size+" docs in settings:\n\n";
+  s.forEach(d=>{msg+= "📄 ID: "+d.id+" | Fields: "+Object.keys(d.data()).join(", ")+"\nPreview: "+JSON.stringify(d.data()).substring(0,120)+"\n\n";});
+  alert(msg);
+  console.log(msg);
+ });
 }
 
 window.onload=()=>{if(localStorage.getItem('nexaAdminLoggedIn')==='true')showPanel();}
