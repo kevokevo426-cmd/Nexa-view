@@ -7,16 +7,16 @@
 <meta name="theme-color" content="#fbbf24">
 <link rel="apple-touch-icon" href="nexa_view_icon.webp">
 <style>
-body{background:#000;color:white;font-family:Poppins;display:flex;justify-content:center;align-items:center;height:100vh;margin:0}
+body{background:#000;color:white;font-family:Poppins;display:flex;justify-content:center;align-items:center;height:100vh;margin:0;padding:15px}
 .box{background:#111;padding:30px;border-radius:16px;border:1px solid #fbbf24;width:90%;max-width:400px;text-align:center}
 .logo{width:80px;height:80px;margin:0 auto 15px auto;display:block;border-radius:50%}
 input,button{width:100%;padding:14px;margin:10px 0;background:#222;border:1px solid #333;color:white;border-radius:10px;font-size:15px;box-sizing:border-box}
 button{background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;font-weight:bold;cursor:pointer}
 h2{color:#fbbf24;text-align:center;margin:0 0 10px 0}
 a{color:#fbbf24}
-.input-wrap{position:relative;width:100%}
-.input-wrap input{padding-right:45px}
-.eye{position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;user-select:none}
+.input-wrap{position:relative;width:100%;margin:10px 0}
+.input-wrap input{padding-right:50px;margin:0;width:100%}
+.eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:20px;user-select:none;background:#222;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:50%}
 #toastBox{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;width:90%;max-width:350px}
 .toast{background:#111;border:1.5px solid #22c55e;color:white;padding:14px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.9);font-size:13px;text-align:center}
 .toast.error{border-color:#ef4444}
@@ -28,6 +28,7 @@ a{color:#fbbf24}
   <img src="nexa_view_icon.webp" alt="NEXA VIEW" class="logo">
   <h2>NEXA LOGIN</h2>
   <input type="tel" id="phone" placeholder="Phone: 0712345678">
+  <!-- EYE ADDED HERE -->
   <div class="input-wrap">
     <input type="password" id="pass" placeholder="Password">
     <span class="eye" onclick="toggleEye('pass',this)">👁️</span>
@@ -58,6 +59,7 @@ function toggleEye(id,el){
 }
 function formatPhone(p){
   p=p.replace(/\D/g,'');
+  if(p.startsWith('254')) return p;
   if(p.startsWith('0')) return '254'+p.substring(1);
   if(p.startsWith('7')) return '254'+p;
   return p;
@@ -71,7 +73,7 @@ function login(){
     if(doc.data().password!==pass){showToast('Wrong Password');return;}
     localStorage.setItem("nexaPhone",phone);
     window.location.href="dashboard.html";
-  });
+  }).catch(()=>showToast('Network error'));
 }
 if('serviceWorker' in navigator){navigator.serviceWorker.register('service-worker.js');}
 </script>
