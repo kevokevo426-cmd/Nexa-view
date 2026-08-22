@@ -48,10 +48,10 @@ label{font-size:11px;color:#aaa}
 .wa-avatar{width:38px;height:38px;background:white;border-radius:50%;display:flex;justify-content:center;align-items:center;font-size:20px}
 .wa-name{font-weight:700;font-size:14px}
 .wa-status{font-size:11px;opacity:0.9}
-.wa-body{flex:1;background:#0b141a;background-image:url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');background-size:cover;overflow-y:auto;padding:12px}
+.wa-body{flex:1;background:#0b141a;background-image:url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');background-size:cover;overflow-y:auto;padding:12px;display:flex;flex-direction:column}
 .wa-msg{padding:8px 12px;border-radius:8px;margin:6px 0;max-width:75%;font-size:13px;position:relative;box-shadow:0 1px 0.5px rgba(0,0,0,0.3);word-wrap:break-word}
-.wa-user{background:#dcf8c6;color:#000;margin-left:auto;border-top-right-radius:0}
-.wa-admin{background:white;color:#000;margin-right:auto;border-top-left-radius:0}
+.wa-user{background:#dcf8c6;color:#000;margin-left:auto;border-top-right-radius:0;align-self:flex-end}
+.wa-admin{background:white;color:#000;margin-right:auto;border-top-left-radius:0;align-self:flex-start}
 .wa-time{font-size:9px;color:#667781;margin-top:4px;text-align:right;display:block}
 .wa-input-area{background:#f0f2f5;padding:10px;display:flex;gap:8px;align-items:center;flex-shrink:0;position:sticky;bottom:0}
 .wa-input{flex:1;background:white;border:none;border-radius:25px;padding:12px 18px;font-size:14px;outline:none;color:#000}
@@ -97,7 +97,7 @@ label{font-size:11px;color:#aaa}
 
 <div id="withdrawModal" class="modal" onclick="closeWithdraw()"><div class="modal-content" onclick="event.stopPropagation()"><h3>📤 Withdraw</h3><p style="font-size:12px">To: <b id="accNum" style="color:#22c55e">Not Set</b></p><p style="font-size:12px">Available: <b id="availBal" style="color:#22c55e">Ksh 0.00</b></p><div class="time-note">⏰ Withdrawal Time: 9:30 AM - 5:30 PM Only</div><label>Select Amount - Tap to Select (No typing)</label><div class="quick-amounts"><button class="quick-btn" onclick="selectAmount(200)">200</button><button class="quick-btn" onclick="selectAmount(500)">500</button><button class="quick-btn" onclick="selectAmount(700)">700</button><button class="quick-btn" onclick="selectAmount(1000)">1000</button><button class="quick-btn" onclick="selectAmount(1500)">1500</button><button class="quick-btn" onclick="selectAmount(2000)">2000</button></div><div style="background:#1a1a1a;padding:12px;border-radius:10px;border:1px dashed #333;margin:10px 0;text-align:center"><span style="font-size:12px;color:#aaa">Selected Amount:</span><br><b id="selectedAmountDisplay" style="font-size:22px;color:#22c55e">Ksh 0</b></div><div class="calc">Tax 10%: <b id="taxShow">KSH 0</b> | You Get: <b id="netShow">KSH 0</b></div><label>PIN</label><div class="input-wrap"><input type="password" id="withPin" placeholder="****" maxlength="4"><span class="eye" onclick="toggleEye('withPin', this)">👁️</span></div><p style="text-align:center;margin:5px 0"><span onclick="forgotOption1();closeWithdraw()" style="color:#fbbf24;font-size:11px;text-decoration:underline;cursor:pointer">Forgot PIN?</span></p><button class="btn btn-withdraw" id="submitWithdrawBtn" onclick="submitWithdraw()">Submit Withdraw</button><button class="btn" style="background:#333;color:white" onclick="closeWithdraw()">Cancel</button></div></div>
 
-<div id="chatModal" class="modal" onclick="closeAdminChat()"><div class="wa-modal-content" onclick="event.stopPropagation()"><div class="wa-header"><div class="wa-avatar">🛡️</div><div><div class="wa-name">NEXA ADMIN</div><div class="wa-status">Online • Replies within minutes</div></div><div style="margin-left:auto;cursor:pointer;font-size:22px" onclick="closeAdminChat()">✕</div></div><div class="wa-body" id="chatMessages"><p style="color:#667781;font-size:11px;text-align:center;margin-top:40px">🔒 Messages auto-delete after 24hrs<br>Start chat with Admin</p></div><div class="wa-input-area"><input type="text" id="chatInput" class="wa-input" placeholder="Type a message" autocomplete="off"><button type="button" class="wa-send" id="waSendBtn" onclick="sendChat()">➤</button></div></div></div>
+<div id="chatModal" class="modal" onclick="closeAdminChat()"><div class="wa-modal-content" onclick="event.stopPropagation()"><div class="wa-header"><div class="wa-avatar">🛡️</div><div><div class="wa-name">NEXA ADMIN</div><div class="wa-status">Online • Replies within minutes</div></div><div style="margin-left:auto;cursor:pointer;font-size:22px" onclick="closeAdminChat()">✕</div></div><div class="wa-body" id="chatMessages"><p style="color:#667781;font-size:11px;text-align:center;margin-top:40px">🔒 Messages kept forever<br>Start chat with Admin</p></div><div class="wa-input-area"><input type="text" id="chatInput" class="wa-input" placeholder="Type a message" autocomplete="off"><button type="button" class="wa-send" id="waSendBtn" onclick="sendChat()">➤</button></div></div></div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
@@ -129,7 +129,8 @@ async function loadWallet(){
       document.getElementById('accNum').innerText = u.accNumber||'Not Set';
       document.getElementById('currentAcc').innerText = u.accNumber||'Not Set';
       document.getElementById('setupAccNumber').value = u.accNumber||'';
-      document.getElementById('availBal').innerText = 'Ksh '+(u.balance||0).toFixed(2);
+      const availEl = document.getElementById('availBal');
+      if(availEl) availEl.innerText = 'Ksh '+(u.balance||0).toFixed(2);
       const todayStr = new Date().toISOString().split('T')[0];
       let todayProfit = u.todayProfit || 0;
       let todayReferral = u.todayReferral || 0;
@@ -183,33 +184,82 @@ function submitWithdraw(){
     });
   });
 }
+
+// === FIXED CHAT - TOP RIGHT + KEEP FOREVER ===
 function openAdminChat(){ document.getElementById('chatModal').style.display='flex'; setTimeout(()=>{document.getElementById('chatInput').focus();},200); loadChat(); }
 function closeAdminChat(){ document.getElementById('chatModal').style.display='none'; if(chatUnsubscribe) chatUnsubscribe(); }
+
 function loadChat(){
   if(chatUnsubscribe) chatUnsubscribe();
-  chatUnsubscribe = db.collection("chats").where("phone","==",phone).orderBy("date","asc").onSnapshot(snap=>{
-    let html=""; let cutoff = Date.now() - 86400000;
-    snap.forEach(doc=>{
-      let m=doc.data();
-      if(m.date && m.date.seconds){ if(m.date.seconds*1000 < cutoff){ db.collection("chats").doc(doc.id).delete(); return; } }
+  // FIXED: No orderBy - avoids Firebase Index error that caused empty screen
+  chatUnsubscribe = db.collection("chats").where("phone","==",phone).onSnapshot(snap=>{
+    let msgs = [];
+    snap.forEach(doc=>{ let m=doc.data(); msgs.push(m); });
+    // Sort manually oldest first
+    msgs.sort((a,b)=>{ return (a.date?.seconds||0) - (b.date?.seconds||0); });
+    
+    let html="";
+    msgs.forEach(m=>{
       let cls = m.from==='user' ? 'wa-user' : 'wa-admin';
       html+=`<div class="wa-msg ${cls}">${m.message}<span class="wa-time">${formatDateTime(m.date)} ✓✓</span></div>`;
     });
-    document.getElementById('chatMessages').innerHTML = html || '<p style="color:#667781;font-size:11px;text-align:center;margin-top:40px">🔒 Messages auto-delete after 24hrs<br>Start chat with Admin</p>';
-    const box = document.getElementById('chatMessages'); box.scrollTop = box.scrollHeight;
+    
+    if(msgs.length===0){
+      html = '<p style="color:#667781;font-size:11px;text-align:center;margin-top:40px">🔒 Messages kept forever<br>Start chat with Admin 👋</p>';
+    }
+    
+    document.getElementById('chatMessages').innerHTML = html;
+    const box = document.getElementById('chatMessages'); 
+    box.scrollTop = box.scrollHeight;
+  }, err=>{
+    console.error(err);
+    showToast("Chat error: "+err.message,"error");
   });
 }
+
 function sendChat(){
   let input = document.getElementById('chatInput');
   let msg = input.value.trim();
   if(!msg) return;
+  
   let btn = document.getElementById('waSendBtn');
-  btn.disabled = true; btn.innerText = "⏳";
-  let messageToSend = msg; input.value = "";
-  db.collection("chats").add({phone, message:messageToSend, from:"user", userId:document.getElementById('userId').innerText, date:firebase.firestore.FieldValue.serverTimestamp(), read:false}).then(()=>{
-    btn.innerText="➤"; btn.disabled=false; input.focus();
-  }).catch(e=>{ showToast("Failed: "+e.message,"error"); input.value=messageToSend; btn.innerText="➤"; btn.disabled=false; });
+  btn.disabled = true; 
+  btn.innerText = "⏳";
+  
+  // Show immediately TOP RIGHT green bubble
+  let chatBox = document.getElementById('chatMessages');
+  if(chatBox.innerHTML.includes('Start chat with Admin')){
+    chatBox.innerHTML = '';
+  }
+  let tempDiv = document.createElement('div');
+  tempDiv.className = 'wa-msg wa-user';
+  tempDiv.innerHTML = `${msg}<span class="wa-time">sending...</span>`;
+  chatBox.appendChild(tempDiv);
+  chatBox.scrollTop = chatBox.scrollHeight;
+  input.value = "";
+
+  db.collection("chats").add({
+    phone: phone, 
+    message: msg, 
+    from: "user", 
+    userId: document.getElementById('userId').innerText, 
+    date: firebase.firestore.FieldValue.serverTimestamp(), 
+    read: false
+  }).then(()=>{
+    btn.innerText="➤"; 
+    btn.disabled=false; 
+    input.focus();
+    // Real message will appear via snapshot, remove temp
+    setTimeout(()=>{ if(tempDiv.parentNode) tempDiv.remove(); }, 500);
+  }).catch(e=>{
+    showToast("Failed: "+e.message,"error"); 
+    input.value=msg; 
+    if(tempDiv.parentNode) tempDiv.remove();
+    btn.innerText="➤"; 
+    btn.disabled=false;
+  });
 }
+
 window.onload=()=>{
   loadWallet();
   document.getElementById('chatInput').addEventListener('keypress', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); sendChat(); } });
