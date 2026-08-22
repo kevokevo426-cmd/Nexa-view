@@ -3,73 +3,47 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NEXA REGISTER</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#fbbf24">
+<link rel="apple-touch-icon" href="nexa_view_icon.webp">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-*{box-sizing:border-box}
 body{background:#000;color:white;font-family:Poppins;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:15px}
-.box{background:#111;padding:24px;border-radius:18px;border:1px solid #222;width:100%;max-width:380px}
-h2{color:#fbbf24;text-align:center;font-size:24px;margin:0 0 20px 0;font-weight:700}
-label{font-size:12px;color:#aaa;margin-bottom:6px;display:block;font-weight:600;letter-spacing:0.5px}
-input,select{width:100%;padding:13px;background:#1a1a1a;border:1px solid #333;color:white;border-radius:10px;font-size:14px;margin-bottom:14px}
-.phone-wrap{display:flex;gap:8px}
-.phone-wrap select{width:32%;padding:13px 5px;font-size:13px}
-.phone-wrap input{width:68%;margin-bottom:0}
-button{width:100%;padding:15px;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;border:none;border-radius:10px;font-weight:700;font-size:15px;cursor:pointer;margin-top:8px}
-.checkbox{display:flex;align-items:center;gap:8px;margin:12px 0 0;font-size:12px}
-.checkbox input{width:16px;height:16px;margin:0;accent-color:#fbbf24}
-.checkbox a{color:#fbbf24;text-decoration:none}
-a{color:#fbbf24;text-decoration:none}
-.code-box{display:flex;gap:8px}
-.code-box input{flex:1;margin-bottom:0}
-.code-display{background:#1a1a1a;border:1px solid #fbbf24;color:#fbbf24;font-weight:700;font-size:16px;letter-spacing:2px;text-align:center;padding:13px;border-radius:10px;min-width:90px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.box{background:#111;padding:30px;border-radius:16px;border:1px solid #fbbf24;width:90%;max-width:400px;text-align:center}
+.logo{width:80px;height:80px;margin:0 auto 15px auto;display:block;border-radius:50%}
+input,button{width:100%;padding:14px;margin:8px 0;background:#222;border:1px solid #333;color:white;border-radius:10px;font-size:15px;box-sizing:border-box}
+button{background:linear-gradient(90deg,#fbbf24,#f59e0b);color:black;font-weight:bold;cursor:pointer}
+h2{color:#fbbf24;text-align:center;margin:0 0 10px 0}
+a{color:#fbbf24}
+.input-wrap{position:relative;width:100%}
+.input-wrap input{padding-right:45px}
+.eye{position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px}
+.ref-valid{font-size:11px;color:#22c55e;margin:-4px 0 8px 0;text-align:left;display:none}
+.ref-invalid{font-size:11px;color:#ef4444;margin:-4px 0 8px 0;text-align:left;display:none}
+#toastBox{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;width:90%;max-width:350px}
+.toast{background:#111;border:1.5px solid #22c55e;color:white;padding:14px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.9);font-size:13px;text-align:center}
+.toast.error{border-color:#ef4444}
 </style>
 </head>
 <body>
+<div id="toastBox"></div>
 <div class="box">
-  <h2>Create Account</h2>
-  
-  <label>PHONE NUMBER</label>
-  <div class="phone-wrap">
-    <select id="countryCode" onchange="updateCountryLabel()">
-      <option value="254" data-name="KENYA">+254 KE</option>
-      <option value="256" data-name="UGANDA">+256 UG</option>
-      <option value="255" data-name="TANZANIA">+255 TZ</option>
-    </select>
-    <input type="tel" id="phone" placeholder="712345678">
+  <img src="nexa_view_icon.webp" alt="NEXA VIEW" class="logo">
+  <h2>NEXA REGISTER</h2>
+  <input type="text" id="name" placeholder="Full Name">
+  <input type="tel" id="phone" placeholder="Phone: 0712345678">
+  <div class="input-wrap">
+    <input type="password" id="pass" placeholder="Password">
+    <span class="eye" onclick="toggleEye('pass',this)">👁️</span>
   </div>
-
-  <label>USERNAME</label>
-  <input type="text" id="username" placeholder="Choose any nickname e.g King254">
-
-  <label>PASSWORD</label>
-  <input type="password" id="pass" placeholder="Enter password">
-
-  <label>REFERRAL CODE - OPTIONAL</label>
-  <input type="text" id="refCode" placeholder="Enter code if you have one">
-
-  <label id="countryLabel">VERIFICATION CODE - KENYA</label>
-  <div class="code-box">
-    <input type="text" id="captchaInput" placeholder="Enter code">
-    <div class="code-display" id="captchaCode" onclick="newCaptcha()">3483</div>
+  <div class="input-wrap">
+    <input type="password" id="cpass" placeholder="Confirm Password">
+    <span class="eye" onclick="toggleEye('cpass',this)">👁️</span>
   </div>
-
-  <div class="checkbox">
-    <input type="checkbox" id="terms">
-    <span>I agree to <a href="#" onclick="showTerms()">Terms</a></span>
-  </div>
-
+  <input type="text" id="refCode" placeholder="Referral Code (Optional)">
+  <div id="refValid" class="ref-valid">✅ Valid referral code</div>
+  <div id="refInvalid" class="ref-invalid">❌ Invalid referral code</div>
   <button onclick="register()">REGISTER</button>
-  
-  <p style="text-align:center;margin-top:16px;font-size:13px">Have account? <a href="index.html">Login</a></p>
-</div>
-
-<!-- TERMS POPUP -->
-<div id="termsPopup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:999;overflow-y:auto;padding:15px">
-  <div style="background:#111;border:1px solid #fbbf24;border-radius:16px;padding:20px;max-width:600px;margin:40px auto">
-    <h2 style="color:#fbbf24;text-align:center">NEXA VIEW - Terms</h2>
-    <div id="termsContent" style="font-size:13px;line-height:1.7;text-align:left">Loading Terms...</div>
-    <button onclick="closeTerms()" style="width:100%;margin-top:15px;padding:14px;background:#fbbf24;color:black;border:none;border-radius:10px;font-weight:700;font-size:15px">I Agree & Close</button>
-  </div>
+  <p style="text-align:center">Have account? <a href="index.html">Login here</a></p>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -79,92 +53,119 @@ const firebaseConfig = {apiKey:"AIzaSyD1ftJH909fbV9X5oUr8r5c9YkeV7N1ecI",authDom
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// LOAD TERMS FROM FIREBASE
-db.collection("settings").doc("terms").get().then(doc=>{
-  if(doc.exists){
-    document.getElementById('termsContent').innerHTML = doc.data().content.replace(/\n/g, '<br>');
-  }
-})
-
-// AUTO FILL REFERRAL CODE FROM LINK ?ref=NEXAR7A9B2
-const urlParams = new URLSearchParams(window.location.search);
-const refFromUrl = urlParams.get('ref');
-if(refFromUrl){ document.getElementById('refCode').value = refFromUrl; }
-
-// TERMS POPUP FUNCTIONS
-function showTerms(){ document.getElementById('termsPopup').style.display = 'block'; document.body.style.overflow = 'hidden'; }
-function closeTerms(){ document.getElementById('termsPopup').style.display = 'none'; document.body.style.overflow = 'auto'; document.getElementById('terms').checked = true; }
-
-// UPDATE COUNTRY LABEL
-function updateCountryLabel(){
-  const select = document.getElementById('countryCode');
-  const country = select.options[select.selectedIndex].getAttribute('data-name');
-  document.getElementById('countryLabel').innerText = `VERIFICATION CODE - ${country}`;
+function showToast(msg,type="error"){
+  const box=document.getElementById('toastBox');
+  const t=document.createElement('div');
+  t.className='toast '+(type=='error'?'error':'');
+  t.innerText=msg;
+  box.appendChild(t);
+  setTimeout(()=>t.remove(),3500);
 }
-
-// CAPTCHA
-function newCaptcha(){ document.getElementById('captchaCode').innerText = Math.floor(1000 + Math.random() * 9000); }
-newCaptcha();
-
-function formatPhone(p, code){
-  p = p.replace(/\D/g,'');
-  if(p.startsWith('0')) p = p.substring(1);
-  return code + p;
+function toggleEye(id,el){
+  const inp=document.getElementById(id);
+  if(inp.type==='password'){inp.type='text';el.innerText='🙈';}
+  else{inp.type='password';el.innerText='👁️';}
 }
-
-// GENERATE UNIQUE USER ID: NEXAU + 6 chars
-function generateUserID(){
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let id = 'NEXAU';
-  for(let i=0; i<6; i++){ id += chars.charAt(Math.floor(Math.random() * chars.length)); }
-  return id;
+function formatPhone(p){
+  p=p.replace(/\D/g,'');
+  if(p.startsWith('0')) return '254'+p.substring(1);
+  if(p.startsWith('7')) return '254'+p;
+  return p;
 }
-
-// GENERATE REFERRAL CODE: NEXAR + 5 chars
-function generateRefCode(){
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let code = 'NEXAR';
-  for(let i=0; i<5; i++){ code += chars.charAt(Math.floor(Math.random() * chars.length)); }
-  return code;
+// Get ref from URL?ref=XXXX
+window.onload=function(){
+  const urlParams=new URLSearchParams(window.location.search);
+  const ref=urlParams.get('ref');
+  if(ref){document.getElementById('refCode').value=ref;checkRef(ref);}
 }
+function checkRef(code){
+  if(!code){document.getElementById('refValid').style.display='none';document.getElementById('refInvalid').style.display='none';return;}
+  db.collection("users").where("userId","==",code).get().then(snap=>{
+    if(!snap.empty){document.getElementById('refValid').style.display='block';document.getElementById('refInvalid').style.display='none';}
+    else{db.collection("users").where("myReferralCode","==",code).get().then(s2=>{
+      if(!s2.empty){document.getElementById('refValid').style.display='block';document.getElementById('refInvalid').style.display='none';}
+      else{document.getElementById('refValid').style.display='none';document.getElementById('refInvalid').style.display='block';}
+    });}
+  });
+}
+document.getElementById('refCode').addEventListener('input',function(){checkRef(this.value.trim());});
 
 function register(){
-  let countryCode = document.getElementById('countryCode').value;
-  let phoneInput = document.getElementById('phone').value.trim();
-  let phone = formatPhone(phoneInput, countryCode);
-  let username = document.getElementById('username').value.trim();
-  let pass = document.getElementById('pass').value.trim();
-  let refBy = document.getElementById('refCode').value.trim();
-  let captcha = document.getElementById('captchaInput').value.trim();
-  let realCaptcha = document.getElementById('captchaCode').innerText;
-  
-  if(!phoneInput || !username || !pass){ alert('❌ Fill Phone, Username and Password'); return; }
-  if(captcha !== realCaptcha){ alert('❌ Wrong Verification Code'); newCaptcha(); return; }
-  if(!document.getElementById('terms').checked){ alert('❌ Please agree to Terms'); return; }
-  
-  let userID = generateUserID();
-  let myRefCode = generateRefCode();
-  
+  let name=document.getElementById('name').value.trim();
+  let phone=formatPhone(document.getElementById('phone').value.trim());
+  let pass=document.getElementById('pass').value.trim();
+  let cpass=document.getElementById('cpass').value.trim();
+  let refCode=document.getElementById('refCode').value.trim();
+
+  if(!name||!phone||!pass||!cpass){showToast('Fill all fields');return;}
+  if(pass!==cpass){showToast('Passwords do not match');return;}
+  if(pass.length<4){showToast('Password too short');return;}
+
   db.collection("users").doc(phone).get().then(doc=>{
-    if(doc.exists){ alert('❌ Phone number already registered'); return; }
-    
-    db.collection("users").doc(phone).set({
-      phone, username, realName: username, country: countryCode,
-      userID: userID, 
-      password:pass, balance:0, ownedPackages:{}, tasksDone:0, 
-      referralBonus:0, totalReferralEarned:0,
-      myReferralCode: myRefCode, 
-      referredBy: refBy || '', 
-      referrals: [],
-      referralStatus: refBy ? 'pending' : '',
-      createdAt:new Date()
-    }).then(()=>{
-      alert(`✅ Account Created!\n\nUsername: ${username}\nUser ID: ${userID}\nYour Referral Code: ${myRefCode}\n\nYour Referral Link:\nhttps://nexa-view.vercel.app/register.html?ref=${myRefCode}`); // FIXED DOMAIN
-      localStorage.setItem("nexaPhone", phone);
-      window.location.href = "dashboard.html";
+    if(doc.exists){showToast('Phone already registered');return;}
+
+    let userId="NEXA"+phone.slice(-6);
+    let myReferralCode=userId;
+
+    // Create user
+    let newUser={
+      name:name,phone:phone,password:pass,userId:userId,myReferralCode:myReferralCode,
+      balance:0,totalProfit:0,totalReferralEarned:0,totalIncome:0,
+      referrals:[],myReferralsLV1:[],myReferralsLV2:[],
+      referredBy: refCode||null,
+      hasPurchased:false,isActive:false,
+      ownedPackages:{},ownedPackagesList:[],packageCounts:{},
+      accNumber:"",accPin:"",date:firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    db.collection("users").doc(phone).set(newUser).then(()=>{
+      // If has referral, link immediately
+      if(refCode){
+        db.collection("users").where("userId","==",refCode).get().then(snap=>{
+          if(snap.empty){
+            db.collection("users").where("myReferralCode","==",refCode).get().then(s2=>{
+              if(!s2.empty){linkReferral(s2.docs[0].id, s2.docs[0].data(), phone, userId);}
+              else{finishReg(phone);}
+            });
+          } else {
+            linkReferral(snap.docs[0].id, snap.docs[0].data(), phone, userId);
+          }
+        });
+      } else {
+        finishReg(phone);
+      }
     });
   });
 }
+
+function linkReferral(uplinePhone, uplineData, newPhone, newUserId){
+  // Add to LV1 of upline - IMMEDIATE VISIBLE
+  db.collection("users").doc(uplinePhone).update({
+    referrals: firebase.firestore.FieldValue.arrayUnion(newPhone),
+    myReferralsLV1: firebase.firestore.FieldValue.arrayUnion(newPhone)
+  });
+
+  // If upline was referred by someone, add new user as LV2 to that grand upline
+  if(uplineData.referredBy){
+    db.collection("users").where("userId","==",uplineData.referredBy).get().then(s3=>{
+      s3.forEach(gDoc=>{
+        db.collection("users").doc(gDoc.id).update({
+          myReferralsLV2: firebase.firestore.FieldValue.arrayUnion(newPhone)
+        });
+      });
+      finishReg(newPhone);
+    });
+  } else {
+    finishReg(newPhone);
+  }
+}
+
+function finishReg(phone){
+  showToast('Registration success!','success');
+  localStorage.setItem("nexaPhone",phone);
+  setTimeout(()=>{window.location.href="dashboard.html";},800);
+}
+if('serviceWorker' in navigator){navigator.serviceWorker.register('service-worker.js');}
 </script>
 </body>
 </html>
